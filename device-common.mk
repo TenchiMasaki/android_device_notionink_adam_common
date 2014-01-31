@@ -27,10 +27,21 @@ endif
 
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
+# Boot animation
+#BOOTANIMATION_RESOLUTION := 1280x720
+#$(call inherit-product, vendor/eos/bootanimations/bootanimation.mk)
+
 # uses mdpi artwork where available
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_LOCALES += mdpi
+
+# Dalvik
+# DONT_INSTALL_DEX_FILES := true
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.dexopt-data-only=1
+#    dalvik.vm.heaptargetutilization=0.25 \
+#    dalvik.vm.jit.codecachesize=0 \
 
 
 # Adam/Harmony Configs
@@ -42,7 +53,10 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
-    device/notionink/adam_common/files/02do:system/etc/init.d/02do
+    device/notionink/adam_common/files/02do:system/etc/adam_postboot.sh
+#    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
+#    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
+
 
 # Modules
 PRODUCT_COPY_FILES += \
@@ -55,8 +69,9 @@ PRODUCT_COPY_FILES += \
 
 # Bluetooth config files
 PRODUCT_COPY_FILES += \
-    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf \
-    device/notionink/adam_common/files/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf \
+    device/notionink/adam_common/files/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf
+#    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf \
+
 	
 # Touchscreen
 PRODUCT_COPY_FILES += \
@@ -83,10 +98,16 @@ PRODUCT_COPY_FILES += \
    device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
       
-PRODUCT_PROPERTY_OVERRIDES := \
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.wifi.country=US \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120 \
-    wifi.supplicant_scan_interval=15
+    wifi.supplicant_scan_interval=15 \
+    debug.hwui.render_dirty_regions=false \
+    ro.zygote.disable_gl_preload=true \
+    ro.bq.gpu_to_cpu_unsupported=true \
+#    ro.boot.selinux=disabled \
+#    ro.build.selinux=0
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
@@ -113,11 +134,14 @@ PRODUCT_PACKAGES += \
 #	hwcomposer.tegra
 
 PRODUCT_PACKAGES += \
-	librs_jni
+	librs_jni \
+	bttest \
+	libbt-vendor
         
 # These are the hardware-specific feature permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
+    frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
     frameworks/native/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.location.xml:system/etc/permissions/android.hardware.location.xml \
@@ -126,6 +150,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
     frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
+    frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
@@ -162,13 +187,18 @@ PRODUCT_PACKAGES += \
         l2ping \
         hcitool \
         bttest 
-	
+
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+
+WIFI_BAND := 802_11_BG
+WPA_SUPPLICANT_VERSION := VER_0_8_X
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/device-bcm.mk)
-$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
 # Firmware
 #PRODUCT_COPY_FILES += \
+#	hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329.bin:system/vendor/firmware/fw_bcmhd.bin \
+#   hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329_apsta.bin:system/vendor/firmware/fw_bcmdhd_apsta.bin
+
 #	device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd.bin:system/vendor/firmware/fw_bcmdhd.bin \
 #        device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd_p2p.bin:system/vendor/firmware/fw_bcmdhd_p2p.bin \
 #        device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd_apsta.bin:system/vendor/firmware/fw_bcmdhd_apsta.bin
