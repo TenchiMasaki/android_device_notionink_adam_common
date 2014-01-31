@@ -42,6 +42,7 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
+    device/notionink/adam_common/files/02do:system/etc/init.d/02do
 
 # Modules
 PRODUCT_COPY_FILES += \
@@ -162,7 +163,10 @@ PRODUCT_PACKAGES += \
         hcitool \
         bttest 
 	
+$(call inherit-product, device/common/gps/gps_us_supl.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/device-bcm.mk)
+$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
 # Firmware
 #PRODUCT_COPY_FILES += \
 #	device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd.bin:system/vendor/firmware/fw_bcmdhd.bin \

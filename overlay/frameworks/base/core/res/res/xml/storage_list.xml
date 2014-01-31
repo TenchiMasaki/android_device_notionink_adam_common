@@ -33,7 +33,7 @@
 -->
 
 <StorageList xmlns:android="http://schemas.android.com/apk/res/android">
-    <storage
+    <storage android:mountPoint="/storage/emulated/legacy"
 	android:storageDescription="@string/storage_internal"
 	android:emulated="true"
 	android:mtpReserve="100" />
