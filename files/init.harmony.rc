@@ -4,9 +4,14 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage 0775 system sdcard_rw
-    mkdir /storage/emulated 0555 root root
+    mkdir /mnt/media_rw 0777 media_rw media_rw
+    mkdir /mnt/media_rw/sdcard1 0777 media_rw media_rw
+    mkdir /mnt/media_rw/sdcard2 0777 media_rw media_rw
+    mkdir /mnt/media_rw/usbdrive1 0777 media_rw media_rw
+    mkdir /mnt/media_rw/usbdrive2 0777 media_rw media_rw
+    mkdir /mnt/shell/emulated 0777 shell shell
+    mkdir /storage 0777 system sdcard_rw
+    mkdir /storage/emulated 0777 sdcard_rw sdcard_rw
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
 
@@ -14,19 +19,24 @@ on init
     export EMULATED_STORAGE_TARGET /storage/emulated
 
     # for backwards compatibility
-    mkdir /storage/emulated/legacy 0777 sdcard_rw sdcard_rw
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
-    # symlink /storage/emulated/0 /storage/emulated/legacy
+    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
     # make the pathes for the external media mounts
-    mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/sdcard2 0000 system system
-    mkdir /storage/usbdisk0 0000 system system
-    mkdir /storage/usbdisk1 0000 system system system system
+    mkdir /storage/sdcard1 0777 sdcard_rw sdcard_rw
+    mkdir /storage/sdcard2 0777 sdcard_rw sdcard_rw
+    mkdir /storage/usbdrive1 0777 sdcard_rw sdcard_rw
+    mkdir /storage/usbdrive2 0777 sdcard_rw sdcard_rw
+    mkdir /mnt/usbdrive1 0666 system system
+    mkdir /mnt/usbdrive2 0666 system system
 
     # for backwards compatibility
+    symlink /storage/usbdrive1 /mnt/usbdrive1
+    symlink /storage/usbdrive2 /mnt/usbdrive2
+    symlink /mnt/usbdrive1 /usbdrive1
+    symlink /mnt/usbdrive2 /usbdrive2
     symlink /storage/sdcard1 /internal_sd
     symlink /storage/sdcard1 /mnt/internal_sd
     symlink /storage/sdcard2 /microsd
@@ -37,6 +47,9 @@ on fs
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.umount_sd false
     setprop ro.crypto.fuse_sdcard true
+#    mount ext4 /dev/block/mmcblk0p2 /data wait noatime nosuid nodev
+    mount yaffs2 mtd@cache /cache nosuid nodev
+    mount yaffs2 mtd@system /system
     mount_all /fstab.harmony
 
 on post-fs
@@ -48,6 +61,8 @@ on post-fs-data
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
+
+    mkdir /data/misc/wminput 0776 system system
 
     # we will remap this as /mnt/sdcard with the sdcard fuse tool
     mkdir /data/media 0770 media_rw media_rw
@@ -130,7 +145,8 @@ on boot
 service wpa_supplicant /system/bin/wpa_supplicant \
     -Dnl80211 -iwlan0 -puse_p2p_group_interface=1 -c/data/misc/wifi/wpa_supplicant.conf -e/data/misc/wifi/entropy.bin \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf \
-#    -O/data/misc/wifi/sockets
+    -O/data/misc/wifi/sockets \
+    -g@android:wpa_wlan0
 #   we will start as root and wpa_supplicant will switch to user wifi
 #   after setting up the capabilities required for WEXT
 #   user wifi
@@ -143,11 +159,13 @@ service wpa_supplicant /system/bin/wpa_supplicant \
 service p2p_supplicant /system/bin/wpa_supplicant \
     -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf \
-#    -O/data/misc/wifi/sockets
-#	 -N \
-# -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
+    -O/data/misc/wifi/sockets \
+    -g@android:wpa_wlan0
+#    -N \
+#    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
 #    -I/system/etc/wifi/p2p_supplicant_overlay.conf \
 #    -puse_p2p_group_interface=1 -e/data/misc/wifi/entropy.bin
+#    -g@android:wpa_wlan0
 #   we will start as root and wpa_supplicant will switch to user wifi
 #   after setting up the capabilities required for WEXT
 #   user wifi
@@ -204,8 +222,38 @@ service iprenew_eth0 /system/bin/dhcpcd -n
 # create virtual SD card at /mnt/sdcard, based on the /data/media directory
 # deamon will drop to user/group system/media_rw after initializing
 # underlying files in /data/media wil be created with user and group media_rw (1023)
-    service sdcard /system/bin/sdcard /data/media /storage/emulated 1023 1023
+service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
     class late_start
+
+service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+    class late_start
+    disabled
+
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
+    class late_start
+    disabled
+
+service fuse_sdcard2 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard2 /storage/sdcard2
+    class late_start
+    disabled
+
+service fuse_usbdrive1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdrive1 /storage/usbdrive1
+    class late_start
+    disabled
+
+service fuse_usbdrive2 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdrive2 /storage/usbdrive2
+    class late_start
+    disabled
+
+on property:ro.fuse_sdcard=true
+    start sdcard
+
+# This will make sure that sdcard service starts as late_start.
+on nonencrypted
+    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
+
+on property:vold.decrypt=trigger_restart_framework
+    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
 
 # Enable tcpdump-service
 #service netdump-service /system/xbin/tcpdump -i any -C 5 -p -s 0 -w /sdcard/netdump.cap
