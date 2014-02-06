@@ -33,9 +33,10 @@
 -->
 
 <StorageList xmlns:android="http://schemas.android.com/apk/res/android">
-    <storage android:mountPoint="/storage/emulated/legacy"
+    <storage android:mountPoint="/data/media/legacy"
 	android:storageDescription="@string/storage_internal"
-	android:emulated="true"
+	android:emulated="false"
+	android:removable="false"
 	android:mtpReserve="100" />
     <storage android:mountPoint="/storage/sdcard1"
 	android:storageDescription="@string/storage_internal"

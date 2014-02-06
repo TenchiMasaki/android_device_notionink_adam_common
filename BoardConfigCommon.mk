@@ -19,6 +19,8 @@
 
 USE_CAMERA_STUB := false
 
+# Skip droiddoc build to save build time
+BOARD_SKIP_ANDROID_DOC_BUILD := true
 TARGET_USES_OLD_LIBSENSORS_HAL := false
 
 # Audio
@@ -51,18 +53,21 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := tegra2
-
+TARGET_CPU_VARIANT := generic
+TARGET_HAVE_TEGRA_ERRATA_657451 := true
+ARCH_ARM_HAVE_TLS_REGISTER := true
+ARCH_ARM_USE_NON_NEON_MEMCPY := true
+NEED_WORKAROUND_CORTEX_A9_745320 := true
 ARCH_ARM_HIGH_OPTIMIZATION := true
 
 # kernel   
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+TARGET_KERNEL_SOURCE := kernel/notionink/adam
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -83,8 +88,11 @@ BOARD_WLAN_DEVICE           := bcmdhd
 #WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/bcm4329.ko"
 WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
 WIFI_DRIVER_FW_PATH_STA     := "/system/vendor/firmware/fw_bcmdhd.bin"
-WIFI_DRIVER_FW_PATH_P2P     := "/system/vendor/firmware/fw_bcmdhd_p2p.bin"
+#WIFI_DRIVER_FW_PATH_P2P     := "/system/vendor/firmware/fw_bcmdhd_p2p.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/system/vendor/firmware/fw_bcmdhd_apsta.bin"
+#CONFIG_CTRL_IFACE           := true
+#CONFIG_CTRL_IFACE_DBUS      := true
+#CONFIG_CTRL_IFACE_DBUS_NEW  := true
 
 # bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -94,11 +102,23 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/notionink/adam_common/blue
 
 # graphics
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
+BOARD_USES_HGL := true
 BOARD_USES_OVERLAY := true
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_EGL_NEEDS_LEGACY_FB := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+BOARD_EGL_NEEDS_FNW:= true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+SKIP_SET_METADATA := true
+ENABLE_WEBGL := true
+BOARD_USE_MHEAP_SCREENSHOT := true
+BOARD_USES_HWCOMPOSER := true
+
+# causes crash
+#BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
+
 MAX_EGL_CACHE_KEY_SIZE := 4096
 MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
@@ -117,6 +137,11 @@ BOARD_HAVE_MAGNETIC_SENSOR := true
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
 
+BOARD_MALLOC_ALIGNMENT := 16
+TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+
+COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
+
 # Preload bootanimation in to memory
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := true
@@ -131,6 +156,12 @@ TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/notionink/adam_common/recovery/recovery_keys.c
 BOARD_RECOVERY_SWIPE := true
+
+# TARGET_USERIMAGES_USE_EXT4 := true
+
+#define to use all of the Linaro Cortex-A9 optimized string funcs,
+#instead of subset known to work on all machines
+USE_ALL_OPTIMIZED_STRING_FUNCS := true
 
 # SELinux policies
 HAVE_SELINUX := true

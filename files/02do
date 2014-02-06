@@ -7,4 +7,6 @@ dmesg > /data/dmsg &
 /system/bin/mount -o rw,fmask=000,dmask=000,uid=1023,gid=1023,nosuid -t vfat /dev/block/mmcblk0p1 /storage/sdcard1
 /system/bin/mount -o rw,fmask=000,dmask=000,uid=1023,gid=1023,nosuid -t vfat /dev/block/mmcblk1p1 /storage/sdcard2
 
+chmod 0777 /data/media/0
+
 # echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
