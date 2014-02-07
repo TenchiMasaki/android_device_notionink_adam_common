@@ -7,11 +7,11 @@ on init
     mkdir /mnt/media_rw 0777 media_rw media_rw
     mkdir /mnt/media_rw/sdcard1 0777 media_rw media_rw
     mkdir /mnt/media_rw/sdcard2 0777 media_rw media_rw
-    mkdir /mnt/media_rw/usbdrive1 0777 media_rw media_rw
-    mkdir /mnt/media_rw/usbdrive2 0777 media_rw media_rw
-    mkdir /mnt/shell/emulated 0777 shell shell
-    mkdir /storage 0777 system sdcard_rw
-    mkdir /storage/emulated 0777 sdcard_rw sdcard_rw
+    mkdir /mnt/media_rw/usbdisk0 0777 media_rw media_rw
+    mkdir /mnt/media_rw/usbdisk1 0777 media_rw media_rw
+    mkdir /mnt/shell/emulated 0700 shell shell
+    mkdir /storage 0775 system sdcard_rw
+    mkdir /storage/emulated 0555 root root
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
 
@@ -22,21 +22,19 @@ on init
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
-    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+    # symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
     # make the pathes for the external media mounts
     mkdir /storage/sdcard1 0777 sdcard_rw sdcard_rw
     mkdir /storage/sdcard2 0777 sdcard_rw sdcard_rw
-    mkdir /storage/usbdrive1 0777 sdcard_rw sdcard_rw
-    mkdir /storage/usbdrive2 0777 sdcard_rw sdcard_rw
-    mkdir /mnt/usbdrive1 0666 system system
-    mkdir /mnt/usbdrive2 0666 system system
+    mkdir /storage/usbdisk0 0777 sdcard_rw sdcard_rw
+    mkdir /storage/usbdisk1 0777 sdcard_rw sdcard_rw
 
     # for backwards compatibility
-    symlink /storage/usbdrive1 /mnt/usbdrive1
-    symlink /storage/usbdrive2 /mnt/usbdrive2
-    symlink /mnt/usbdrive1 /usbdrive1
-    symlink /mnt/usbdrive2 /usbdrive2
+    symlink /storage/usbdisk0 /mnt/usbdisk0
+    symlink /storage/usbdisk1 /mnt/usbdisk1
+    symlink /mnt/usbdisk0 /usbdisk0
+    symlink /mnt/usbdisk1 /usbdisk1
     symlink /storage/sdcard1 /internal_sd
     symlink /storage/sdcard1 /mnt/internal_sd
     symlink /storage/sdcard2 /microsd
@@ -47,7 +45,7 @@ on fs
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.umount_sd false
     setprop ro.crypto.fuse_sdcard true
-#    mount ext4 /dev/block/mmcblk0p2 /data wait noatime nosuid nodev
+#    mount ext3 /dev/block/mmcblk0p2 /data wait noatime nosuid nodev
     mount yaffs2 mtd@cache /cache nosuid nodev
     mount yaffs2 mtd@system /system
     mount_all /fstab.harmony
@@ -237,11 +235,11 @@ service fuse_sdcard2 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard2
     class late_start
     disabled
 
-service fuse_usbdrive1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdrive1 /storage/usbdrive1
+service fuse_usbdisk0 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk0 /storage/usbdisk0
     class late_start
     disabled
 
-service fuse_usbdrive2 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdrive2 /storage/usbdrive2
+service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk1 /storage/usbdisk1
     class late_start
     disabled
 

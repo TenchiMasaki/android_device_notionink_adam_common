@@ -64,11 +64,11 @@ TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := generic
-#TARGET_HAVE_TEGRA_ERRATA_657451 := true
-##ARCH_ARM_HAVE_TLS_REGISTER := true
-##ARCH_ARM_USE_NON_NEON_MEMCPY := true
+TARGET_HAVE_TEGRA_ERRATA_657451 := true
+ARCH_ARM_HAVE_TLS_REGISTER := true
+ARCH_ARM_USE_NON_NEON_MEMCPY := true
 NEED_WORKAROUND_CORTEX_A9_745320 := true
-####ARCH_ARM_HIGH_OPTIMIZATION := true
+ARCH_ARM_HIGH_OPTIMIZATION := true
 
 # kernel   
 #TARGET_KERNEL_SOURCE := kernel/notionink/adam
@@ -122,18 +122,19 @@ BOARD_NEEDS_OLD_HWC_API := true
 TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
-#BOARD_USES_HGL := true
+BOARD_USES_HGL := true
 BOARD_USES_OVERLAY := true
+#XX BOARD_USES_LEGACY_OVERLAY := true
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_EGL_NEEDS_LEGACY_FB := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
-#BOARD_EGL_NEEDS_FNW:= true
-#BOARD_EGL_WORKAROUND_BUG_10194508 := true
-#SKIP_SET_METADATA := true
-#ENABLE_WEBGL := true
-#BOARD_USE_MHEAP_SCREENSHOT := true
-#BOARD_USES_HWCOMPOSER := true
+BOARD_EGL_NEEDS_FNW:= true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+SKIP_SET_METADATA := true
+ENABLE_WEBGL := true
+BOARD_USE_MHEAP_SCREENSHOT := true
+BOARD_USES_HWCOMPOSER := true
 
 # causes crash
 #BOARD_USE_SKIA_LCDTEXT := true
@@ -160,11 +161,12 @@ BOARD_HAVE_GPS := true
 BOARD_HAVE_MAGNETIC_SENSOR := true
 
 # Avoid the generation of ldrcc instructions
-######NEED_WORKAROUND_CORTEX_A9_745320 := true
+NEED_WORKAROUND_CORTEX_A9_745320 := true
 
-### TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+BOARD_MALLOC_ALIGNMENT := 16
+TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 
-#### COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
+COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
 
 # Preload bootanimation in to memory
 TARGET_BOOTANIMATION_PRELOAD := true
@@ -186,7 +188,7 @@ SENSORS_NEED_SETRATE_ON_ENABLE := true
 
 #define to use all of the Linaro Cortex-A9 optimized string funcs,
 #instead of subset known to work on all machines
-### USE_ALL_OPTIMIZED_STRING_FUNCS := true
+USE_ALL_OPTIMIZED_STRING_FUNCS := true
 
 # SELinux policies
 HAVE_SELINUX := true
@@ -233,11 +235,11 @@ TW_NO_REBOOT_BOOTLOADER := false
 TW_NO_REBOOT_RECOVERY := false
 TW_FLASH_FROM_STORAGE := true
 BOARD_HAS_NO_REAL_SDCARD := false
-#TW_INCLUDE_JB_CRYPTO := true
-#TW_CRYPTO_FS_TYPE := "ext4"
-#TW_CRYPTO_REAL_BLKDEV := "/dev/block/mmcblk0p2"
-#TW_CRYPTO_MNT_POINT := "/data"
-#TW_CRYPTO_FS_OPTIONS := "data=ordered,delalloc"
-#TW_CRYPTO_FS_FLAGS := "0x00000406"
-#TW_CRYPTO_KEY_LOC := "footer"
+TW_INCLUDE_JB_CRYPTO := true
+TW_CRYPTO_FS_TYPE := "ext3"
+TW_CRYPTO_REAL_BLKDEV := "/dev/block/mmcblk0p2"
+TW_CRYPTO_MNT_POINT := "/data"
+TW_CRYPTO_FS_OPTIONS := "data=ordered,delalloc"
+TW_CRYPTO_FS_FLAGS := "0x00000406"
+TW_CRYPTO_KEY_LOC := "footer"
 

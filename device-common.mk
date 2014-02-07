@@ -27,10 +27,6 @@ endif
 
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
-# Boot animation
-#BOOTANIMATION_RESOLUTION := 1280x720
-#$(call inherit-product, vendor/eos/bootanimations/bootanimation.mk)
-
 # uses mdpi artwork where available
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
