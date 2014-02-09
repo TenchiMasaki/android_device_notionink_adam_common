@@ -22,7 +22,8 @@ on init
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
-    # symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+    symlink /mnt/shell/emulated/0 /storage/emulated/0
 
     # make the pathes for the external media mounts
     mkdir /storage/sdcard1 0777 sdcard_rw sdcard_rw
@@ -121,6 +122,7 @@ on boot
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 80
+    write /sys/module/cpuidle/parameters/lp2_in_idle 1
 
 # GPS
     mkdir /data/gps
@@ -223,9 +225,9 @@ service iprenew_eth0 /system/bin/dhcpcd -n
 service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
     class late_start
 
-service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
-    class late_start
-    disabled
+#service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+#    class late_start
+#    disabled
 
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
