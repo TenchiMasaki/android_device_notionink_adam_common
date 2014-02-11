@@ -2,6 +2,7 @@ import init.harmony.usb.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
+    mkdir /storage 0666 system sdcard_r
 
 on init
     mkdir /mnt/media_rw 0777 media_rw media_rw
@@ -10,7 +11,6 @@ on init
     mkdir /mnt/media_rw/usbdisk0 0777 media_rw media_rw
     mkdir /mnt/media_rw/usbdisk1 0777 media_rw media_rw
     mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage 0775 system sdcard_rw
     mkdir /storage/emulated 0555 root root
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
@@ -23,7 +23,7 @@ on init
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
-    symlink /mnt/shell/emulated/0 /storage/emulated/0
+    #symlink /mnt/shell/emulated/0 /storage/emulated/0
 
     # make the pathes for the external media mounts
     mkdir /storage/sdcard1 0777 sdcard_rw sdcard_rw
@@ -40,16 +40,24 @@ on init
     symlink /storage/sdcard1 /mnt/internal_sd
     symlink /storage/sdcard2 /microsd
     symlink /storage/sdcard2 /mnt/microsd
+    
+    # Save bugreports as owner
+    export BUGREPORT_WRITE_PATH /mnt/shell/sdcard0/0
+    export BUGREPORT_READ_PATH /storage/sdcard0
 
 on fs
-    # Mount /system rw first to give the filesystem a chance to save a checkpoint
+    mount_all /fstab.harmony
+    # mount ext3 /dev/block/mmcblk0p2 /data wait noatime nosuid nodev
+    mount yaffs2 mtd@cache /cache nosuid nodev
+    mount yaffs2 mtd@system /system
+    
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.umount_sd false
     setprop ro.crypto.fuse_sdcard true
-#    mount ext3 /dev/block/mmcblk0p2 /data wait noatime nosuid nodev
-    mount yaffs2 mtd@cache /cache nosuid nodev
-    mount yaffs2 mtd@system /system
-    mount_all /fstab.harmony
+    
+    # virtual sdcard daemon running as media_rw (1023)
+    service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
+    class late_start
 
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
@@ -122,7 +130,9 @@ on boot
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 80
-    write /sys/module/cpuidle/parameters/lp2_in_idle 1
+    
+    # sleep freeze workaround
+    # write /sys/module/cpuidle/parameters/lp2_in_idle 1
 
 # GPS
     mkdir /data/gps
@@ -219,12 +229,6 @@ service iprenew_eth0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-# create virtual SD card at /mnt/sdcard, based on the /data/media directory
-# deamon will drop to user/group system/media_rw after initializing
-# underlying files in /data/media wil be created with user and group media_rw (1023)
-service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
-    class late_start
-
 #service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
 #    class late_start
 #    disabled
@@ -245,15 +249,15 @@ service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk1 
     class late_start
     disabled
 
-on property:ro.fuse_sdcard=true
-    start sdcard
+#on property:ro.fuse_sdcard=true
+#    start sdcard
 
 # This will make sure that sdcard service starts as late_start.
-on nonencrypted
-    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
+#on nonencrypted
+#    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
 
-on property:vold.decrypt=trigger_restart_framework
-    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
+#on property:vold.decrypt=trigger_restart_framework
+#    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
 
 # Enable tcpdump-service
 #service netdump-service /system/xbin/tcpdump -i any -C 5 -p -s 0 -w /sdcard/netdump.cap
