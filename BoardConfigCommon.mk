@@ -37,6 +37,7 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.board
 BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_AUDIO_LEGACY := false
 BOARD_USES_ALSA_AUDIO := false
+BOARD_HAVE_OLD_OMX_LIBS := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
@@ -71,13 +72,13 @@ NEED_WORKAROUND_CORTEX_A9_745320 := true
 ARCH_ARM_HIGH_OPTIMIZATION := true
 
 # kernel   
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+TARGET_KERNEL_SOURCE := kernel/notionink/adam
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
