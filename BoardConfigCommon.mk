@@ -209,6 +209,7 @@ BOARD_SEPOLICY_UNION := \
     drmserver.te \
     file.te \
     genfs_contexts \
+    healthd.te \
     init.te \
     media_app.te \
     release_app.te \
@@ -219,6 +220,8 @@ BOARD_SEPOLICY_UNION := \
     surfaceflinger.te \
     system_app.te \
     system.te \
+    untrusted_app.te \
+    vold.te \
     wpa_socket.te \
     wpa.te \
     zygote.te
