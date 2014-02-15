@@ -49,7 +49,8 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
-    device/notionink/adam_common/files/02do:system/etc/init.d/02do \
+    device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
+    device/notionink/adam_common/files/02do:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 

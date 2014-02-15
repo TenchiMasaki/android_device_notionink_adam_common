@@ -4,9 +4,8 @@ rm /data/aplog
 /system/bin/logcat -f /data/aplog &
 dmesg > /data/dmsg &
 
-/system/bin/mount -o rw,fmask=000,dmask=000,uid=1023,gid=1023,nosuid -t vfat /dev/block/mmcblk0p1 /storage/sdcard1
-
+# /system/bin/mount -o rw,fmask=000,dmask=000,uid=1023,gid=1023,nosuid -t vfat /dev/block/mmcblk0p1 /storage/sdcard1
 # /system/bin/mount -o rw,fmask=000,dmask=000,uid=1023,gid=1023,nosuid -t vfat /dev/block/mmcblk1p1 /storage/sdcard2
-# echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
 
+# echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
 

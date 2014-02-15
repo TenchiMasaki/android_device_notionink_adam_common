@@ -2,7 +2,6 @@ import init.harmony.usb.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
-    mkdir /storage 0666 system sdcard_r
 
 on init
     mkdir /mnt/media_rw 0777 media_rw media_rw
@@ -11,6 +10,7 @@ on init
     mkdir /mnt/media_rw/usbdisk0 0777 media_rw media_rw
     mkdir /mnt/media_rw/usbdisk1 0777 media_rw media_rw
     mkdir /mnt/shell/emulated 0700 shell shell
+    mkdir /storage 0775 system sdcard_rw
     mkdir /storage/emulated 0555 root root
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
@@ -26,10 +26,10 @@ on init
     #symlink /mnt/shell/emulated/0 /storage/emulated/0
 
     # make the pathes for the external media mounts
-    mkdir /storage/sdcard1 0777 sdcard_rw sdcard_rw
-    mkdir /storage/sdcard2 0777 sdcard_rw sdcard_rw
-    mkdir /storage/usbdisk0 0777 sdcard_rw sdcard_rw
-    mkdir /storage/usbdisk1 0777 sdcard_rw sdcard_rw
+    mkdir /storage/sdcard1 0000 system system
+    mkdir /storage/sdcard2 0000 system system
+    mkdir /storage/usbdisk0 0000 system system
+    mkdir /storage/usbdisk1 0000 system system
 
     # for backwards compatibility
     symlink /storage/usbdisk0 /mnt/usbdisk0
@@ -55,10 +55,6 @@ on fs
     setprop ro.crypto.umount_sd false
     setprop ro.crypto.fuse_sdcard true
     
-    # virtual sdcard daemon running as media_rw (1023)
-    service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
-    class late_start
-
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
     mount rootfs rootfs / rw remount
@@ -72,7 +68,7 @@ on post-fs-data
     mkdir /data/misc/wminput 0776 system system
 
     # we will remap this as /mnt/sdcard with the sdcard fuse tool
-    mkdir /data/media 0770 media_rw media_rw
+    mkdir /data/media 0777 media_rw media_rw
     chown media_rw media_rw /data/media
 
     # Set indication (checked by vold) that we have finished this action
@@ -229,6 +225,11 @@ service iprenew_eth0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
+
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
+    class late_start
+
 #service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
 #    class late_start
 #    disabled
@@ -299,6 +300,11 @@ on device-removed-/dev/ttyUSB3
 on property:init.svc.bootanim=stopped
     start wwlanselect
 
+# Preboot service
+service adam_preboot /system/bin/sh /system/etc/adam_preboot.sh
+    user root
+    oneshot
+
 # Postboot service
 service adam_postboot /system/bin/sh /system/etc/adam_postboot.sh
     user root
@@ -310,3 +316,5 @@ on property:init.svc.bootanim=stopped
 
 on property:init.svc.vold=running
     start sdcard
+    start adam_preboot
+    
