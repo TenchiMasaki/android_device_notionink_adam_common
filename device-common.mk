@@ -32,14 +32,6 @@ PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_LOCALES += mdpi
 
-# Dalvik
-# DONT_INSTALL_DEX_FILES := true
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dexopt-data-only=1
-#    dalvik.vm.heaptargetutilization=0.25 \
-#    dalvik.vm.jit.codecachesize=0 \
-
-
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
@@ -96,7 +88,6 @@ PRODUCT_COPY_FILES += \
 
       
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.wifi.country=US \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120 \
     wifi.supplicant_scan_interval=15 \
@@ -115,13 +106,13 @@ PRODUCT_PACKAGES += \
 
 #Audio
 PRODUCT_PACKAGES += \
-        audio.a2dp.default \
-	audio.primary.harmony \
-	audio.usb.default \
-        libaudioutils \
-        tinymix \
-        tinyplay \
-        tinyrec \
+    audio.a2dp.default \
+    audio.primary.harmony \
+    audio.usb.default \
+    libaudioutils \
+    tinymix \
+    tinyplay \
+    tinyrec
 
 # Harmony Hardware
 PRODUCT_PACKAGES += \
@@ -129,7 +120,7 @@ PRODUCT_PACKAGES += \
 	lights.harmony \
 	gps.harmony \
 	camera.tegra \
-#	hwcomposer.tegra
+	hwcomposer.tegra
 
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -160,7 +151,22 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.opengles.version=131072 \
-	ro.opengles.surface.rgb565=true
+	ro.opengles.surface.rgb565=true \
+    dalvik.vm.dexopt-flags=v=n,o=v \
+    dalvik.vm.verify_bytecode=false \
+    dalvik.vm.checkjni=false \
+    dalvik.gc.type=precise \
+    ro.kernel.android.checkjni=0 \
+    ro.config.nocheckin=1 \
+    profiler.force_disable_err_rpt=1 \
+    profiler.force_disable_ulog=1 \
+    debug.sf.hw=1 \
+    debug.composition.type=gpu \
+    video.accelerate.hw=1 \
+    debug.performance.tuning=1 \
+    dev.pm.dyn_sampling_rate=1 \
+    ro.max.fling_velocity=12000 \
+    ro.min.fling_velocity=8000    
 
 #Set default.prop properties for root + mtp
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
@@ -180,11 +186,11 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
-	setup_fs \
-        make_ext4fs \
-        l2ping \
-        hcitool \
-        bttest 
+    setup_fs \
+    make_ext4fs \
+    l2ping \
+    hcitool \
+    bttest 
 
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
@@ -194,7 +200,7 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/device-bcm.mk)
 # Firmware
 #PRODUCT_COPY_FILES += \
-#	hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329.bin:system/vendor/firmware/fw_bcmhd.bin \
+#	hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329.bin:system/vendor/firmware/fw_bcmdhd.bin \
 #   hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329_apsta.bin:system/vendor/firmware/fw_bcmdhd_apsta.bin
 
 #	device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd.bin:system/vendor/firmware/fw_bcmdhd.bin \
