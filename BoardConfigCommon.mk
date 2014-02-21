@@ -17,7 +17,14 @@
 # This variable is set first, so it can be overridden
 # by BoardConfigVendor.mk
 
+# Camera options
 USE_CAMERA_STUB := false
+BOARD_USES_PROPRIETARY_LIBCAMERA := true
+BOARD_SECOND_CAMERA_DEVICE := false
+BOARD_CAMERA_HAVE_ISO := true
+ICS_CAMERA_BLOB := true
+BOARD_VENDOR_USE_NV_CAMERA := true
+
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -30,7 +37,7 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.board
 BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_AUDIO_LEGACY := false
 BOARD_USES_ALSA_AUDIO := false
-BOARD_OMX_NEEDS_LEGACY_AUDIO := true
+BOARD_HAVE_OLD_OMX_LIBS := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
@@ -41,7 +48,7 @@ TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
 # partitions
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x01000000
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x26be3680
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x2faf0800
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 0x105c0000
 
 # platform
@@ -97,10 +104,8 @@ WIFI_DRIVER_FW_PATH_STA     := "/system/vendor/firmware/fw_bcmdhd.bin"
 #WIFI_DRIVER_FW_PATH_P2P     := "/system/vendor/firmware/fw_bcmdhd_p2p.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/system/vendor/firmware/fw_bcmdhd_apsta.bin"
 CONFIG_CTRL_IFACE           := true
-
-# Wi-Fi AP
-BOARD_LEGACY_NL80211_STA_EVENTS := true
-BOARD_NO_APSME_ATTR := true
+#CONFIG_CTRL_IFACE_DBUS      := true
+#CONFIG_CTRL_IFACE_DBUS_NEW  := true
 
 CONFIG_ANDROID_LOG := true
 CONFIG_DEBUG_LINUX_TRACING := true
@@ -133,7 +138,7 @@ BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_USES_HWCOMPOSER := true
 
 # causes crash
-BOARD_USE_SKIA_LCDTEXT := true
+#BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 
 MAX_EGL_CACHE_KEY_SIZE := 4096
@@ -222,3 +227,23 @@ BOARD_SEPOLICY_UNION := \
     zygote.te
 
 endif
+
+# TWRP Settings
+DEVICE_RESOLUTION := 1024x600
+RECOVERY_SDCARD_ON_DATA := true
+TW_INTERNAL_STORAGE_PATH := "/storage/sdcard1"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard1"
+TW_EXTERNAL_STORAGE_PATH := "/storage/sdcard2"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard2"
+TW_NO_REBOOT_BOOTLOADER := false
+TW_NO_REBOOT_RECOVERY := false
+TW_FLASH_FROM_STORAGE := true
+BOARD_HAS_NO_REAL_SDCARD := false
+TW_INCLUDE_JB_CRYPTO := true
+TW_CRYPTO_FS_TYPE := "ext3"
+TW_CRYPTO_REAL_BLKDEV := "/dev/block/mmcblk0p2"
+TW_CRYPTO_MNT_POINT := "/data"
+TW_CRYPTO_FS_OPTIONS := "data=ordered,delalloc"
+TW_CRYPTO_FS_FLAGS := "0x00000406"
+TW_CRYPTO_KEY_LOC := "footer"
+
