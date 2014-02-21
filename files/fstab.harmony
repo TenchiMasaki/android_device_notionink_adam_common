@@ -3,7 +3,7 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-/dev/block/mmcblk0p2            /data               ext3      noatime,nosuid,nodev,barrier=1,data=ordered               wait,check,encryptable=footer
+/dev/block/mmcblk0p2            /data               ext4      noatime,nosuid,nodev,barrier=1,data=ordered               wait,check,encryptable=footer
 
 ## Vold 2.0 fstab for NI Adam
 
@@ -16,15 +16,17 @@
 ## part         - Partition # (1 based), or 'auto' for first usable partition.
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
-/devices/platform/sdhci-tegra.3/mmc_host/mmc1                  /storage/sdcard1         auto    defaults voldmanaged=sdcard:auto
-/devices/platform/tegra-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0        /storage/usbdisk0        auto    defaults voldmanaged=sda:auto
-/devices/platform/tegra-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0        /storage/usbdisk1        auto    defaults voldmanaged=sdb:auto
-/devices/platform/sdhci-tegra.2/mmc_host/mmc2                  /storage/sdcard2         auto    defaults voldmanaged=sdcard:auto
 
+/devices/platform/sdhci-tegra.3/mmc_host/mmc1	auto  auto defaults voldmanaged=sdcard1:auto
+/devices/platform/sdhci-tegra.2/mmc_host/mmc2   auto  auto defaults voldmanaged=sdcard2:auto
+/devices/platform/tegra-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0 auto auto defaults voldmanaged=usbdisk0:auto
+/devices/platform/tegra-ehci.2/usb2/1-1/1-1.2/1-1.2:1.0 auto auto defaults voldmanaged=usbdisk1:auto
 # recovery
 misc                                /misc                        mtd        defaults recoveryonly                                
-recovery                            /recovery                    mtd        defaults recoveryonly
-boot                                /boot                        mtd        defaults recoveryonly
+/dev/block/mmcblk0p1	/storage/sdcard1 auto defaults recoveryonly
+/dev/block/mmcblk1p1	/storage/sdcard2 auto defaults recoveryonly
+recovery		/recovery	mtd defaults recoveryonly
+boot			/boot		mtd defaults recoveryonly
 system				    /system			 yaffs2     defaults recoveryonly
 cache				    /cache			 yaffs2     defaults recoveryonly
 /dev/block/mmcblk0p2                /data                        ext3       defaults recoveryonly

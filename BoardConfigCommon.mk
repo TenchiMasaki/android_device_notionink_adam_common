@@ -19,12 +19,18 @@
 
 USE_CAMERA_STUB := false
 
+# Skip droiddoc build to save build time
+BOARD_SKIP_ANDROID_DOC_BUILD := true
+
 TARGET_USES_OLD_LIBSENSORS_HAL := false
+
+BOARD_HAL_STATIC_LIBRARIES := libhealthd.board
 
 # Audio
 BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_AUDIO_LEGACY := false
 BOARD_USES_ALSA_AUDIO := false
+BOARD_OMX_NEEDS_LEGACY_AUDIO := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
@@ -35,7 +41,7 @@ TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
 # partitions
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x01000000
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x19000000
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x26be3680
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 0x105c0000
 
 # platform
@@ -51,22 +57,26 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := tegra2
-
+TARGET_CPU_VARIANT := generic
+TARGET_HAVE_TEGRA_ERRATA_657451 := true
+ARCH_ARM_HAVE_TLS_REGISTER := true
+ARCH_ARM_USE_NON_NEON_MEMCPY := true
+NEED_WORKAROUND_CORTEX_A9_745320 := true
 ARCH_ARM_HIGH_OPTIMIZATION := true
 
 # kernel   
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+TARGET_KERNEL_SOURCE := kernel/notionink/adam
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
 #Stock CMDLINE
+#BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),16384K@43904K(boot),204800K@60928K(system),781824K@266240K(cache)
 #MRDEAD CMDLINE
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
@@ -80,11 +90,22 @@ BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_bcmdhd
 BOARD_HOSTAPD_DRIVER        := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_bcmdhd
 BOARD_WLAN_DEVICE           := bcmdhd
-#WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/bcm4329.ko"
+#WIFI_DRIVER_MODULE_PATH     := "/system/lib/hw/dhd.ko"
+#WIFI_DRIVER_MODULE_NAME     := "dhd"
 WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
 WIFI_DRIVER_FW_PATH_STA     := "/system/vendor/firmware/fw_bcmdhd.bin"
-WIFI_DRIVER_FW_PATH_P2P     := "/system/vendor/firmware/fw_bcmdhd_p2p.bin"
+#WIFI_DRIVER_FW_PATH_P2P     := "/system/vendor/firmware/fw_bcmdhd_p2p.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/system/vendor/firmware/fw_bcmdhd_apsta.bin"
+CONFIG_CTRL_IFACE           := true
+
+# Wi-Fi AP
+BOARD_LEGACY_NL80211_STA_EVENTS := true
+BOARD_NO_APSME_ATTR := true
+
+CONFIG_ANDROID_LOG := true
+CONFIG_DEBUG_LINUX_TRACING := true
+CONFIG_DEBUG_SYSLOG := true
+ 
 
 # bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -93,18 +114,39 @@ BOARD_BLUEDROID_VENDOR_CONF := device/notionink/adam_common/bluetooth/libbt_vndc
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/notionink/adam_common/bluetooth
 
 # graphics
+BOARD_NEEDS_OLD_HWC_API := true
+TARGET_DISABLE_TRIPLE_BUFFERING := true
+TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
+BOARD_USES_HGL := true
 BOARD_USES_OVERLAY := true
+#XX BOARD_USES_LEGACY_OVERLAY := true
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_EGL_NEEDS_LEGACY_FB := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+BOARD_EGL_NEEDS_FNW:= true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+SKIP_SET_METADATA := true
+ENABLE_WEBGL := true
+BOARD_USE_MHEAP_SCREENSHOT := true
+BOARD_USES_HWCOMPOSER := true
+
+# causes crash
+BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
+
 MAX_EGL_CACHE_KEY_SIZE := 4096
 MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 BOARD_HDMI_MIRROR_MODE := Scale
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
+
+# Green Screen Fix
+#COMMON_GLOBAL_CFLAGS += -DMISSING_EGL_EXTERNAL_IMAGE -DMISSING_GRALLOC_BUFFERS
+#COMMON_GLOBAL_CFLAGS += -DMISSING_EGL_PIXEL_FORMAT_YV12
+#COMMON_GLOBAL_CFLAGS += -DBOARD_GL_OES_EGL_IMG_EXTERNAL_HACK
  
 PRODUCT_CHARACTERISTICS := tablet
 BOARD_USES_SECURE_SERVICES := true
@@ -116,6 +158,11 @@ BOARD_HAVE_MAGNETIC_SENSOR := true
 
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
+
+BOARD_MALLOC_ALIGNMENT := 16
+TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+
+COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
 
 # Preload bootanimation in to memory
 TARGET_BOOTANIMATION_PRELOAD := true
@@ -132,8 +179,16 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/notionink/adam_common/recovery/recovery_keys.c
 BOARD_RECOVERY_SWIPE := true
 
+# Compatibility with pre-kitkat Sensor HALs
+SENSORS_NEED_SETRATE_ON_ENABLE := true
+
+#define to use all of the Linaro Cortex-A9 optimized string funcs,
+#instead of subset known to work on all machines
+USE_ALL_OPTIMIZED_STRING_FUNCS := true
+
 # SELinux policies
 HAVE_SELINUX := true
+
 
 ifeq ($(HAVE_SELINUX),true)
 
@@ -149,6 +204,7 @@ BOARD_SEPOLICY_UNION := \
     drmserver.te \
     file.te \
     genfs_contexts \
+    healthd.te \
     init.te \
     media_app.te \
     release_app.te \
@@ -159,6 +215,8 @@ BOARD_SEPOLICY_UNION := \
     surfaceflinger.te \
     system_app.te \
     system.te \
+    untrusted_app.te \
+    vold.te \
     wpa_socket.te \
     wpa.te \
     zygote.te
