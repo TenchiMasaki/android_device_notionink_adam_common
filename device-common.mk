@@ -174,7 +174,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.performance.tuning=1 \
     dev.pm.dyn_sampling_rate=1 \
     ro.max.fling_velocity=12000 \
-    ro.min.fling_velocity=8000    
+    ro.min.fling_velocity=8000 \   
+	# GPU producer to CPU consumer not supported
+	ro.bq.gpu_to_cpu_unsupported=1
 
 #Set default.prop properties for root + mtp
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \

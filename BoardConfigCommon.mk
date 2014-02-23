@@ -69,17 +69,29 @@ TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := generic
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
-ARCH_ARM_HAVE_TLS_REGISTER := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
-NEED_WORKAROUND_CORTEX_A9_745320 := true
-ARCH_ARM_HIGH_OPTIMIZATION := true
-
 # kernel   
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
+
+# Compiler Optimization - This is a @codefireX specific flag to use -O3 everywhere.
+ARCH_ARM_HIGH_OPTIMIZATION := true
+# ANDROID, LINUX-ARM AND TLS REGISTER EMULATION
+ARCH_ARM_HAVE_TLS_REGISTER := true
+# Avoid the generation of ldrcc instructions
+NEED_WORKAROUND_CORTEX_A9_745320 := true
+#define to use all of the Linaro Cortex-A9 optimized string funcs,
+#instead of subset known to work on all machines
+USE_ALL_OPTIMIZED_STRING_FUNCS := true
+# customize the malloced address to be 16-byte aligned
+BOARD_MALLOC_ALIGNMENT := 16
+TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+
+# Kernel   
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+>>>>>>> 094faaa68bff93dda1ea267a1206dd1c22d923c1
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
-
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
@@ -115,7 +127,6 @@ BOARD_NO_APSME_ATTR := true
 CONFIG_ANDROID_LOG := true
 CONFIG_DEBUG_LINUX_TRACING := true
 CONFIG_DEBUG_SYSLOG := true
- 
 
 # bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -134,7 +145,6 @@ BOARD_USES_OVERLAY := true
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_EGL_NEEDS_LEGACY_FB := true
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 BOARD_EGL_NEEDS_FNW:= true
 BOARD_EGL_WORKAROUND_BUG_10194508 := true
 SKIP_SET_METADATA := true
@@ -142,13 +152,16 @@ ENABLE_WEBGL := true
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_USES_HWCOMPOSER := true
 
-BOARD_USE_SKIA_LCDTEXT := true
-BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 
 MAX_EGL_CACHE_KEY_SIZE := 4096
 MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-BOARD_HDMI_MIRROR_MODE := Scale
+
+# display
+# Use nicer font rendering
+BOARD_USE_SKIA_LCDTEXT := true
+BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK : = true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
@@ -163,10 +176,10 @@ BOARD_USES_SECURE_SERVICES := true
 #GPS
 BOARD_HAVE_GPS := true
 
-BOARD_HAVE_MAGNETIC_SENSOR := true
 
-# Avoid the generation of ldrcc instructions
-NEED_WORKAROUND_CORTEX_A9_745320 := true
+# Sensors
+TARGET_USES_OLD_LIBSENSORS_HAL := false
+BOARD_HAVE_MAGNETIC_SENSOR := true
 
 BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
@@ -201,10 +214,10 @@ HAVE_SELINUX := true
 
 ifeq ($(HAVE_SELINUX),true)
 
-POLICYVERS   := 24
-
-  BOARD_SEPOLICY_DIRS += \
-     device/notionink/adam_common/sepolicy
+	POLICYVERS := 24
+	
+	BOARD_SEPOLICY_DIRS += \
+	device/notionink/adam_common/sepolicy
  
 BOARD_SEPOLICY_UNION := \
     file_contexts \
