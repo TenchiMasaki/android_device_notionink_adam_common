@@ -485,4 +485,34 @@
 
   <VideoDecoderCap name="wmv" enabled="true"/>
   <AudioDecoderCap name="wma" enabled="true"/>
+
+  <VideoEditorCap maxInputFrameWidth="1280"
+    maxInputFrameHeight="720"
+    maxOutputFrameWidth="1280"
+    maxOutputFrameHeight="720"
+    maxPrefetchYUVFrames="10" />
+  <!--
+      The VideoEditor Export codec profile and level values
+      correspond to the values in OMX_Video.h.
+      E.g. for h264, profile value 1 means OMX_VIDEO_AVCProfileBaseline
+      and  level 512 means OMX_VIDEO_AVCLevel31.
+      Please note that the values are in decimal.
+      These values are for video encoder.
+  -->
+  <!--
+      Codec = h.263, Baseline profile, level 1
+  -->
+  <ExportVideoProfile name="h263" profile="1"
+   level="1" />
+  <!--
+      Codec = h.264, Baseline profile, level 3.1
+  -->
+  <ExportVideoProfile name="h264" profile="1"
+   level="512" />
+  <!--
+      Codec = mpeg4, Simple profile, level 5
+  -->
+  <ExportVideoProfile name="m4v" profile="1"
+   level="128" />
+  
 </MediaSettings>
