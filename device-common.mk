@@ -50,14 +50,13 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
-    device/notionink/adam_common/files/02do:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
 
 # Modules
 PRODUCT_COPY_FILES += \
-    device/notionink/adam_common/modules/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko \
+    device/notionink/adam_common/modules/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko #\
    #device/notionink/adam_common/modules/tun.ko:system/lib/modules/tun.ko
 
 # Bluetooth
@@ -69,7 +68,7 @@ PRODUCT_COPY_FILES += \
     device/notionink/adam_common/files/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf
 #    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf \
 
-	
+
 # Touchscreen
 PRODUCT_COPY_FILES += \
     device/notionink/adam_common/files/at168_touch.idc:system/usr/idc/at168_touch.idc 
@@ -94,7 +93,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
    device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
-      
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120 \
@@ -134,7 +132,7 @@ PRODUCT_PACKAGES += \
 	librs_jni \
 	bttest \
 	libbt-vendor
-        
+
 # These are the hardware-specific feature permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
@@ -168,19 +166,29 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.nocheckin=1 \
     profiler.force_disable_err_rpt=1 \
     profiler.force_disable_ulog=1 \
-    debug.sf.hw=1 \
     debug.composition.type=gpu \
     video.accelerate.hw=1 \
     debug.performance.tuning=1 \
     dev.pm.dyn_sampling_rate=1 \
     ro.max.fling_velocity=12000 \
-    ro.min.fling_velocity=8000 \   
+    ro.min.fling_velocity=8000 \
+	debug.hwui.render_dirty_regions=false \
 	# GPU producer to CPU consumer not supported
-	ro.bq.gpu_to_cpu_unsupported=1
+	ro.bq.gpu_to_cpu_unsupported=1 \
+	ro.zygote.disable_gl_preload=true \
+ 	# Render UI with GPU
+	debug.sf.hw=1 \
+    # Fuse storage
+    persist.fuse_sdcard=true
+
 
 #Set default.prop properties for root + mtp
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 	persist.sys.usb.config=mtp
+
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    ro.boot.selinux=disabled \
+#    ro.build.selinux=0 
 
 ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.secure=0 \

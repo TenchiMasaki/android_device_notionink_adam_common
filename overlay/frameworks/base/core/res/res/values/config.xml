@@ -301,5 +301,5 @@
     <integer name="config_activityShortDur">75</integer>
     <integer name="config_activityDefaultDur">145</integer>
 
-    <bool name="config_avoidGfxAccel">true</bool>
+    <!-- <bool name="config_avoidGfxAccel">true</bool> -->
 </resources>

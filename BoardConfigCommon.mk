@@ -17,30 +17,10 @@
 # This variable is set first, so it can be overridden
 # by BoardConfigVendor.mk
 
-# Camera options
-USE_CAMERA_STUB := false
-BOARD_USES_PROPRIETARY_LIBCAMERA := true
-BOARD_SECOND_CAMERA_DEVICE := false
-BOARD_CAMERA_HAVE_ISO := true
-ICS_CAMERA_BLOB := true
-BOARD_VENDOR_USE_NV_CAMERA := true
-
-
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
-TARGET_USES_OLD_LIBSENSORS_HAL := false
 
-BOARD_HAL_STATIC_LIBRARIES := libhealthd.board
-
-# Audio
-BOARD_USES_GENERIC_AUDIO := false
-BOARD_USES_AUDIO_LEGACY := false
-BOARD_USES_ALSA_AUDIO := false
-# Adam patch flag
-BOARD_OMX_NEEDS_LEGACY_AUDIO := true
-# OMNIROM flag
-BOARD_NEED_OMX_COMPAT := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
@@ -70,8 +50,6 @@ TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := generic
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
-# kernel   
-TARGET_KERNEL_SOURCE := kernel/notionink/adam
 
 # Compiler Optimization - This is a @codefireX specific flag to use -O3 everywhere.
 ARCH_ARM_HIGH_OPTIMIZATION := true
@@ -87,8 +65,7 @@ BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 
 # Kernel   
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
->>>>>>> 094faaa68bff93dda1ea267a1206dd1c22d923c1
+TARGET_KERNEL_SOURCE := kernel/notionink/adam
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
@@ -139,22 +116,15 @@ BOARD_NEEDS_OLD_HWC_API := true
 TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
-BOARD_USES_HGL := true
-BOARD_USES_OVERLAY := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
-USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_EGL_NEEDS_LEGACY_FB := true
 BOARD_EGL_NEEDS_FNW:= true
-BOARD_EGL_WORKAROUND_BUG_10194508 := true
 SKIP_SET_METADATA := true
-ENABLE_WEBGL := true
-BOARD_USE_MHEAP_SCREENSHOT := true
-BOARD_USES_HWCOMPOSER := true
 
 
 MAX_EGL_CACHE_KEY_SIZE := 4096
-MAX_EGL_CACHE_SIZE := 2146304
+MAX_EGL_CACHE_SIZE := 4292608
+#2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # display
@@ -164,6 +134,23 @@ BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK : = true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
+
+# Tegra2 EGL support
+BOARD_USES_OVERLAY := true
+BOARD_USES_HGL := true
+USE_OPENGL_RENDERER := true
+BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+BOARD_HDMI_MIRROR_MODE := Scale
+BOARD_USE_MHEAP_SCREENSHOT := true
+BOARD_EGL_SKIP_FIRST_DEQUEUE := true
+BOARD_USES_HWCOMPOSER := true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+SKIP_SET_METADATA := true
+BOARD_EGL_NEEDS_LEGACY_FB := true
+EGL_NEEDS_FNW := true
+
+# Enable WEBGL in WebKit
+ENABLE_WEBGL := true
 
 # Green Screen Fix
 #COMMON_GLOBAL_CFLAGS += -DMISSING_EGL_EXTERNAL_IMAGE -DMISSING_GRALLOC_BUFFERS
@@ -176,19 +163,38 @@ BOARD_USES_SECURE_SERVICES := true
 #GPS
 BOARD_HAVE_GPS := true
 
+# Camera options
+USE_CAMERA_STUB := false
+BOARD_USES_PROPRIETARY_LIBCAMERA := true
+BOARD_SECOND_CAMERA_DEVICE := false
+BOARD_CAMERA_HAVE_ISO := true
+ICS_CAMERA_BLOB := true
+BOARD_VENDOR_USE_NV_CAMERA := true
+
+# Audio
+BOARD_USES_GENERIC_AUDIO := false
+BOARD_USES_AUDIO_LEGACY := false
+BOARD_USES_ALSA_AUDIO := false
+BOARD_OMX_NEEDS_LEGACY_AUDIO := true
+# OMNIROM flag
+BOARD_NEED_OMX_COMPAT := true
 
 # Sensors
 TARGET_USES_OLD_LIBSENSORS_HAL := false
 BOARD_HAVE_MAGNETIC_SENSOR := true
 
-BOARD_MALLOC_ALIGNMENT := 16
-TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+# Compatibility with pre-kitkat Sensor HALs
+SENSORS_NEED_SETRATE_ON_ENABLE := true
 
+# Misc flags
 COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
+
+# Override healthd HAL
+BOARD_HAL_STATIC_LIBRARIES := libhealthd.harmony
 
 # Preload bootanimation in to memory
 TARGET_BOOTANIMATION_PRELOAD := true
-TARGET_BOOTANIMATION_TEXTURE_CACHE := true
+TARGET_BOOTANIMATION_TEXTURE_CACHE := false
 TARGET_BOOTANIMATION_USE_RGB565 := true
 TARGET_SCREEN_WIDTH := 1024
 TARGET_SCREEN_HEIGHT := 600
@@ -214,34 +220,34 @@ HAVE_SELINUX := true
 
 ifeq ($(HAVE_SELINUX),true)
 
-	POLICYVERS := 24
+	#POLICYVERS := 24
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
  
 BOARD_SEPOLICY_UNION := \
-    file_contexts \
-    app.te \
-    device.te \
-    drmserver.te \
-    file.te \
-    genfs_contexts \
-    healthd.te \
-    init.te \
-    media_app.te \
-    release_app.te \
-    mediaserver.te \
-    platform_app.te \
-    sensors_config.te \
-    shared_app.te \
-    surfaceflinger.te \
-    system_app.te \
-    system.te \
-    untrusted_app.te \
-    vold.te \
-    wpa_socket.te \
-    wpa.te \
-    zygote.te
+	file_contexts \
+	app.te \
+	device.te \
+	drmserver.te \
+	file.te \
+	genfs_contexts \
+	healthd.te \
+	init.te \
+	media_app.te \
+	release_app.te \
+	mediaserver.te \
+	platform_app.te \
+	sensors_config.te \
+	shared_app.te \
+	surfaceflinger.te \
+	system_app.te \
+	system.te \
+	untrusted_app.te \
+	vold.te \
+	wpa_socket.te \
+	wpa.te \
+	zygote.te
 
 endif
 

@@ -29,5 +29,6 @@ recovery		/recovery	bml defaults recoveryonly
 boot			/boot		bml defaults recoveryonly
 system				    /system			 yaffs2     defaults recoveryonly
 cache				    /cache			 yaffs2     defaults recoveryonly
-/dev/block/mmcblk0p2                /data                        ext3       defaults recoveryonly
+/dev/block/mmcblk0p2                /data                        ext4       defaults recoveryonly
 /dev/null			    /sdcard			 datamedia  defaults recoveryonly
+

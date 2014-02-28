@@ -112,6 +112,8 @@ namespace android {
 
 char videodevice[64];
 
+static int count = 0;
+
 bool CameraHardware::PowerOn()
 {
 	ALOGD("CameraHardware::PowerOn: Power ON camera.");
@@ -290,7 +292,7 @@ bool CameraHardware::NegotiatePreviewFormat(struct preview_stream_ops* win)
 	}
 
 	// Store the preview window format
-	mPreviewWinFmt = PIXEL_FORMAT_YV12;
+	mPreviewWinFmt = PIXEL_FORMAT_YV12; //PIXEL_FORMAT_YV12;
 	mPreviewWinWidth = pw;
 	mPreviewWinHeight = ph;
 	
@@ -905,20 +907,20 @@ void CameraHardware::initDefaultParameters()
 	// Now store the data
 	
 	// Antibanding
-	p.set(CameraParameters::KEY_SUPPORTED_ANTIBANDING,"auto");
-	p.set(CameraParameters::KEY_ANTIBANDING,"auto");
+	p.set(CameraParameters::KEY_SUPPORTED_ANTIBANDING,"off");
+	p.set(CameraParameters::KEY_ANTIBANDING,CameraParameters::ANTIBANDING_OFF);
 	
 	// Effects
 	p.set(CameraParameters::KEY_SUPPORTED_EFFECTS,"none"); // "none,mono,sepia,negative,solarize"
-	p.set(CameraParameters::KEY_EFFECT,"none");
+	p.set(CameraParameters::KEY_EFFECT,CameraParameters::EFFECT_NONE);
 	
 	// Flash modes
 	p.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES,"off");
-	p.set(CameraParameters::KEY_FLASH_MODE,"off");
+	p.set(CameraParameters::KEY_FLASH_MODE,CameraParameters::FLASH_MODE_OFF);
 	
 	// Focus modes
 	p.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES,"fixed");
-	p.set(CameraParameters::KEY_FOCUS_MODE,"fixed");
+	p.set(CameraParameters::KEY_FOCUS_MODE,CameraParameters::FOCUS_MODE_FIXED);
 	
 #if 0
 	p.set(CameraParameters::KEY_JPEG_THUMBNAIL_HEIGHT,0); 
@@ -956,21 +958,24 @@ void CameraHardware::initDefaultParameters()
 	
 	// scenes modes
 	p.set(CameraParameters::KEY_SUPPORTED_SCENE_MODES,"auto");
-	p.set(CameraParameters::KEY_SCENE_MODE,"auto");
+	p.set(CameraParameters::KEY_SCENE_MODE,CameraParameters::SCENE_MODE_AUTO);
 	
 	// white balance
 	p.set(CameraParameters::KEY_SUPPORTED_WHITE_BALANCE,"auto");
-	p.set(CameraParameters::KEY_WHITE_BALANCE,"auto");
+	p.set(CameraParameters::KEY_WHITE_BALANCE,CameraParameters::WHITE_BALANCE_AUTO);
 
 	// zoom
 	p.set(CameraParameters::KEY_SMOOTH_ZOOM_SUPPORTED,"false");
 	p.set("max-video-continuous-zoom", 0 );
 	p.set(CameraParameters::KEY_ZOOM, "0");
-    p.set(CameraParameters::KEY_MAX_ZOOM, "100");
-    p.set(CameraParameters::KEY_ZOOM_RATIOS, "100");
-    p.set(CameraParameters::KEY_ZOOM_SUPPORTED, "false");
+    	p.set(CameraParameters::KEY_MAX_ZOOM, "100");
+    	p.set(CameraParameters::KEY_ZOOM_RATIOS, "100");
+    	p.set(CameraParameters::KEY_ZOOM_SUPPORTED, "false");
 
-    p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP,"0.1");
+	p.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, "-1.0");
+	p.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, "1.0");
+    	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP,"0.1");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION,"0.0");
 
     // keep these in sync with hw specs, needed for panorama in Camera app.
     // VS6725 spec has only the diagonal view angle, the vertical view angle
@@ -1334,7 +1339,18 @@ int CameraHardware::previewThread()
 							
 		// Grab a frame in the raw format YUYV
 		camera.GrabRawFrame(rawBase, mRawPreviewFrameSize);
+		
+		///////////////////////////////
 
+		char fn[255];
+		sprintf(fn, "/data/img/framex-%dx%d-%d-%d.raw", mRawPreviewWidth, mRawPreviewHeight, rawBase, count++);
+		int handle = ::open(fn, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+		if (handle >= 0) {
+			::write(handle,rawBase,mRawPreviewFrameSize);
+			::close(handle);
+		}
+
+	
 		// If the recording is enabled...
 		if (mRecordingEnabled && mMsgEnabled & CAMERA_MSG_VIDEO_FRAME) {
 			//ALOGD("CameraHardware::previewThread: posting video frame...");
@@ -1399,6 +1415,10 @@ int CameraHardware::previewThread()
 				cwidth = mRawPreviewWidth;
 			if (cheight > mRawPreviewHeight)
 				cheight = mRawPreviewHeight;
+
+			/////////////////////////////////////
+
+			//nv16_to_yuyv(frame, width, rawBase, cwidth, cheight);
 
 			// Convert from our raw frame to the one the Preview requires
 			switch (mPreviewFmt) {
@@ -1568,6 +1588,15 @@ void CameraHardware::fillPreviewWindow(uint8_t* yuyv, int srcWidth, int srcHeigh
 	// Based on the destination pixel type, we must convert from YUYV to it
 	int dstStride = bytesPerPixel * stride;
 	uint8_t* dst  = ((uint8_t*)vaddr) + (xStart * bytesPerPixel) + (dstStride * yStart);
+	
+	///////////////////////////////
+		char fn[255];
+		sprintf(fn, "/data/img/frame-%dx%d-%d-%d.raw", srcWidth, srcHeight, srcStride, count++);
+		int handle = ::open(fn, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+		if (handle >= 0) {
+			::write(handle,src,srcWidth*srcHeight*srcStride);
+			::close(handle);
+		}
 
 	switch (mPreviewWinFmt) {
 	case PIXEL_FORMAT_YCbCr_422_SP: // This is misused by android...

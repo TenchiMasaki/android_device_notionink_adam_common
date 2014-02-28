@@ -19,14 +19,19 @@
 -->
 <resources>
     <!-- Storage description for internal storage. [CHAR LIMIT=NONE] -->
-    <string name="storage_internal">Internal Storage</string>
+    <add-resource type="string" name="storage_internal0"></add-resource>
+    <add-resource type="string" name="storage_internal1"></add-resource>
+    <string name="storage_internal0">Internal Storage 0</string>
+    <string name="storage_internal1">Internal Storage 1</string>
 
     <!-- Storage description for the SD card. [CHAR LIMIT=NONE] -->
     <string name="storage_sd_card">Micro SD Card</string>
 
     <!-- Storage description for USBDisk storage. [CHAR LIMIT=NONE] -->
-    <add-resource type="string" name="storage_usb"></add-resource>
-    <string name="storage_usb">USB Device</string>
+    <add-resource type="string" name="storage_usb0"></add-resource>
+    <add-resource type="string" name="storage_usb1"></add-resource>
+    <string name="storage_usb0">USB Device 0</string>
+    <string name="storage_usb1">USB Device 1</string>
 </resources>
 
 
