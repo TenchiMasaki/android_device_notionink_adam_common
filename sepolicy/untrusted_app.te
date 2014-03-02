@@ -1,5 +1,4 @@
 allow untrusted_app system_data_file:file setattr;
-auditallow untrusted_app system_data_file:file setattr;
 allow untrusted_app apk_data_file:dir getattr;
 allow untrusted_app selinuxfs:dir { read search };
 allow untrusted_app selinuxfs:file { read open getattr };
