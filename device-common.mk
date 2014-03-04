@@ -156,8 +156,8 @@ PRODUCT_COPY_FILES += \
 
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.opengles.version=131072 \
-	ro.opengles.surface.rgb565=true \
+    ro.opengles.version=131072 \
+    ro.opengles.surface.rgb565=true \
     dalvik.vm.dexopt-flags=v=n,o=v \
     dalvik.vm.verify_bytecode=false \
     dalvik.vm.checkjni=false \
@@ -172,12 +172,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
     dev.pm.dyn_sampling_rate=1 \
     ro.max.fling_velocity=12000 \
     ro.min.fling_velocity=8000 \
-	debug.hwui.render_dirty_regions=false \
-	# GPU producer to CPU consumer not supported
-	ro.bq.gpu_to_cpu_unsupported=1 \
-	ro.zygote.disable_gl_preload=true \
- 	# Render UI with GPU
-	debug.sf.hw=1 \
+    debug.hwui.render_dirty_regions=false \
+    # GPU producer to CPU consumer not supported
+    ro.bq.gpu_to_cpu_unsupported=1 \
+    ro.zygote.disable_gl_preload=true \
+    # Render UI with GPU
+    debug.sf.hw=1 \
     # Fuse storage
     persist.fuse_sdcard=true
 
