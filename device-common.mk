@@ -130,6 +130,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
 	librs_jni \
+	libemoji \
 	bttest \
 	libbt-vendor
 
