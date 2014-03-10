@@ -115,6 +115,7 @@ PRODUCT_PACKAGES += \
         audio.a2dp.default \
 	audio.primary.harmony \
 	audio.usb.default \
+        audio.r_submix.default \
         libaudioutils \
         tinymix \
         tinyplay \

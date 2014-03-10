@@ -11,7 +11,7 @@ on init
     mkdir /storage/emulated 0555 root root
 
     #External storage directories
-    mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    # mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
     mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
     mkdir /mnt/media_rw/sdcard2 0700 media_rw media_rw
     mkdir /storage/usbdisk0 0000 system system
@@ -19,7 +19,7 @@ on init
     mkdir /storage/usbdisk1 0000 system system
     mkdir /mnt/media_rw/usbdisk1 0700 media_rw media_rw
 
-    mkdir /storage/sdcard0 0700 root root
+    # mkdir /storage/sdcard0 0700 root root
     mkdir /storage/sdcard1 0700 root root
     mkdir /storage/sdcard2 0700 root root
 
@@ -307,8 +307,8 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 service sdcard /system/bin/sdcard -u 1023 -g 1023 /data/media /mnt/shell/emulated
     class late_start
 
-service sdcard0 /system/bin/sdcard -u 1023 -g 1023 /mnt/shell/emulated/0 /storage/sdcard0
-    class late_start
+# service sdcard0 /system/bin/sdcard -u 1023 -g 1023 /mnt/shell/emulated/0 /storage/sdcard0
+#   class late_start
 
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
