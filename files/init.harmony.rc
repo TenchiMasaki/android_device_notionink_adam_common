@@ -23,7 +23,7 @@ on init
     mkdir /storage/sdcard1 0700 root root
     mkdir /storage/sdcard2 0700 root root
 
-    export EXTERNAL_STORAGE /storage/sdcard0
+    export EXTERNAL_STORAGE /mnt/shell/emulated/0
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
 #    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
 #    export EMULATED_STORAGE_TARGET /storage/emulated
