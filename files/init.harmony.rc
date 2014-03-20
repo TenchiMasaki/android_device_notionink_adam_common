@@ -23,15 +23,15 @@ on init
     mkdir /storage/sdcard1 0700 root root
     mkdir /storage/sdcard2 0700 root root
 
-    export EXTERNAL_STORAGE /mnt/shell/emulated/0
+    export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
-#    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-#    export EMULATED_STORAGE_TARGET /storage/emulated
+    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+    export EMULATED_STORAGE_TARGET /storage/emulated
 
     # for backwards compatibility
-    symlink /mnt/shell/emulated/0 /sdcard
-    symlink /mnt/shell/emulated/0 /mnt/sdcard
-    symlink /mnt/shell/emulated/0 /storage/sdcard0
+    symlink /storage/emulated/legacy /sdcard
+    symlink /storage/emulated/legacy /mnt/sdcard
+    symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
     symlink /storage/usbdisk0 /mnt/usbdisk0
@@ -50,7 +50,7 @@ on init
 
 on fs
     mount_all /fstab.harmony
-
+    # Mount cache and system yaffs2 partitions here
     mount yaffs2 mtd@cache /cache nosuid nodev
     mount yaffs2 mtd@system /system
 
@@ -189,14 +189,14 @@ on boot
     chmod 0664 /sys/class/gpio/gpio171/value
 
 # Default Read Ahead value for sdcards
-    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
-    write /sys/block/mmcblk1/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk0/queue/read_ahead_kb 1024
+    write /sys/block/mmcblk1/queue/read_ahead_kb 1024
 
-# Set I/O scheduler noop deadline cfq sio bfq row=x
-    write /sys/block/mmcblk0/queue/scheduler noop
-    write /sys/block/mmcblk1/queue/scheduler noop
-    write /sys/block/mtdblock3/queue/scheduler noop
-    write /sys/block/mtdblock4/queue/scheduler noop
+# Set I/O scheduler noop deadline cfq sio bfq row
+    write /sys/block/mmcblk0/queue/scheduler row
+    write /sys/block/mmcblk1/queue/scheduler row
+    write /sys/block/mtdblock3/queue/scheduler row
+    write /sys/block/mtdblock4/queue/scheduler row
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
@@ -328,7 +328,6 @@ service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk1 
 
 on property:ro.fuse_sdcard=true
     start sdcard
-    start sdcard0
 
 # Binding fuse mount point to /storage/emulated/legacy
 #on property:init.svc.sdcard=running
