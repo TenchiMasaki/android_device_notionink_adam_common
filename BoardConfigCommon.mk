@@ -17,6 +17,8 @@
 # This variable is set first, so it can be overridden
 # by BoardConfigVendor.mk
 
+BOARD_ADAM := true
+
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
@@ -140,7 +142,6 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 BOARD_EGL_NEEDS_FNW := true
 SKIP_SET_METADATA := true
 BOARD_EGL_NEEDS_LEGACY_FB := true
-EGL_NEEDS_FNW := true
 
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
@@ -177,6 +178,7 @@ BOARD_USES_GENERIC_INVENSENSE := false
 # Sensors
 TARGET_USES_OLD_LIBSENSORS_HAL := false
 BOARD_HAVE_MAGNETIC_SENSOR := true
+BOARD_USE_LEGACY_TOUCHSCREEN := true
 
 # Compatibility with pre-kitkat Sensor HALs
 SENSORS_NEED_SETRATE_ON_ENABLE := true
