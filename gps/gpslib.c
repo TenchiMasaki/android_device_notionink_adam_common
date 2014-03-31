@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <string.h>
 #include <math.h>
 #include "nmea/nmea/nmea.h"
@@ -16,6 +17,7 @@
 
 #define  LOG_TAG  "gps_adam"
 #define GPS_TTYPORT "/dev/ttyHS3"
+#define GPS_POWER_CTRL "/sys/devices/platform/smba1006-pm-gps/power_on"
 #define MAX_NMEA_CHARS 85
 
 
@@ -40,6 +42,7 @@ static pthread_t NMEAThread;
 char NMEA[MAX_NMEA_CHARS];
 pthread_mutex_t mutGPS = PTHREAD_MUTEX_INITIALIZER;
 char gpsOn = 0;
+int gps_pfd = -1;
 GpsSvStatus *storeSV = NULL;
 int svMask = 0;
 pthread_mutex_t mutGSV = PTHREAD_MUTEX_INITIALIZER;
@@ -421,10 +424,23 @@ static void* doGPS (void* arg) {
 		go = gpsOn;
 		pthread_mutex_unlock(&mutGPS);
 	}
-fclose(gpsTTY);
-return NULL;
+	
+	fclose(gpsTTY);
+	return NULL;
 }
 
+static void gps_power(int onoff)
+{
+	switch (onoff) {
+	case 0:	if (gps_pfd != -1) write(gps_pfd, "0", 1);
+		break;
+	case 1: if (gps_pfd != -1) write(gps_pfd, "1", 1);
+		break;
+	default:
+		LOGE("gps_power: error: given unknown onoff value %d.", onoff);
+		break;
+	}
+}
 
 /////////////////////////////////////////////////////////
 //		     GPS INTERFACE       	       //
@@ -433,71 +449,89 @@ return NULL;
 
 
 static int gpslib_init(GpsCallbacks* callbacks) {
-int ret = 0;
-LOGV("Callbacks set");
-adamGpsCallbacks = callbacks;
-adamGpsCallbacks->set_capabilities_cb(0);
-GpsStatus *status = malloc(sizeof(GpsStatus));
+	int ret = 0;
+	LOGV("Callbacks set");
+	adamGpsCallbacks = callbacks;
+	adamGpsCallbacks->set_capabilities_cb(0);
+	GpsStatus *status = malloc(sizeof(GpsStatus));
 
-struct stat st;
-if(stat(GPS_TTYPORT, &st) != 0) {
-	ret = -1;
-	LOGE("Specified tty port: %s does not exist", GPS_TTYPORT);
-	goto end;
-}
+	struct stat st;
+	if(stat(GPS_TTYPORT, &st) != 0) {
+		ret = -1;
+		LOGE("Specified tty port: %s does not exist", GPS_TTYPORT);
+		goto end;
+	}
 
+	if (gps_pfd == -1) {
+		gps_pfd = open(GPS_POWER_CTRL, O_WRONLY);
+		if (gps_pfd == -1) {
+			ret = -1;
+			LOGE("Power control: open failed: %s. GPS will not be activated.", GPS_POWER_CTRL);
+			status->size = sizeof (GpsStatus);
+			status->status = GPS_STATUS_ENGINE_OFF;
+			adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
+			goto end;
+		}
+	}
+	gps_power(1);
+	status->size = sizeof(GpsStatus);
+	status->status = GPS_STATUS_ENGINE_ON;
+	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
 
-status->size = sizeof(GpsStatus);
-status->status = GPS_STATUS_ENGINE_ON;
-adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
-
-end:
-return ret;
+	end:
+	return ret;
 }
 
 static int gpslib_start() {
-LOGV("Gps start");
-GpsStatus *stat = malloc(sizeof(GpsStatus));
-stat->size = sizeof(GpsStatus);
-stat->status = GPS_STATUS_SESSION_BEGIN;
-adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
-pthread_mutex_lock(&mutGPS);
-gpsOn = 1;
-pthread_mutex_unlock(&mutGPS);	
-pthread_create(&NMEAThread, NULL, doGPS, NULL);
-return 0;
+	LOGV("Gps start");
+	GpsStatus *stat = malloc(sizeof(GpsStatus));
+	stat->size = sizeof(GpsStatus);
+	stat->status = GPS_STATUS_SESSION_BEGIN;
+	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
+	pthread_mutex_lock(&mutGPS);
+	gpsOn = 1;
+	pthread_mutex_unlock(&mutGPS);	
+	pthread_create(&NMEAThread, NULL, doGPS, NULL);
+	return 0;
 }
 
 static int gpslib_stop() {
-LOGV("GPS stop");
-GpsStatus *stat = malloc(sizeof(GpsStatus));
-stat->size = sizeof(GpsStatus);
-stat->status = GPS_STATUS_SESSION_END;
-adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
-pthread_mutex_lock(&mutGPS);
-gpsOn = 0;
-pthread_mutex_unlock(&mutGPS);
-return 0;
+	LOGV("GPS stop");
+	GpsStatus *stat = malloc(sizeof(GpsStatus));
+	stat->size = sizeof(GpsStatus);
+	stat->status = GPS_STATUS_SESSION_END;
+	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
+	pthread_mutex_lock(&mutGPS);
+	gpsOn = 0;
+	pthread_mutex_unlock(&mutGPS);
+	return 0;
 }
 
 static void gpslib_cleanup() {
-GpsStatus *stat = malloc(sizeof(GpsStatus));
-stat->size = sizeof(GpsStatus);
-stat->status = GPS_STATUS_ENGINE_OFF;
-adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
-LOGV("GPS clean");
-return;
+	GpsStatus *stat = malloc(sizeof(GpsStatus));
+	stat->size = sizeof(GpsStatus);
+	stat->status = GPS_STATUS_ENGINE_OFF;
+	
+	if (gps_pfd != -1) {
+		gps_power(0);
+		close(gps_pfd);
+		gps_pfd = -1;
+	}
+
+	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
+	LOGV("GPS clean");
+	return;
 }
 
 static int gpslib_inject_time(GpsUtcTime time, int64_t timeReference,
                          int uncertainty) {
-LOGV("GPS inject time");
-return 0;
+	LOGV("GPS inject time");
+	return 0;
 }
 
 static int gpslib_inject_location(double latitude, double longitude, float accuracy) {
-LOGV("GPS inject location");
-return 0;
+	LOGV("GPS inject location");
+	return 0;
 }
 
 
@@ -508,7 +542,7 @@ static void gpslib_delete_aiding_data(GpsAidingData flags) {
 static int gpslib_set_position_mode(GpsPositionMode mode, GpsPositionRecurrence recurrence,
             uint32_t min_interval, uint32_t preferred_accuracy, uint32_t preferred_time) {
 
-return 0;
+	return 0;
 }
 
 
