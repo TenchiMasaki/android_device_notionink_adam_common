@@ -97,10 +97,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120 \
     wifi.supplicant_scan_interval=15 \
-    debug.hwui.render_dirty_regions=false \
-    ro.zygote.disable_gl_preload=true \
-    ro.bq.gpu_to_cpu_unsupported=true \
-    hwui.use_gpu_pixel_buffers=false \
 #    ro.boot.selinux=disabled \
 #    ro.build.selinux=0
 
@@ -172,8 +168,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     video.accelerate.hw=1 \
     debug.performance.tuning=1 \
     dev.pm.dyn_sampling_rate=1 \
-    ro.max.fling_velocity=12000 \
-    ro.min.fling_velocity=8000 \
+#    ro.max.fling_velocity=12000 \
+#    ro.min.fling_velocity=8000 \
+    hwui.use_gpu_pixel_buffers=false \
     debug.hwui.render_dirty_regions=false \
     # GPU producer to CPU consumer not supported
     ro.bq.gpu_to_cpu_unsupported=1 \
