@@ -9,6 +9,8 @@ on init
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
 
+    write /sys/devices/platform/pwm-backlight/PQiModeOn 1
+
     symlink /system/etc /etc
 
     mkdir /boot
