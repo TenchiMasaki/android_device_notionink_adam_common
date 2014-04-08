@@ -56,7 +56,8 @@ on init
     write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
-
+    setprop service.adb.root 1
+    setprop sys.storage.ums_enabled 1
 
 on boot
 
