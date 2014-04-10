@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-# echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
+#echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
 
 rm /data/aplog
 /system/bin/logcat -f /data/aplog &

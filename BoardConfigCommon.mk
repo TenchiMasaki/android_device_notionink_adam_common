@@ -24,6 +24,8 @@ BOARD_SKIP_ANDROID_DOC_BUILD := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
+# Don't include backuptools
+WITH_GMS := true
 
 # Use the non-open-source parts, if they're present
 -include vendor/notionink/adam/BoardConfigVendor.mk
@@ -70,7 +72,8 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
+#device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -142,6 +145,8 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 BOARD_EGL_NEEDS_FNW := true
 SKIP_SET_METADATA := true
 BOARD_EGL_NEEDS_LEGACY_FB := true
+EGL_NEEDS_FNW := true
+BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
@@ -189,19 +194,30 @@ COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.harmony
 
+# Javascript, Browser and Webkit
+WITH_JIT                := true
+ENABLE_JSC_JIT          := true
+JS_ENGINE               := v8
+HTTP                    := chrome
+TARGET_FORCE_CPU_UPLOAD := true
+
+# ClamAV "ramdisk-recovery.img: Andr.Exploit.Ratc FOUND"
+TW_EXCLUDE_SUPERSU      := true
+
 # Preload bootanimation in to memory
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := false
 TARGET_BOOTANIMATION_USE_RGB565 := true
-TARGET_SCREEN_WIDTH := 1024
-TARGET_SCREEN_HEIGHT := 600
+TARGET_SCREEN_WIDTH := 1280
+TARGET_SCREEN_HEIGHT := 720
 
 # Recovery
+RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
 TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
 # Large fonts
-BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
+BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/notionink/adam_common/recovery/recovery_keys.c
 BOARD_RECOVERY_SWIPE := true

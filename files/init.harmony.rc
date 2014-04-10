@@ -23,15 +23,15 @@ on init
     mkdir /storage/sdcard1 0700 root root
     mkdir /storage/sdcard2 0700 root root
 
-    export EXTERNAL_STORAGE /mnt/shell/emulated/0
+    export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
-#    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-#    export EMULATED_STORAGE_TARGET /storage/emulated
+    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+    export EMULATED_STORAGE_TARGET /storage/emulated
 
     # for backwards compatibility
-    symlink /mnt/shell/emulated/0 /sdcard
-    symlink /mnt/shell/emulated/0 /mnt/sdcard
-    symlink /mnt/shell/emulated/0 /storage/sdcard0
+    symlink /storage/emulated/legacy /sdcard
+    symlink /storage/emulated/legacy /mnt/sdcard
+    symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
     symlink /storage/usbdisk0 /mnt/usbdisk0
@@ -47,6 +47,39 @@ on init
     # Save bugreports as owner
     export BUGREPORT_WRITE_PATH /mnt/shell/emulated/0
     export BUGREPORT_READ_PATH /storage/sdcard0
+
+on early-boot
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    restorecon /sys/devices/system/cpu
+    restorecon /sys/devices/system/cpu/cpu0
+    restorecon /sys/devices/system/cpu/cpu1
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
+    restorecon /sys/devices/system/cpu/cpufreq/hispeed_freq
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/input_boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
 
 on fs
     mount_all /fstab.harmony
@@ -126,6 +159,16 @@ on boot
 
 # Interactive governor settings
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+    
     chown system system /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
     chown system system /sys/devices/system/cpu/cpufreq/interactive/boost
@@ -149,30 +192,67 @@ on boot
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
 
-    restorecon /sys/devices/sytstem/cpu
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    restorecon /sys/devices/system/cpu/cpufreq/hispeed_freq
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+# power
+    chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
 
 # Power management settings
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
+
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
+#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
+#    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
     
+    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
+    write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 0
+
     # sleep freeze workaround
-    # write /sys/module/cpuidle/parameters/lp2_in_idle 1
+    write /sys/module/cpuidle/parameters/lp2_in_idle 1
+
+# Interactive governor settings
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+
+# MBM modem
+# Enable USB auto suspend for MBM devices
+    write /sys/bus/usb/devices/2-1/power/autosuspend 3
+    write /sys/bus/usb/devices/2-1/power/control auto
+    write /sys/bus/usb/devices/2-1/power/wakeup enabled
+    chown radio radio /dev/cdc-wdm0
+    chmod 0660 /dev/cdc-wdm0
+    chown radio radio /dev/cdc-wdm1
+    chmod 0660 /dev/cdc-wdm1
+
+# Set NITZ Feature on or off
+    setprop mbm.ril.config.nitz yes
+# Enable RIL Fast Dormancy
+    setprop mbm.ril.config.fd yes
+# Enable Neighboring Cell Info support
+    setprop mbm.ril.config.nci screen
+
+# Define TCP buffer sizes for various networks
+#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.wifi    65535,256000,512000,65535,128000,512000
+    setprop net.tcp.buffersize.lte     65535,256000,512000,65535,128000,512000
+    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.hspa    4092,87380,704512,4096,16384,262144
+    setprop net.tcp.buffersize.hsupa   4092,87380,704512,4096,16384,262144
+    setprop net.tcp.buffersize.hsdpa   4092,87380,704512,4096,16384,110208
+    setprop net.tcp.buffersize.hspap   4092,87380,704512,4096,16384,262144
+    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
+    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+    setprop net.tcp.buffersize.evdo    4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.evdo_b  4094,87380,262144,4096,16384,262144
 
 # GPS
     mkdir /data/gps
@@ -202,6 +282,9 @@ on boot
 # Wiimote connect status
     write /data/misc/wminput/connected 0
     chmod 0666 /data/misc/wminput/connected
+    
+# Set the SELinux system-wide enforcing status
+    setenforce 1
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
