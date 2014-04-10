@@ -9,6 +9,8 @@ on init
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
 
+    write /sys/devices/platform/pwm-backlight/PQiModeOn 1
+
     symlink /system/etc /etc
 
     mkdir /boot
@@ -50,11 +52,12 @@ on init
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 0955
     write /sys/class/android_usb/android0/idProduct 70a9
-    write /sys/class/android_usb/android0/functions mtp,adb
+    write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
-
+    setprop service.adb.root 1
+    setprop sys.storage.ums_enabled 1
 
 on boot
 
@@ -87,10 +90,10 @@ on property:service.adb.root=1
 
 on property:sys.storage.ums_enabled=1
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/functions adb,mass_storage
+    write /sys/class/android_usb/android0/functions mass_storage,adb
     write /sys/class/android_usb/android0/enable 1
 
-#on property:sys.storage.ums_enabled=0
-#    write /sys/class/android_usb/android0/enable 0
-#    write /sys/class/android_usb/android0/functions adb
-#    write /sys/class/android_usb/android0/enable ${service.adb.root}
+on property:sys.storage.ums_enabled=0
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/enable ${service.adb.root}

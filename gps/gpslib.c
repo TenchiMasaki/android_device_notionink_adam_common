@@ -18,7 +18,7 @@
 
 #define  LOG_TAG  "gps_adam"
 #define GPS_TTYPORT "/dev/ttyHS3"
-#define GPS_POWER_CTRL	"/sys/class/gpio/gpio203/value"
+#define GPS_POWER_CTRL "/sys/devices/platform/smba1006-pm-gps/power_on"
 #define MAX_NMEA_CHARS 85
 
 
@@ -99,7 +99,7 @@ static void updateNMEA(void* arg) {
 	nmeaArgs *Args = (nmeaArgs*)arg;
 	GpsUtcTime time = Args->time;
 	char* NMEA2 = Args->NMEA;
-	LOGV("Debug GPS: %s", NMEA2);
+	//LOGV("Debug GPS: %s", NMEA2);
 	if (adamGpsCallbacks != NULL) {
 		adamGpsCallbacks->nmea_cb(time, NMEA2, strlen(NMEA2));
 	}
@@ -202,7 +202,7 @@ static void updateGSV(void* arg) {
 	int numMessages = NMEA2[7] - 48;
 	int msgNumber = NMEA2[9] - 48;
 
-	LOGV("Updating %i sats: msg %i/%i", num, numMessages, msgNumber);
+	//LOGV("Updating %i sats: msg %i/%i", num, numMessages, msgNumber);
 
 	switch (msgNumber) {
 
@@ -253,7 +253,7 @@ static void updateGSV(void* arg) {
 		svStatus->sv_list[count].snr = sats.sat[count].sig;
 		svStatus->sv_list[count].elevation = sats.sat[count].elv;
 		svStatus->sv_list[count].azimuth = sats.sat[count].azimuth;
-		LOGV("ID: %i; SIG: %i; ELE: %i; AZI: %i", sats.sat[count].id, sats.sat[count].sig, sats.sat[count].elv, sats.sat[count].azimuth);
+		//LOGV("ID: %i; SIG: %i; ELE: %i; AZI: %i", sats.sat[count].id, sats.sat[count].sig, sats.sat[count].elv, sats.sat[count].azimuth);
 	}
 
 
@@ -265,10 +265,10 @@ static void updateGSV(void* arg) {
 	case 2:
 		if (svMask == (MASK_GSV_MSG1 | MASK_GSV_MSG2)) {
 			// We've got both messages
-			LOGV("Delivering 2: %i, %i", svMask, (MASK_GSV_MSG1 | MASK_GSV_MSG2));
+			//LOGV("Delivering 2: %i, %i", svMask, (MASK_GSV_MSG1 | MASK_GSV_MSG2));
 			goto deliverMsg;
 		} else {
-			LOGV("Debug 2: %i, %i", svMask, (MASK_GSV_MSG1 | MASK_GSV_MSG2));
+			//LOGV("Debug 2: %i, %i", svMask, (MASK_GSV_MSG1 | MASK_GSV_MSG2));
 			// Store for next run
 			storeSV = svStatus;
 			goto gsvEnd;
@@ -276,10 +276,10 @@ static void updateGSV(void* arg) {
 		break;
 	case 3:
 		if (svMask == ((MASK_GSV_MSG1 | MASK_GSV_MSG2) | MASK_GSV_MSG3)) {
-			LOGV("Delivering 3: %i, %i", svMask, ((MASK_GSV_MSG1 | MASK_GSV_MSG2) | MASK_GSV_MSG3));
+			//LOGV("Delivering 3: %i, %i", svMask, ((MASK_GSV_MSG1 | MASK_GSV_MSG2) | MASK_GSV_MSG3));
 			goto deliverMsg;
 		} else {
-			LOGV("Debug 2: %i, %i",svMask, ((MASK_GSV_MSG1 | MASK_GSV_MSG2) | MASK_GSV_MSG3));
+			//LOGV("Debug 2: %i, %i",svMask, ((MASK_GSV_MSG1 | MASK_GSV_MSG2) | MASK_GSV_MSG3));
 			storeSV = svStatus;
 			goto gsvEnd;
 		}
@@ -305,7 +305,7 @@ static void updateGSV(void* arg) {
 		adamGpsCallbacks->sv_status_cb(svStatus);
 	}
 
-	LOGV("Pushing data");
+	//LOGV("Pushing data");
 	free(svStatus);		
 	storeSV = NULL;
 	svMask = 0;
@@ -385,7 +385,7 @@ void processNMEA() {
 		break;
 	}
 
-	LOGV("Successful read: %i", info->smask);	
+	//LOGV("Successful read: %i", info->smask);	
 }
 
 
@@ -473,6 +473,7 @@ static int gpslib_init(GpsCallbacks* callbacks) {
 			goto end;
 		}
 	}
+	gps_power(1);
 	status->size = sizeof(GpsStatus);
 	status->status = GPS_STATUS_ENGINE_ON;
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
@@ -489,7 +490,7 @@ static int gpslib_start() {
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
 	pthread_mutex_lock(&mutGPS);
 	gpsOn = 1;
-	gps_power(gpsOn);
+	//gps_power(gpsOn);
 	pthread_mutex_unlock(&mutGPS);	
 	pthread_create(&NMEAThread, NULL, doGPS, NULL);
 	return 0;
@@ -512,11 +513,11 @@ static void gpslib_cleanup() {
 	stat->size = sizeof(GpsStatus);
 	stat->status = GPS_STATUS_ENGINE_OFF;
 	
-/*	if (gps_pfd != -1) {
+	if (gps_pfd != -1) {
+		gps_power(0);
 		close(gps_pfd);
 		gps_pfd = -1;
 	}
-*/	
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
 	LOGV("GPS clean");
 	return;

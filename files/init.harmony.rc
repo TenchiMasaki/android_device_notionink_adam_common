@@ -2,16 +2,27 @@ import init.harmony.usb.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
-    mkdir /storage 0666 system sdcard_r
 
 on init
-    mkdir /mnt/media_rw 0777 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard1 0777 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard2 0777 media_rw media_rw
-    mkdir /mnt/media_rw/usbdisk0 0777 media_rw media_rw
-    mkdir /mnt/media_rw/usbdisk1 0777 media_rw media_rw
+    chmod 777 /storage
+    chown system sdcard_r /storage
+
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
+
+    #External storage directories
+    # mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
+    mkdir /mnt/media_rw/sdcard2 0700 media_rw media_rw
+    mkdir /storage/usbdisk0 0000 system system
+    mkdir /mnt/media_rw/usbdisk0 0700 media_rw media_rw
+    mkdir /storage/usbdisk1 0000 system system
+    mkdir /mnt/media_rw/usbdisk1 0700 media_rw media_rw
+
+    # mkdir /storage/sdcard0 0700 root root
+    mkdir /storage/sdcard1 0700 root root
+    mkdir /storage/sdcard2 0700 root root
+
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
@@ -22,72 +33,64 @@ on init
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
-    #symlink /mnt/shell/emulated/0 /storage/emulated/0
 
-    # make the pathes for the external media mounts
-    mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/sdcard2 0000 system system
-    mkdir /storage/usbdisk0 0000 system system
-    mkdir /storage/usbdisk1 0000 system system
-
-    # for backwards compatibility
     symlink /storage/usbdisk0 /mnt/usbdisk0
     symlink /storage/usbdisk1 /mnt/usbdisk1
-    symlink /mnt/usbdisk0 /usbdisk0
-    symlink /mnt/usbdisk1 /usbdisk1
+    symlink /storage/usbdisk0 /usbdisk0
+    symlink /storage/usbdisk1 /usbdisk1
     symlink /storage/sdcard1 /internal_sd
     symlink /storage/sdcard1 /mnt/internal_sd
     symlink /storage/sdcard2 /microsd
     symlink /storage/sdcard2 /mnt/microsd
-    
+    symlink /storage/sdcard2 /sd-ext
+ 
     # Save bugreports as owner
     export BUGREPORT_WRITE_PATH /mnt/shell/emulated/0
     export BUGREPORT_READ_PATH /storage/sdcard0
 
+on early-boot
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    restorecon /sys/devices/system/cpu
+    restorecon /sys/devices/system/cpu/cpu0
+    restorecon /sys/devices/system/cpu/cpu1
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
+    restorecon /sys/devices/system/cpu/cpufreq/hispeed_freq
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/input_boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+
 on fs
     mount_all /fstab.harmony
-    # mount ext4 /dev/block/mmcblk0p2 /data wait noatime nosuid nodev
+    # Mount cache and system yaffs2 partitions here
     mount yaffs2 mtd@cache /cache nosuid nodev
     mount yaffs2 mtd@system /system
 
     setprop ro.crypto.fuse_sdcard true
-#    setprop ro.crypto.umount_sd false    
+#    setprop ro.crypto.umount_sd false
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
 
-# virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard -u 1023 -g 1023 /data/media /mnt/shell/emulated
-    class late_start
-
-#service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard0 /storage/sdcard0
-#    class late_start
-#    disabled
-
-service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
-    class late_start
-    disabled
-
-service fuse_sdcard2 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard2 /storage/sdcard2
-    class late_start
-    disabled
-
-service fuse_usbdisk0 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk0 /storage/usbdisk0
-    class late_start
-    disabled
-
-service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk1 /storage/usbdisk1
-    class late_start
-    disabled
-
-on property:ro.fuse_sdcard=true
-    start sdcard
-
-# This will make sure that sdcard service starts as late_start.
-on nonencrypted
-    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
-
-on property:vold.decrypt=trigger_restart_framework
-    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
-    
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
     mount rootfs rootfs / rw remount
@@ -156,6 +159,16 @@ on boot
 
 # Interactive governor settings
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+    
     chown system system /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
     chown system system /sys/devices/system/cpu/cpufreq/interactive/boost
@@ -179,30 +192,67 @@ on boot
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
 
-    restorecon /sys/devices/sytstem/cpu
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    restorecon /sys/devices/system/cpu/cpufreq/hispeed_freq
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+# power
+    chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
 
 # Power management settings
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
+
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
+#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
+#    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
     
+    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
+    write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 0
+
     # sleep freeze workaround
-    # write /sys/module/cpuidle/parameters/lp2_in_idle 1
+    write /sys/module/cpuidle/parameters/lp2_in_idle 1
+
+# Interactive governor settings
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+
+# MBM modem
+# Enable USB auto suspend for MBM devices
+    write /sys/bus/usb/devices/2-1/power/autosuspend 3
+    write /sys/bus/usb/devices/2-1/power/control auto
+    write /sys/bus/usb/devices/2-1/power/wakeup enabled
+    chown radio radio /dev/cdc-wdm0
+    chmod 0660 /dev/cdc-wdm0
+    chown radio radio /dev/cdc-wdm1
+    chmod 0660 /dev/cdc-wdm1
+
+# Set NITZ Feature on or off
+    setprop mbm.ril.config.nitz yes
+# Enable RIL Fast Dormancy
+    setprop mbm.ril.config.fd yes
+# Enable Neighboring Cell Info support
+    setprop mbm.ril.config.nci screen
+
+# Define TCP buffer sizes for various networks
+#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.wifi    65535,256000,512000,65535,128000,512000
+    setprop net.tcp.buffersize.lte     65535,256000,512000,65535,128000,512000
+    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.hspa    4092,87380,704512,4096,16384,262144
+    setprop net.tcp.buffersize.hsupa   4092,87380,704512,4096,16384,262144
+    setprop net.tcp.buffersize.hsdpa   4092,87380,704512,4096,16384,110208
+    setprop net.tcp.buffersize.hspap   4092,87380,704512,4096,16384,262144
+    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
+    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+    setprop net.tcp.buffersize.evdo    4094,87380,262144,4096,16384,262144
+    setprop net.tcp.buffersize.evdo_b  4094,87380,262144,4096,16384,262144
 
 # GPS
     mkdir /data/gps
@@ -210,27 +260,31 @@ on boot
     chmod 774 /data/gps
     chown gps system /dev/ttyHS3
     chmod 0664 /dev/ttyHS3
+    chmod 0666 /sys/devices/platform/smba1006-pm-gps/power_on
 
 # GPS power gpio
-    write /sys/class/gpio/export 203 
-    write /sys/class/gpio/gpio203/value 0
-    write /sys/class/gpio/gpio203/direction out
-    chown gps system /sys/class/gpio/gpio203/value
-    chmod 0664 /sys/class/gpio/gpio203/value
+    write /sys/class/gpio/export 171 
+    write /sys/class/gpio/gpio171/value 0
+    write /sys/class/gpio/gpio171/direction out
+    chown gps system /sys/class/gpio/gpio171/value
+    chmod 0664 /sys/class/gpio/gpio171/value
 
 # Default Read Ahead value for sdcards
-    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
-    write /sys/block/mmcblk1/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk0/queue/read_ahead_kb 1024
+    write /sys/block/mmcblk1/queue/read_ahead_kb 1024
 
-# Set I/O scheduler noop deadline cfq sio bfq row=x
-    write /sys/block/mmcblk0/queue/scheduler noop
-    write /sys/block/mmcblk1/queue/scheduler noop
-    write /sys/block/mtdblock3/queue/scheduler noop
-    write /sys/block/mtdblock4/queue/scheduler noop
+# Set I/O scheduler noop deadline cfq sio bfq row
+    write /sys/block/mmcblk0/queue/scheduler row
+    write /sys/block/mmcblk1/queue/scheduler row
+    write /sys/block/mtdblock3/queue/scheduler row
+    write /sys/block/mtdblock4/queue/scheduler row
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
     chmod 0666 /data/misc/wminput/connected
+    
+# Set the SELinux system-wide enforcing status
+    #setenforce 1
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
@@ -289,6 +343,26 @@ service dhcpcd_p2p /system/bin/dhcpcd -aABKL
     disabled
     oneshot
 
+service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
+    disabled
+    oneshot
+
+service dhcpcd_bnep1 /system/bin/dhcpcd -BKLG
+    disabled
+    oneshot
+
+service dhcpcd_bnep2 /system/bin/dhcpcd -BKLG
+    disabled
+    oneshot
+
+service dhcpcd_bnep3 /system/bin/dhcpcd -BKLG
+    disabled
+    oneshot
+
+service dhcpcd_bnep4 /system/bin/dhcpcd -BKLG
+    disabled
+    oneshot
+
 # bluetooth
 service dhcpcd_bt-pan /system/bin/dhcpcd -ABKL
     disabled
@@ -312,6 +386,44 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
+
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard /system/bin/sdcard -u 1023 -g 1023 /data/media /mnt/shell/emulated
+    class late_start
+
+# service sdcard0 /system/bin/sdcard -u 1023 -g 1023 /mnt/shell/emulated/0 /storage/sdcard0
+#   class late_start
+
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
+    class late_start
+    disabled
+
+service fuse_sdcard2 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard2 /storage/sdcard2
+    class late_start
+    disabled
+
+service fuse_usbdisk0 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk0 /storage/usbdisk0
+    class late_start
+    disabled
+
+service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk1 /storage/usbdisk1
+    class late_start
+    disabled
+
+on property:ro.fuse_sdcard=true
+    start sdcard
+
+# Binding fuse mount point to /storage/emulated/legacy
+#on property:init.svc.sdcard=running
+#    wait /mnt/shell/emulated/0
+#    mount none /mnt/shell/emulated/0 /storage/emulated/legacy bind
+
+# This will make sure that sdcard service starts as late_start.
+on nonencrypted
+    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
+
+on property:vold.decrypt=trigger_restart_framework
+    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
 
 # Enable tcpdump-service
 #service netdump-service /system/xbin/tcpdump -i any -C 5 -p -s 0 -w /sdcard/netdump.cap

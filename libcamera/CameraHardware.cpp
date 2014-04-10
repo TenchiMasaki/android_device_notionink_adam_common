@@ -970,7 +970,10 @@ void CameraHardware::initDefaultParameters()
     p.set(CameraParameters::KEY_ZOOM_RATIOS, "100");
     p.set(CameraParameters::KEY_ZOOM_SUPPORTED, "false");
 
-    p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP,"0.1");
+	p.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, "-1.0");
+	p.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, "1.0");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP,"0.1");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION,"0.0");
 
     // keep these in sync with hw specs, needed for panorama in Camera app.
     // VS6725 spec has only the diagonal view angle, the vertical view angle
