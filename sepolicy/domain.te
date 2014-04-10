@@ -6,3 +6,10 @@ allow surfaceflinger tee_device:chr_file rw_file_perms;
 allow mediaserver { nvhost_writable_device nv_device nvhost_device }:chr_file rw_file_perms;
 
 allow appdomain { nvhost_writable_device nv_device }:chr_file rw_file_perms;
+
+# Connect to adbd and use a socket transferred from it.
+# This is used for e.g. adb backup/restore.
+allow domain adbd:unix_stream_socket connectto;
+allow domain adbd:fd use;
+allow domain adbd:unix_stream_socket { getattr getopt read write shutdown };
+
