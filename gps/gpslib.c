@@ -1,6 +1,6 @@
 // NI Adam GPS library
 // Uses an Open Source NMEA parsing lib
-// Written by MrGuy
+// Written by MrGuy and updated by Borkata
 
 #include <hardware/gps.h>
 #include <stdio.h>
@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 #include "nmea/nmea/nmea.h"
 
 #define  GPS_DEBUG  1
@@ -202,9 +203,9 @@ static void updateGSV(void* arg) {
 	int msgNumber = NMEA2[9] - 48;
 
 	//LOGV("Updating %i sats: msg %i/%i", num, numMessages, msgNumber);
-	
+
 	switch (msgNumber) {
-	
+
 	case (1):
 		if (svMask & MASK_GSV_MSG1) {
 		// We already have a message one.. dump the old, run with the new.
@@ -236,7 +237,7 @@ static void updateGSV(void* arg) {
 		// We should never be here..
 		break;
 	}
-	
+
 
 	// Retrieve stored messages
 	if (storeSV == NULL) {
@@ -255,7 +256,7 @@ static void updateGSV(void* arg) {
 		//LOGV("ID: %i; SIG: %i; ELE: %i; AZI: %i", sats.sat[count].id, sats.sat[count].sig, sats.sat[count].elv, sats.sat[count].azimuth);
 	}
 
-	
+
 	switch (numMessages) {
 	case 1:
 		// Only one msg, and we're it
@@ -288,7 +289,7 @@ static void updateGSV(void* arg) {
 		LOGE("Logic error in GSV! numMessages: %i", numMessages);
 		goto gsvEnd;
 	}
-		
+
 
 	///////////////////////////////////////////////////////
 	deliverMsg:
@@ -348,9 +349,9 @@ void processNMEA() {
 	strcpy(nArgs->NMEA, NMEA);
 	Args->info = info;
 	nArgs->time = getUTCTime(&(info->utc));
-	
+
 	adamGpsCallbacks->create_thread_cb("adamgps-nmea", updateNMEA, nArgs);
-	
+
 	switch (info->smask) {
 	case 1:
 		//< GGA - Essential fix data which provide 3D location and accuracy data.
@@ -447,7 +448,6 @@ static void gps_power(int onoff)
 /////////////////////////////////////////////////////////
 
 
-
 static int gpslib_init(GpsCallbacks* callbacks) {
 	int ret = 0;
 	LOGV("Callbacks set");
@@ -490,6 +490,7 @@ static int gpslib_start() {
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
 	pthread_mutex_lock(&mutGPS);
 	gpsOn = 1;
+	//gps_power(gpsOn);
 	pthread_mutex_unlock(&mutGPS);	
 	pthread_create(&NMEAThread, NULL, doGPS, NULL);
 	return 0;
@@ -517,7 +518,6 @@ static void gpslib_cleanup() {
 		close(gps_pfd);
 		gps_pfd = -1;
 	}
-
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
 	LOGV("GPS clean");
 	return;
@@ -547,7 +547,7 @@ static int gpslib_set_position_mode(GpsPositionMode mode, GpsPositionRecurrence 
 
 
 static const void* gpslib_get_extension(const char* name) {
-return NULL;
+	return NULL;
 }
 
 const GpsInterface* gps__get_gps_interface(struct gps_device_t* dev) 
@@ -566,19 +566,19 @@ const GpsInterface* gps__get_gps_interface(struct gps_device_t* dev)
 
 	return &adamGpsInterface;
 }
-	
-	
+
+
 static int open_gps(const struct hw_module_t* module, char const* name,
 	struct hw_device_t** device) 
 {
 	struct gps_device_t *dev = malloc (sizeof(struct gps_device_t));
 	memset(dev, 0 , sizeof(*dev));
-	
+
 	dev->common.tag = HARDWARE_DEVICE_TAG;
 	dev->common.version = 0;
 	dev->common.module = (struct hw_module_t*)module;
 	dev->get_gps_interface = gps__get_gps_interface;
-	
+
 	*device = (struct hw_device_t*)dev;
 	return 0;
 }

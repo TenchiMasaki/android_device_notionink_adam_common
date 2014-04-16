@@ -71,7 +71,11 @@ PRODUCT_COPY_FILES += \
 
 # Touchscreen
 PRODUCT_COPY_FILES += \
-    device/notionink/adam_common/files/at168_touch.idc:system/usr/idc/at168_touch.idc 
+    device/notionink/adam_common/files/at168_touch.idc:system/usr/idc/at168_touch.idc
+
+# GPIO Keys
+PRODUCT_COPY_FILES += \
+    device/notionink/adam_common/files/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
 
 # Graphics
 PRODUCT_COPY_FILES += \
@@ -90,15 +94,12 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/audio_policy.conf:system/etc/audio_policy.conf
 
 # APNs list
-PRODUCT_COPY_FILES += \
-   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
+#PRODUCT_COPY_FILES += \
+#   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
-    ro.sf.lcd_density=120 \
-    wifi.supplicant_scan_interval=15 \
-#    ro.boot.selinux=disabled \
-#    ro.build.selinux=0
+    ro.sf.lcd_density=120
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
@@ -122,14 +123,45 @@ PRODUCT_PACKAGES += \
 	sensors.harmony \
 	lights.harmony \
 	gps.harmony \
-	camera.tegra \
-	hwcomposer.tegra
+	power.tegra \
+	camera.tegra #\
+	#hwcomposer.tegra
+
+# These are the OpenMAX IL modules
+PRODUCT_PACKAGES += \
+    libSEC_OMX_Core \
+    libOMX.SEC.AVC.Decoder \
+    libOMX.SEC.M4V.Decoder \
+    libOMX.SEC.M4V.Encoder \
+    libOMX.SEC.AVC.Encoder
+
+# Usb accessory
+PRODUCT_PACKAGES += \
+    com.android.future.usb.accessory
+
+# Media
+PRODUCT_PACKAGES += \
+    libstagefrighthw \
+    libmm-omxcore \
+    libOmxCore
+
+# WebKit
+PRODUCT_PACKAGES += \
+    libwebcore
+
+# Webkit (classic webview provider)
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.webview.provider=classic
 
 PRODUCT_PACKAGES += \
 	librs_jni \
 	libemoji \
 	bttest \
-	libbt-vendor
+	libbt-vendor \
+	webview \
+	WebViewDream \
+	PhotoTable \
+	libwebkit
 
 # These are the hardware-specific feature permissions
 PRODUCT_COPY_FILES += \
@@ -150,44 +182,11 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
-    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml 
-
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.opengles.version=131072 \
-    ro.opengles.surface.rgb565=true \
-    dalvik.vm.dexopt-flags=v=n,o=v \
-    dalvik.vm.verify_bytecode=false \
-    dalvik.vm.checkjni=false \
-    dalvik.gc.type=precise \
-    ro.kernel.android.checkjni=0 \
-    ro.config.nocheckin=1 \
-    profiler.force_disable_err_rpt=1 \
-    profiler.force_disable_ulog=1 \
-    debug.composition.type=gpu \
-    video.accelerate.hw=1 \
-    debug.performance.tuning=1 \
-    dev.pm.dyn_sampling_rate=1 \
-#    ro.max.fling_velocity=12000 \
-#    ro.min.fling_velocity=8000 \
-    hwui.use_gpu_pixel_buffers=false \
-    debug.hwui.render_dirty_regions=false \
-    # GPU producer to CPU consumer not supported
-    ro.bq.gpu_to_cpu_unsupported=1 \
-    ro.zygote.disable_gl_preload=true \
-    # Render UI with GPU
-    debug.sf.hw=1 \
-    # Fuse storage
-    persist.fuse_sdcard=true
-
-
-#Set default.prop properties for root + mtp
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-	persist.sys.usb.config=mtp
+    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
 #PRODUCT_PROPERTY_OVERRIDES += \
 #    ro.boot.selinux=disabled \
-#    ro.build.selinux=0 
+#    ro.build.selinux=0
 
 ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.secure=0 \

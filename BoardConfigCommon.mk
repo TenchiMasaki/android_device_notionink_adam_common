@@ -24,6 +24,8 @@ BOARD_SKIP_ANDROID_DOC_BUILD := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
+# Don't include backuptools
+WITH_GMS := true
 
 # Use the non-open-source parts, if they're present
 -include vendor/notionink/adam/BoardConfigVendor.mk
@@ -47,7 +49,8 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT := tegra2
+ARM_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 
@@ -70,7 +73,7 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage 
+TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 #device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
@@ -144,6 +147,7 @@ BOARD_EGL_NEEDS_FNW := true
 SKIP_SET_METADATA := true
 BOARD_EGL_NEEDS_LEGACY_FB := true
 EGL_NEEDS_FNW := true
+BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
@@ -180,6 +184,7 @@ BOARD_USES_GENERIC_INVENSENSE := false
 # Sensors
 TARGET_USES_OLD_LIBSENSORS_HAL := false
 BOARD_HAVE_MAGNETIC_SENSOR := true
+BOARD_USE_LEGACY_TOUCHSCREEN := true
 
 # Compatibility with pre-kitkat Sensor HALs
 SENSORS_NEED_SETRATE_ON_ENABLE := true
@@ -190,6 +195,16 @@ COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.harmony
 
+# Javascript, Browser and Webkit
+WITH_JIT                := true
+ENABLE_JSC_JIT          := true
+JS_ENGINE               := v8
+HTTP                    := chrome
+TARGET_FORCE_CPU_UPLOAD := true
+
+# ClamAV "ramdisk-recovery.img: Andr.Exploit.Ratc FOUND"
+TW_EXCLUDE_SUPERSU      := true
+
 # Preload bootanimation in to memory
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := false
@@ -198,6 +213,7 @@ TARGET_SCREEN_WIDTH := 1280
 TARGET_SCREEN_HEIGHT := 720
 
 # Recovery
+RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
 TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
@@ -243,6 +259,7 @@ BOARD_SEPOLICY_UNION := \
 	surfaceflinger.te \
 	system_app.te \
 	system.te \
+	ueventd.te \
 	untrusted_app.te \
 	vold.te \
 	wpa_socket.te \
