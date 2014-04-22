@@ -53,6 +53,7 @@ TARGET_CPU_VARIANT := tegra2
 ARM_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
+#TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
 # Compiler Optimization - This is a @codefireX specific flag to use -O3 everywhere.
 ARCH_ARM_HIGH_OPTIMIZATION := true
@@ -68,13 +69,12 @@ BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 
 # Kernel   
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+TARGET_KERNEL_SOURCE := kernel/notionink/adam
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
-#device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -209,15 +209,15 @@ TW_EXCLUDE_SUPERSU      := true
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := false
 TARGET_BOOTANIMATION_USE_RGB565 := true
-TARGET_SCREEN_WIDTH := 1280
-TARGET_SCREEN_HEIGHT := 720
+TARGET_SCREEN_WIDTH := 1024
+TARGET_SCREEN_HEIGHT := 600
 
 # Recovery
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
 TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
-# Large fonts
+# Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/notionink/adam_common/recovery/recovery_keys.c

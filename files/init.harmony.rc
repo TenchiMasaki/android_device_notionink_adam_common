@@ -23,15 +23,15 @@ on init
     mkdir /storage/sdcard1 0700 root root
     mkdir /storage/sdcard2 0700 root root
 
-    export EXTERNAL_STORAGE /storage/emulated/legacy
+    export EXTERNAL_STORAGE /mnt/shell/emulated/0
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
-    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-    export EMULATED_STORAGE_TARGET /storage/emulated
+    #export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+    #export EMULATED_STORAGE_TARGET /mnt/shell/emulated
 
     # for backwards compatibility
-    symlink /storage/emulated/legacy /sdcard
-    symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /mnt/shell/emulated/0 /sdcard
+    symlink /mnt/shell/emulated/0 /mnt/sdcard
+    symlink /mnt/shell/emulated/0 /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
     symlink /storage/usbdisk0 /mnt/usbdisk0
@@ -80,6 +80,10 @@ on early-boot
     restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
     restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
     restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+    
 
 on fs
     mount_all /fstab.harmony
@@ -90,6 +94,7 @@ on fs
     setprop ro.crypto.fuse_sdcard true
 #    setprop ro.crypto.umount_sd false
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
+#    setprop sys.usb.config ptp,adb
 
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
@@ -191,6 +196,10 @@ on boot
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_rate
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+    chmod 664 /sys/bus/iio/devices/device0/proxim_ir
+    chown 666 /dev/mmc31xx
+    chown 666 /dev/ecompass_ctrl
+    chown 666 /sys/devices/platform/lis3lv02d/position
 
 # power
     chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
@@ -205,7 +214,7 @@ on boot
     
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
     write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
-    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 0
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
 
     # sleep freeze workaround
     write /sys/module/cpuidle/parameters/lp2_in_idle 1
@@ -243,7 +252,6 @@ on boot
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.wifi    524288,1048576,2097152,262144,524288,1048576
-
     setprop net.tcp.buffersize.lte     524288,1048576,2560000,262144,524288,1220608
 #    setprop net.tcp.buffersize.wifi    65535,256000,512000,65535,128000,512000
 #    setprop net.tcp.buffersize.lte     65535,256000,512000,65535,128000,512000
@@ -287,7 +295,7 @@ on boot
     chmod 0666 /data/misc/wminput/connected
     
 # Set the SELinux system-wide enforcing status
-    setenforce 1
+    #setenforce 1
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
@@ -439,6 +447,13 @@ on property:vold.decrypt=trigger_restart_framework
 #on property:net.netdump.enable=0
 #    stop netdump-service
 
+# G5Sensor daemon for ecompass
+service g5sensord /system/bin/g5sensord
+    class main
+#    user system
+#    group misc
+    oneshot
+
 # 3G library selection
 service wwlanselect /system/bin/sh /system/bin/wwlan_select.sh
     disabled
@@ -484,3 +499,5 @@ on property:init.svc.bootanim=stopped
 
 on property:init.svc.vold=running
     start adam_preboot
+#    start g5sensord
+
