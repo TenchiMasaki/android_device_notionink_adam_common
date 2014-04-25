@@ -44,6 +44,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 #    dalvik.vm.heapsize=256m \
 #    dalvik.vm.dexopt-data-only=1 \
 #    dalvik.vm.heaptargetutilization=0.25 \
+#    dalvik.vm.jit.codecachesize=0 \
 
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
@@ -198,13 +199,12 @@ PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
 PRODUCT_PROPERTY_OVERRIDES += \
-#    ro.boot.selinux=disabled \
-#    ro.build.selinux=0
+    ro.boot.selinux=disabled \
+    ro.build.selinux=0
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
 	persist.sys.usb.config=mtp \
-	ro.kernel.qemu=1 \
 	ro.secure=0 \
 	ro.adb.secure=0
 

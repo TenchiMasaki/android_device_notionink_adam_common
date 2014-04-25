@@ -19,6 +19,8 @@
 
 BOARD_ADAM := true
 
+TARGET_ARCH_LOWMEM := true
+
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
@@ -70,9 +72,9 @@ TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu
 
 # Kernel   
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
-TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
-TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
-TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
+TARGET_KERNEL_CONFIG := tegra_adam_defconfig
+TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
+TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
@@ -121,8 +123,8 @@ TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 
-MAX_EGL_CACHE_KEY_SIZE := 4096
-MAX_EGL_CACHE_SIZE := 2146304
+#MAX_EGL_CACHE_KEY_SIZE := 4096
+#MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # display
@@ -231,7 +233,7 @@ SENSORS_NEED_SETRATE_ON_ENABLE := true
 USE_ALL_OPTIMIZED_STRING_FUNCS := true
 
 # SELinux policies
-HAVE_SELINUX := true
+HAVE_SELINUX := false
 
 
 ifeq ($(HAVE_SELINUX),true)
