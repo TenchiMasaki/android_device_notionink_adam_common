@@ -26,7 +26,7 @@ on init
     export EXTERNAL_STORAGE /mnt/shell/emulated/0
     export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
     #export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-    #export EMULATED_STORAGE_TARGET /mnt/shell/emulated
+    #export EMULATED_STORAGE_TARGET /storage/emulated
 
     # for backwards compatibility
     symlink /mnt/shell/emulated/0 /sdcard
@@ -94,7 +94,7 @@ on fs
     setprop ro.crypto.fuse_sdcard true
 #    setprop ro.crypto.umount_sd false
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
-#    setprop sys.usb.config ptp,adb
+    setprop sys.usb.config mtp,adb
 
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
@@ -285,17 +285,17 @@ on boot
     write /sys/block/mmcblk1/queue/read_ahead_kb 1024
 
 # Set I/O scheduler noop deadline cfq sio bfq row
-    write /sys/block/mmcblk0/queue/scheduler row
-    write /sys/block/mmcblk1/queue/scheduler row
-    write /sys/block/mtdblock3/queue/scheduler row
-    write /sys/block/mtdblock4/queue/scheduler row
+    write /sys/block/mmcblk0/queue/scheduler sio
+    write /sys/block/mmcblk1/queue/scheduler sio
+    write /sys/block/mtdblock3/queue/scheduler sio
+    write /sys/block/mtdblock4/queue/scheduler sio
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
     chmod 0666 /data/misc/wminput/connected
     
 # Set the SELinux system-wide enforcing status
-    #setenforce 1
+    setenforce 0
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only

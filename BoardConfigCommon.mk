@@ -75,6 +75,9 @@ TARGET_KERNEL_SOURCE := kernel/notionink/adam
 TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
+#TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
+#TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
+#TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 
