@@ -34,11 +34,17 @@ PRODUCT_LOCALES += mdpi
 
 # Dalvik
 # DONT_INSTALL_DEX_FILES := true
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.dexopt-flags=m=y,v=n,o=a
+#m=y
+
+# Decrease VM Heap Size
 #PRODUCT_PROPERTY_OVERRIDES += \
-#    dalvik.vm.dexopt-data-only=1
+#    dalvik.vm.heapgrowthlimit=128m \
+#    dalvik.vm.heapsize=256m \
+#    dalvik.vm.dexopt-data-only=1 \
 #    dalvik.vm.heaptargetutilization=0.25 \
 #    dalvik.vm.jit.codecachesize=0 \
-
 
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
@@ -72,6 +78,10 @@ PRODUCT_COPY_FILES += \
 # Touchscreen
 PRODUCT_COPY_FILES += \
     device/notionink/adam_common/files/at168_touch.idc:system/usr/idc/at168_touch.idc
+
+# GPIO Keys
+PRODUCT_COPY_FILES += \
+    device/notionink/adam_common/files/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
 
 # GPIO Keys
 PRODUCT_COPY_FILES += \
@@ -150,8 +160,8 @@ PRODUCT_PACKAGES += \
     libwebcore
 
 # Webkit (classic webview provider)
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.webview.provider=classic
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    persist.webview.provider=classic
 
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -162,6 +172,10 @@ PRODUCT_PACKAGES += \
 	WebViewDream \
 	PhotoTable \
 	libwebkit
+
+# Sensor daemon
+PRODUCT_PACKAGES += \
+       g5sensord
 
 # These are the hardware-specific feature permissions
 PRODUCT_COPY_FILES += \
@@ -188,17 +202,19 @@ PRODUCT_COPY_FILES += \
 #    ro.boot.selinux=disabled \
 #    ro.build.selinux=0
 
+# start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
+	persist.sys.usb.config=mtp \
 	ro.secure=0 \
-	ro.adb.secure=0
+	ro.adb.secure=0 \
+	persist.fuse_sdcard=true
 
 PRODUCT_CHARACTERISTICS := tablet
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
 PRODUCT_PACKAGES += \
-	com.android.future.usb.accessory \
-	libnetcmdiface 
+	libnetcmdiface
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
@@ -206,7 +222,7 @@ PRODUCT_PACKAGES += \
         make_ext4fs \
         l2ping \
         hcitool \
-        bttest 
+        bttest
 
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
