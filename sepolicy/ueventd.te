@@ -1,0 +1,2 @@
+allow ueventd sysfs_devices_tegradc:dir { read open search write };
+allow ueventd sysfs_devices_tegradc:file { read open write };
