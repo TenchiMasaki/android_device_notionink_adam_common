@@ -5,7 +5,7 @@ on early-init
 
 on init
     chmod 777 /storage
-    chown system sdcard_r /storage
+    chown system sdcard_rw /storage
 
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
@@ -126,13 +126,13 @@ on boot
 # bluetooth permissions
     chmod 0660 /dev/ttyHS2
     chown bluetooth net_bt_stack /dev/ttyHS2
-    chmod 0660 /sys/class/rfkill/rfkill0/state
-    chmod 0660 /sys/class/rfkill/rfkill0/type
-    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
-    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
-    restorecon /sys/class/rfkill/rfkill0/state
-    restorecon /sys/class/rfkill/rfkill0/type
-    write /sys/class/rfkill/rfkill0/state 0
+    chmod 0660 /sys/class/rfkill/rfkill1/state
+    chmod 0660 /sys/class/rfkill/rfkill1/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/type
+    restorecon /sys/class/rfkill/rfkill1/state
+    restorecon /sys/class/rfkill/rfkill1/type
+    write /sys/class/rfkill/rfkill1/state 0
     symlink /system/lib/hw/wlan/bcm4329B1.hcd /data/BCM4329B1.hcd
     symlink /system/lib/hw/wlan/bcm4329B1.hcd /data/bcm4329B1.hcd
     chmod 0777 /data/bcm4329B1.hcd
@@ -206,11 +206,11 @@ on boot
 
 # Power management settings
 
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1600000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1600000
-    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
+#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
+#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
+#    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
     
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
     write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
@@ -285,10 +285,10 @@ on boot
     write /sys/block/mmcblk1/queue/read_ahead_kb 1024
 
 # Set I/O scheduler noop deadline cfq sio bfq row
-    write /sys/block/mmcblk0/queue/scheduler sio
-    write /sys/block/mmcblk1/queue/scheduler sio
-    write /sys/block/mtdblock3/queue/scheduler sio
-    write /sys/block/mtdblock4/queue/scheduler sio
+    write /sys/block/mmcblk0/queue/scheduler noop
+    write /sys/block/mmcblk1/queue/scheduler noop
+    write /sys/block/mtdblock3/queue/scheduler noop
+    write /sys/block/mtdblock4/queue/scheduler noop
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
