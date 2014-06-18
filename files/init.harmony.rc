@@ -5,7 +5,7 @@ on early-init
 
 on init
     chmod 777 /storage
-    chown system sdcard_r /storage
+    chown system sdcard_rw /storage
 
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
@@ -49,8 +49,8 @@ on init
     export BUGREPORT_READ_PATH /storage/sdcard0
 
 on early-boot
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor ondemand
     restorecon /sys/devices/system/cpu
     restorecon /sys/devices/system/cpu/cpu0
     restorecon /sys/devices/system/cpu/cpu1
@@ -80,6 +80,10 @@ on early-boot
     restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
     restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
     restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+    
 
 on fs
     mount_all /fstab.harmony
@@ -90,6 +94,7 @@ on fs
     setprop ro.crypto.fuse_sdcard true
 #    setprop ro.crypto.umount_sd false
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
+    setprop sys.usb.config mtp,adb
 
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
@@ -121,13 +126,13 @@ on boot
 # bluetooth permissions
     chmod 0660 /dev/ttyHS2
     chown bluetooth net_bt_stack /dev/ttyHS2
-    chmod 0660 /sys/class/rfkill/rfkill0/state
-    chmod 0660 /sys/class/rfkill/rfkill0/type
-    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
-    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
-    restorecon /sys/class/rfkill/rfkill0/state
-    restorecon /sys/class/rfkill/rfkill0/type
-    write /sys/class/rfkill/rfkill0/state 0
+    chmod 0660 /sys/class/rfkill/rfkill1/state
+    chmod 0660 /sys/class/rfkill/rfkill1/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill1/type
+    restorecon /sys/class/rfkill/rfkill1/state
+    restorecon /sys/class/rfkill/rfkill1/type
+    write /sys/class/rfkill/rfkill1/state 0
     symlink /system/lib/hw/wlan/bcm4329B1.hcd /data/BCM4329B1.hcd
     symlink /system/lib/hw/wlan/bcm4329B1.hcd /data/bcm4329B1.hcd
     chmod 0777 /data/bcm4329B1.hcd
@@ -191,6 +196,10 @@ on boot
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_rate
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
     chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+    chmod 664 /sys/bus/iio/devices/device0/proxim_ir
+    chown 666 /dev/mmc31xx
+    chown 666 /dev/ecompass_ctrl
+    chown 666 /sys/devices/platform/lis3lv02d/position
 
 # power
     chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
@@ -205,7 +214,7 @@ on boot
     
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
     write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
-    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 0
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
 
     # sleep freeze workaround
     write /sys/module/cpuidle/parameters/lp2_in_idle 1
@@ -242,8 +251,10 @@ on boot
 # Define TCP buffer sizes for various networks
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.wifi    65535,256000,512000,65535,128000,512000
-    setprop net.tcp.buffersize.lte     65535,256000,512000,65535,128000,512000
+    setprop net.tcp.buffersize.wifi    524288,1048576,2097152,262144,524288,1048576
+    setprop net.tcp.buffersize.lte     524288,1048576,2560000,262144,524288,1220608
+#    setprop net.tcp.buffersize.wifi    65535,256000,512000,65535,128000,512000
+#    setprop net.tcp.buffersize.lte     65535,256000,512000,65535,128000,512000
     setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.hspa    4092,87380,704512,4096,16384,262144
     setprop net.tcp.buffersize.hsupa   4092,87380,704512,4096,16384,262144
@@ -274,17 +285,17 @@ on boot
     write /sys/block/mmcblk1/queue/read_ahead_kb 1024
 
 # Set I/O scheduler noop deadline cfq sio bfq row
-    write /sys/block/mmcblk0/queue/scheduler row
-    write /sys/block/mmcblk1/queue/scheduler row
-    write /sys/block/mtdblock3/queue/scheduler row
-    write /sys/block/mtdblock4/queue/scheduler row
+    write /sys/block/mmcblk0/queue/scheduler noop
+    write /sys/block/mmcblk1/queue/scheduler noop
+    write /sys/block/mtdblock3/queue/scheduler noop
+    write /sys/block/mtdblock4/queue/scheduler noop
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
     chmod 0666 /data/misc/wminput/connected
     
 # Set the SELinux system-wide enforcing status
-    setenforce 1
+    setenforce 0
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
@@ -436,6 +447,13 @@ on property:vold.decrypt=trigger_restart_framework
 #on property:net.netdump.enable=0
 #    stop netdump-service
 
+# G5Sensor daemon for ecompass
+service g5sensord /system/bin/g5sensord
+    class main
+#    user system
+#    group misc
+    oneshot
+
 # 3G library selection
 service wwlanselect /system/bin/sh /system/bin/wwlan_select.sh
     disabled
@@ -481,3 +499,5 @@ on property:init.svc.bootanim=stopped
 
 on property:init.svc.vold=running
     start adam_preboot
+#    start g5sensord
+

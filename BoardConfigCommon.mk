@@ -19,6 +19,8 @@
 
 BOARD_ADAM := true
 
+TARGET_ARCH_LOWMEM := true
+
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
@@ -50,8 +52,10 @@ TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := generic
+ARM_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
+#TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
 # Compiler Optimization - This is a @codefireX specific flag to use -O3 everywhere.
 ARCH_ARM_HIGH_OPTIMIZATION := true
@@ -67,12 +71,15 @@ BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 
 # Kernel   
-TARGET_KERNEL_SOURCE := kernel/notionink/adam
-TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
-TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
-TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+TARGET_KERNEL_CONFIG := tegra_adam_defconfig
+TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
+TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
+#TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
+#TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
+#TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
+TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 #device/notionink/adam_common/kernel
 
 BOARD_KERNEL_BASE := 0x10000000
@@ -120,8 +127,8 @@ TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 
-MAX_EGL_CACHE_KEY_SIZE := 4096
-MAX_EGL_CACHE_SIZE := 2146304
+#MAX_EGL_CACHE_KEY_SIZE := 4096
+#MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # display
@@ -195,11 +202,11 @@ COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.harmony
 
 # Javascript, Browser and Webkit
-WITH_JIT                := true
-ENABLE_JSC_JIT          := true
-JS_ENGINE               := v8
-HTTP                    := chrome
-TARGET_FORCE_CPU_UPLOAD := true
+#WITH_JIT                := true
+#ENABLE_JSC_JIT          := true
+#JS_ENGINE               := v8
+#HTTP                    := chrome
+#TARGET_FORCE_CPU_UPLOAD := true
 
 # ClamAV "ramdisk-recovery.img: Andr.Exploit.Ratc FOUND"
 TW_EXCLUDE_SUPERSU      := true
@@ -216,7 +223,7 @@ RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
 TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
-# Large fonts
+# Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/notionink/adam_common/recovery/recovery_keys.c
@@ -258,6 +265,7 @@ BOARD_SEPOLICY_UNION := \
 	surfaceflinger.te \
 	system_app.te \
 	system.te \
+	ueventd.te \
 	untrusted_app.te \
 	vold.te \
 	wpa_socket.te \
