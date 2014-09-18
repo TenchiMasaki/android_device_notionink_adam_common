@@ -1,95 +1,59 @@
 import init.harmony.usb.rc
-
+#                                    RC mod: ver23y
 on early-init
+    # Set init and its forked children's oom_adj. # RC mod:was -16, default -12
+    #write /proc/1/oom_adj -14
+    write /proc/1/oom_score_adj -930
+    
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    chmod 777 /storage
-    chown system sdcard_r /storage
-
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage/emulated 0555 root root
-
-    #External storage directories
-    # mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard2 0700 media_rw media_rw
-    mkdir /storage/usbdisk0 0000 system system
-    mkdir /mnt/media_rw/usbdisk0 0700 media_rw media_rw
-    mkdir /storage/usbdisk1 0000 system system
-    mkdir /mnt/media_rw/usbdisk1 0700 media_rw media_rw
-
-    # mkdir /storage/sdcard0 0700 root root
-    mkdir /storage/sdcard1 0700 root root
-    mkdir /storage/sdcard2 0700 root root
-
-    export EXTERNAL_STORAGE /storage/emulated/legacy
-    export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
+    export EXTERNAL_STORAGE  /storage/emulated/legacy
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
     export EMULATED_STORAGE_TARGET /storage/emulated
+    export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
+    export PRIMARY_STORAGE  /storage/emulated/legacy   # RC note: gets around issues
+    # Save bugreports as owner
+    export BUGREPORT_WRITE_PATH /storage/emulated/legacy/
+    export BUGREPORT_READ_PATH  /mnt/shell/emulated
+
+    chown system sdcard_rw /storage
+
+    mkdir /mnt/shell/emulated 0755 shell shell
+    mkdir /storage/emulated 0755 media_rw media_rw # 0555 root root
+
+    #External storage directories need read+execute on other group for installing apk
+    mkdir /mnt/media_rw/sdcard1 0755 media_rw media_rw
+    mkdir /mnt/media_rw/sdcard2 0755 media_rw media_rw
+    mkdir /storage/usbdisk0 0755 system system
+    mkdir /mnt/media_rw/usbdisk0 0755 media_rw media_rw
+    mkdir /storage/usbdisk1 0755 system system
+    mkdir /mnt/media_rw/usbdisk1 0755 media_rw media_rw
+    mkdir /storage/sdcard1 0755 media_rw media_rw                # relax perms to allow access
+    mkdir /storage/sdcard2 0755 media_rw media_rw
 
     # for backwards compatibility
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
-
-    symlink /storage/usbdisk0 /mnt/usbdisk0
-    symlink /storage/usbdisk1 /mnt/usbdisk1
-    symlink /storage/usbdisk0 /usbdisk0
-    symlink /storage/usbdisk1 /usbdisk1
     symlink /storage/sdcard1 /internal_sd
     symlink /storage/sdcard1 /mnt/internal_sd
     symlink /storage/sdcard2 /microsd
     symlink /storage/sdcard2 /mnt/microsd
     symlink /storage/sdcard2 /sd-ext
- 
-    # Save bugreports as owner
-    export BUGREPORT_WRITE_PATH /mnt/shell/emulated/0
-    export BUGREPORT_READ_PATH /storage/sdcard0
-
-on early-boot
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    restorecon /sys/devices/system/cpu
-    restorecon /sys/devices/system/cpu/cpu0
-    restorecon /sys/devices/system/cpu/cpu1
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost_factor
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    restorecon /sys/devices/system/cpu/cpufreq/hispeed_freq
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-
+    symlink /storage/usbdisk0 /mnt/usbdisk0
+    symlink /storage/usbdisk0 /usbdisk0
+    symlink /storage/usbdisk1 /mnt/usbdisk1
+    symlink /storage/usbdisk1 /usbdisk1
 on fs
     mount_all /fstab.harmony
     # Mount cache and system yaffs2 partitions here
     mount yaffs2 mtd@cache /cache nosuid nodev
     mount yaffs2 mtd@system /system
 
+    # setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.fuse_sdcard true
-#    setprop ro.crypto.umount_sd false
-    setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
 
 on post-fs
     # Keep rootfs rw since FUSE needs dir creation
@@ -99,20 +63,34 @@ on post-fs-data
     # some apps need access to this
     chmod 777 /mnt/shell
 
+    # Set SELinux security contexts on upgrade or policy update.
+    restorecon /data    # RC not exist: restorecon_recursive
+
+    # we will remap this as /mnt/sdcard with the sdcard fuse tool
+    mkdir /data/media 0775 media_rw media_rw
+    
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
 
+    # Camera calibration                     # RC mod: add 
+    mkdir /data/misc/camera 0770 media media
+
+    # Magnetic calibration
+    mkdir /data/misc/magnetic_calibration 0770 media media
+    # Wiimote connect status
     mkdir /data/misc/wminput 0776 system system
-
-    # we will remap this as /mnt/sdcard with the sdcard fuse tool
-    mkdir /data/media 0777 media_rw media_rw
-    chown media_rw media_rw /data/media
-
+    write /data/misc/wminput/connected 0
+    chmod 0666 /data/misc/wminput/connected
+    
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
 
+on early-boot
+    
+# Set the SELinux system-wide enforcing status  # RC mod: "setenforce 0" BROKE it
+    setenforce 1                                # RC:    1 is implied value?
 
 on boot
 # PQi Permissions
@@ -125,9 +103,9 @@ on boot
     chmod 0660 /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+    write /sys/class/rfkill/rfkill0/state 0
     restorecon /sys/class/rfkill/rfkill0/state
     restorecon /sys/class/rfkill/rfkill0/type
-    write /sys/class/rfkill/rfkill0/state 0
     symlink /system/lib/hw/wlan/bcm4329B1.hcd /data/BCM4329B1.hcd
     symlink /system/lib/hw/wlan/bcm4329B1.hcd /data/bcm4329B1.hcd
     chmod 0777 /data/bcm4329B1.hcd
@@ -138,8 +116,14 @@ on boot
     chown bluetooth net_bt_stack /proc/bluetooth/sleep/lpm
     chown bluetooth net_bt_stack /proc/bluetooth/sleep/btwrite
 
+# InputMethodManagerService                                   # RC mod fix log error
+    mkdir /data/system/inputmethod 0666 system system
+
 # backlight
     chown system system /sys/class/backlight/pwm-backlight/brightness
+
+# Camera power
+    chmod 0666 /sys/devices/platform/tegra_camera.0/power/control
 
 # Sensor
     chmod 666 /dev/tegra_mediaserver
@@ -156,71 +140,30 @@ on boot
     chmod 664 /sys/bus/iio/devices/device0/illuminance0_input
     chmod 664 /sys/bus/iio/devices/device0/lux
     chmod 664 /sys/bus/iio/devices/device0/proximity_raw
-
-# Interactive governor settings
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/
-    chown system system /sys/devices/system/cpu/cpu1/cpufreq/
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
-    
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/hispeed_freq
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-
-# power
-    chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
+    chmod 664 /sys/bus/iio/devices/device0/proxim_ir
+    chown 666 /dev/mmc31xx
+    chown 666 /dev/ecompass_ctrl
+    chown 666 /sys/devices/platform/lis3lv02d/position
 
 # Power management settings
+    chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
 
-#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
-#    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
-#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
-#    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
-#    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
-    
-    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
-    write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
-    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 0
-
-    # sleep freeze workaround
+# sleep freeze workaround # RC: Sets got to deep sleep mode quicker
     write /sys/module/cpuidle/parameters/lp2_in_idle 1
 
-# Interactive governor settings
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost_factor
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boost_factor
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+# Interactive Governor Settings   (write cpufreq before cpu0,cpu1)
+#            ******** Governor Settings Reapplied on Post_Boot **************
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000  #
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1408000 # ** SET 1.4Ghz **
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive # Set Governor
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000  # Same Governor for
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1408000 # both cores
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
+    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2    # file not exist?
+    write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
+    write /sys/devices/system/cpu/cpufreq/interactive/io_is_busy  1
 
 # MBM modem
 # Enable USB auto suspend for MBM devices
@@ -232,6 +175,18 @@ on boot
     chown radio radio /dev/cdc-wdm1
     chmod 0660 /dev/cdc-wdm1
 
+    # ril control auto-suspend                                  # RC addition: ver23
+    chmod 0660 /sys/bus/usb/devices/usb1/power/control
+    chown radio radio /sys/bus/usb/devices/usb1/power/control
+
+    # RC: forces usb devices to resume not reset after sleep, and to not self suspend.
+    write /sys/bus/usb/devices/usb1/power/control on
+    write /sys/class/android_usb/android0/f_rndis/power/control on
+
+    # autosuspend root hubs immediatly after attached devices  # RC note: *USB power setting, use "control" instead*
+    #write /sys/bus/usb/devices/usb1/power/autosuspend_delay_ms 0 # (2000 default)
+    #write /sys/bus/usb/devices/usb2/power/autosuspend_delay_ms 0
+
 # Set NITZ Feature on or off
     setprop mbm.ril.config.nitz yes
 # Enable RIL Fast Dormancy
@@ -240,34 +195,10 @@ on boot
     setprop mbm.ril.config.nci screen
 
 # Define TCP buffer sizes for various networks
-#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.wifi    65535,256000,512000,65535,128000,512000
-    setprop net.tcp.buffersize.lte     65535,256000,512000,65535,128000,512000
-    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.hspa    4092,87380,704512,4096,16384,262144
-    setprop net.tcp.buffersize.hsupa   4092,87380,704512,4096,16384,262144
-    setprop net.tcp.buffersize.hsdpa   4092,87380,704512,4096,16384,110208
-    setprop net.tcp.buffersize.hspap   4092,87380,704512,4096,16384,262144
-    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
-    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
-    setprop net.tcp.buffersize.evdo    4094,87380,262144,4096,16384,262144
-    setprop net.tcp.buffersize.evdo_b  4094,87380,262144,4096,16384,262144
+    # RC: mod  Duplicate code in init.rc
 
-# GPS
-    mkdir /data/gps
-    chown gps system /data/gps
-    chmod 774 /data/gps
-    chown gps system /dev/ttyHS3
-    chmod 0664 /dev/ttyHS3
-    chmod 0666 /sys/devices/platform/smba1006-pm-gps/power_on
-
-# GPS power gpio
-    write /sys/class/gpio/export 171 
-    write /sys/class/gpio/gpio171/value 0
-    write /sys/class/gpio/gpio171/direction out
-    chown gps system /sys/class/gpio/gpio171/value
-    chmod 0664 /sys/class/gpio/gpio171/value
+# Smaller MTU size for VPN
+    write /sys/class/net/wlan0/mtu 1396
 
 # Default Read Ahead value for sdcards
     write /sys/block/mmcblk0/queue/read_ahead_kb 1024
@@ -279,14 +210,34 @@ on boot
     write /sys/block/mtdblock3/queue/scheduler row
     write /sys/block/mtdblock4/queue/scheduler row
 
-# Wiimote connect status
-    write /data/misc/wminput/connected 0
-    chmod 0666 /data/misc/wminput/connected
-    
-# Set the SELinux system-wide enforcing status
-    setenforce 1
+    chown system system /sys/block/mmcblk0/queue/scheduler
+    chmod 0664 /sys/block/mmcblk0/queue/scheduler
+    chown system system /sys/block/mmcblk1/queue/scheduler
+    chmod 0664 /sys/block/mmcblk1/queue/scheduler
+    chown system system /sys/block/mtdblock3/queue/scheduler
+    chmod 0664 /sys/block/mtdblock3/queue/scheduler
+    chown system system /sys/block/mtdblock4/queue/scheduler
+    chmod 0664 /sys/block/mtdblock4/queue/scheduler
 
-# stop ril-daemon if this is a wifi-only device
+# GPS
+    mkdir /data/gps
+    chown gps system /data/gps
+    chmod 774 /data/gps
+    chown gps system /dev/ttyHS3
+    chmod 0664 /dev/ttyHS3
+    chown gps system /sys/devices/platform/smba1006-pm-gps/power_on
+    chmod 0664 /sys/devices/platform/smba1006-pm-gps/power_on
+#   write /sys/devices/platform/smba1006-pm-gps/power_on 1         # RC mod: GPS enable?
+
+# GPS power gpio
+    write /sys/class/gpio/export 171 
+    write /sys/class/gpio/gpio171/value 0
+    write /sys/class/gpio/gpio171/direction out
+    chown gps system /sys/class/gpio/gpio171/value
+    chmod 0664 /sys/class/gpio/gpio171/value
+
+
+# stop ril-daemon if this is a wifi-only device    # RC add: from Slim
 on property:ro.carrier=wifi-only
     stop ril-daemon
 
@@ -387,12 +338,9 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     disabled
     oneshot
 
-# virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard -u 1023 -g 1023 /data/media /mnt/shell/emulated
+# virtual sdcard daemon running as media_rw (1023) not using -d due to access inheritance problems
+service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
     class late_start
-
-# service sdcard0 /system/bin/sdcard -u 1023 -g 1023 /mnt/shell/emulated/0 /storage/sdcard0
-#   class late_start
 
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
@@ -410,31 +358,12 @@ service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/usbdisk1 
     class late_start
     disabled
 
-on property:ro.fuse_sdcard=true
-    start sdcard
-
-# Binding fuse mount point to /storage/emulated/legacy
-#on property:init.svc.sdcard=running
-#    wait /mnt/shell/emulated/0
-#    mount none /mnt/shell/emulated/0 /storage/emulated/legacy bind
-
-# This will make sure that sdcard service starts as late_start.
-on nonencrypted
-    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
-
-on property:vold.decrypt=trigger_restart_framework
-    setprop ro.fuse_sdcard ${persist.fuse_sdcard}
-
-# Enable tcpdump-service
-#service netdump-service /system/xbin/tcpdump -i any -C 5 -p -s 0 -w /sdcard/netdump.cap
-#    user root
-#    disabled
-#
-#on property:net.netdump.enable=1
-#    start netdump-service
-#
-#on property:net.netdump.enable=0
-#    stop netdump-service
+# G5Sensor daemon for ecompass
+#service g5sensord /system/bin/g5sensord
+#    class main
+#    user system
+#    group misc
+#    oneshot
 
 # 3G library selection
 service wwlanselect /system/bin/sh /system/bin/wwlan_select.sh
@@ -462,8 +391,6 @@ on device-removed-/dev/ttyUSB2
 on device-removed-/dev/ttyUSB3
     stop ril-daemon
 
-on property:init.svc.bootanim=stopped
-    start wwlanselect
 
 # Preboot service
 service adam_preboot /system/bin/sh /system/etc/adam_preboot.sh
@@ -471,13 +398,20 @@ service adam_preboot /system/bin/sh /system/etc/adam_preboot.sh
     oneshot
 
 # Postboot service
-service adam_postboot /system/bin/sh /system/etc/adam_postboot.sh
+service adam_postboot /system/bin/sh /sbin/adam_postboot.sh
     user root
     oneshot
 
-on property:init.svc.bootanim=stopped
-    start adam_postboot
-    class_start postbootinit
-
 on property:init.svc.vold=running
     start adam_preboot
+    #start g5sensord
+
+on property:init.svc.bootanim=stopped
+    class_start postbootinit
+    start adam_postboot
+    start wwlanselect
+
+# reload adb on persist-property changes
+on property:persist.sys.usb.config=*
+    restart adam_postboot
+

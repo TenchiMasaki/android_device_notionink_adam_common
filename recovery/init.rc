@@ -4,11 +4,11 @@ on early-init
     start ueventd
 
 on init
-    export PATH /sbin
+    export PATH /sbin:/system/bin
     export LD_LIBRARY_PATH .:/sbin
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
-    export EXTERNAL_STORAGE /sdcard
+    export EXTERNAL_STORAGE /internal_sd
 
     write /sys/devices/platform/pwm-backlight/PQiModeOn 1
 
@@ -52,12 +52,18 @@ on init
 
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 0955
-    write /sys/class/android_usb/android0/idProduct 70b5
+    write /sys/class/android_usb/android0/idProduct 70a9
     write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
-    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
-    setprop service.adb.root 1
+    write /sys/class/android_usb/android0/iSerial ${ro.serial}
+    write /sys/class/android_usb/android0/f_rndis/manufacturer Nvidia
+    write /sys/class/android_usb/android0/f_rndis/vendorID 0955
+    write /sys/class/android_usb/android0/f_rndis/wceis 1
+
+on post-fs-data
+    # ** RC: usb devices resume not reset after sleep, also do not self suspend. write early **
+    write /sys/bus/usb/devices/usb1/power/control on  
 
 on boot
 
@@ -67,6 +73,25 @@ on boot
 
     class_start default
 
+    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+    write /sys/class/android_usb/android0/iSerial ${ro.serial}
+    write /sys/class/android_usb/android0/f_rndis/manufacturer Nvidia
+    write /sys/class/android_usb/android0/f_rndis/vendorID 0955
+    write /sys/class/android_usb/android0/f_rndis/wceis 1
+    
+# Enable USB auto suspend for MBM devices
+    write /sys/bus/usb/devices/2-1/power/autosuspend 3
+    write /sys/bus/usb/devices/2-1/power/control auto
+    write /sys/bus/usb/devices/2-1/power/wakeup enabled    
+
+    # ril control auto-suspend                                  # RC addition: ver23
+    chmod 0660 /sys/bus/usb/devices/usb1/power/control
+    chown radio radio /sys/bus/usb/devices/usb1/power/control
+    write /sys/bus/usb/devices/usb1/power/control on  # RC: devices resumes not resets, not self suspend. apply earlier
+
+    setprop service.adb.root 1
+    
 service ueventd /sbin/ueventd
     critical
 
@@ -90,10 +115,12 @@ on property:service.adb.root=1
 
 on property:sys.storage.ums_enabled=1
     write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idProduct 70b5
     write /sys/class/android_usb/android0/functions mass_storage,adb
     write /sys/class/android_usb/android0/enable 1
 
 on property:sys.storage.ums_enabled=0
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/idProduct 70a9
     write /sys/class/android_usb/android0/enable ${service.adb.root}

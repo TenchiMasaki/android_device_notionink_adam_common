@@ -34,8 +34,8 @@ PRODUCT_LOCALES += mdpi
 
 # Dalvik
 # DONT_INSTALL_DEX_FILES := true
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dexopt-flags=m=y,v=n,o=a
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    dalvik.vm.dexopt-flags=m=y,v=n,o=a
 #m=y
 
 # Decrease VM Heap Size
@@ -49,6 +49,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
+    device/notionink/adam_common/files/init.rc:root/init.rc \
+    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
@@ -56,6 +58,7 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
+    device/notionink/adam_common/files/adam_postboot.sh:root/sbin/adam_postboot.sh \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
@@ -133,7 +136,7 @@ PRODUCT_PACKAGES += \
 	sensors.harmony \
 	lights.harmony \
 	gps.harmony \
-	power.tegra \
+	#power.tegra \
 	camera.tegra #\
 	#hwcomposer.tegra
 
@@ -172,7 +175,7 @@ PRODUCT_PACKAGES += \
 	WebViewDream \
 	PhotoTable \
 	libwebkit
-
+        
 # Sensor daemon
 PRODUCT_PACKAGES += \
        g5sensord
@@ -202,12 +205,18 @@ PRODUCT_COPY_FILES += \
 #    ro.boot.selinux=disabled \
 #    ro.build.selinux=0
 
+#Set default.prop properties for root + mtp
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+persist.sys.usb.config=mtp
+
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
 	ro.secure=0 \
 	ro.adb.secure=0 \
-	persist.fuse_sdcard=true
+	persist.fuse_sdcard=true \
+	ro.serial=0123456789ABCDEF \
+	ro.product.manufacturer=NotionInk \
+	ro.product.model=Notion_Ink_ADAM
 
 PRODUCT_CHARACTERISTICS := tablet
 

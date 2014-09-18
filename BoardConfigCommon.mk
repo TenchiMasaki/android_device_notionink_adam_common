@@ -51,8 +51,8 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := generic
-ARM_ARM_HAVE_NEON := false
+TARGET_CPU_VARIANT := tegra2
+ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
@@ -71,16 +71,16 @@ BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 
 # Kernel   
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
-TARGET_KERNEL_CONFIG := tegra_adam_defconfig
-TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
-TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
-#TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
-#TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
-#TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
+TARGET_KERNEL_SOURCE := kernel/notionink/adam
+#TARGET_KERNEL_CONFIG := tegra_adam_defconfig
+#TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
+#TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
+TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
+TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
+TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
-#device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
