@@ -30,12 +30,12 @@ DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 # uses mdpi artwork where available
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += mdpi
+PRODUCT_LOCALES += en mdpi
 
 # Dalvik
 # DONT_INSTALL_DEX_FILES := true
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dexopt-flags=m=y,v=n,o=a
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    dalvik.vm.dexopt-flags=m=y,v=n,o=a
 #m=y
 
 # Decrease VM Heap Size
@@ -44,6 +44,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 #    dalvik.vm.heapsize=256m \
 #    dalvik.vm.dexopt-data-only=1 \
 #    dalvik.vm.heaptargetutilization=0.25 \
+#    dalvik.vm.jit.codecachesize=0 \
 
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
@@ -55,6 +56,7 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
+    device/notionink/adam_common/files/adam_postboot.sh:root/sbin/adam_postboot.sh \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
@@ -132,8 +134,8 @@ PRODUCT_PACKAGES += \
 	sensors.harmony \
 	lights.harmony \
 	gps.harmony \
-	power.tegra \
-	camera.tegra #\
+	camera.tegra
+	#power.tegra \
 	#hwcomposer.tegra
 
 # These are the OpenMAX IL modules
@@ -159,8 +161,8 @@ PRODUCT_PACKAGES += \
     libwebcore
 
 # Webkit (classic webview provider)
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.webview.provider=classic
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    persist.webview.provider=classic
 
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -197,16 +199,22 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
-PRODUCT_PROPERTY_OVERRIDES += \
+#PRODUCT_PROPERTY_OVERRIDES += \
 #    ro.boot.selinux=disabled \
 #    ro.build.selinux=0
 
+#Set default.prop properties for root + mtp
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+persist.sys.usb.config=mtp
+
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
-	ro.kernel.qemu=1 \
 	ro.secure=0 \
-	ro.adb.secure=0
+	ro.adb.secure=0 \
+	persist.fuse_sdcard=true \
+	ro.serial=0123456789ABCDEF \
+	ro.product.manufacturer=NotionInk \
+	ro.product.model=Notion_Ink_ADAM
 
 PRODUCT_CHARACTERISTICS := tablet
 
