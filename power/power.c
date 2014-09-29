@@ -86,8 +86,8 @@ static void tegra_power_init(struct power_module *module)
                 "30000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
                 "85");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
-		"0");
+    /* sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+		"0"); */
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
 		"1");
 }
@@ -105,8 +105,8 @@ static void tegra_power_set_interactive(struct power_module *module, int on)
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
                 on ? "1" : "0");
 
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
-                on ? "0" : "2");
+    /* sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+                on ? "0" : "2"); */
 
 }
 
