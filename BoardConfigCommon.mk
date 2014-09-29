@@ -19,6 +19,8 @@
 
 BOARD_ADAM := true
 
+TARGET_ARCH_LOWMEM := true
+
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
@@ -50,7 +52,7 @@ TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := tegra2
-ARM_ARM_HAVE_NEON := false
+ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
@@ -70,11 +72,15 @@ TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu
 
 # Kernel   
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
+#TARGET_KERNEL_CONFIG := tegra_adam_defconfig
+#TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
+#TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
 TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -117,12 +123,14 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/notionink/adam_common/blue
 
 # graphics
 BOARD_NEEDS_OLD_HWC_API := true
+# Netflix fix
+BOARD_USES_PROPRIETARY_OMX := TF101
 TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 
-MAX_EGL_CACHE_KEY_SIZE := 4096
-MAX_EGL_CACHE_SIZE := 2146304
+#MAX_EGL_CACHE_KEY_SIZE := 4096
+#MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # display
