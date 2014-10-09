@@ -80,16 +80,19 @@ static void tegra_power_init(struct power_module *module)
 
     /*
      * cpufreq interactive governor: timer 20ms, min sample 100ms,
+     * hispeed 700MHz at load 40%
      */
 
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
                 "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
                 "30000");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load",
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
                 "85");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
-		"0");
+    /* sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+		"0"); */
+    /* sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+		"1"); */
 }
 
 static void tegra_power_set_interactive(struct power_module *module, int on)
@@ -108,11 +111,15 @@ static void tegra_power_set_interactive(struct power_module *module, int on)
      * Lower maximum frequency to minimum when screen is off.  CPU 0 and 1 share a
      * cpufreq policy.
      */
+
     sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
                 on ? max_speed : "216000");
 
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
-                on ? "0" : "2");
+    /* sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+                on ? "1" : "0"); */
+
+    /* sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+                on ? "0" : "2"); */
 
 }
 
@@ -123,7 +130,7 @@ static void tegra_power_hint(struct power_module *module, power_hint_t hint,
     case POWER_HINT_VSYNC:
         break;
     default:
-		break;
+            break;
     }
 }
 

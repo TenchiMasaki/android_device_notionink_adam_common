@@ -106,6 +106,7 @@ extern "C" {
 
 // File to control camera power
 #define CAMERA_POWER	    "/sys/devices/platform/tegra_camera.0/power/control"
+// "/sys/devices/platform/adam-pm-camera/power_on"
 
 
 namespace android {
@@ -325,7 +326,7 @@ status_t CameraHardware::getCameraInfo(int camera_id, struct camera_info* info)
 	info->orientation = 0;
     } else {
 	info->facing = CAMERA_FACING_FRONT;
-	info->orientation = 0;
+	info->orientation = 180;
     }
 
     return NO_ERROR;
@@ -723,7 +724,7 @@ status_t CameraHardware::setParameters(const char* parms)
 	}	
 	
     int w, h;
-
+    params.setPreviewSize(2048, 1536);
     params.getPreviewSize(&w, &h);
     ALOGD("CameraHardware::setParameters: PREVIEW: Size %dx%d, %d fps, format: %s", w, h, params.getPreviewFrameRate(), params.getPreviewFormat());
 
@@ -823,13 +824,13 @@ void CameraHardware::initDefaultParameters()
     } else {
 	
 		// Get the default preview format
-		pw = camera.getBestPreviewFmt().getWidth();
-		ph = camera.getBestPreviewFmt().getHeight();
-		pfps = camera.getBestPreviewFmt().getFps();
+		pw = 2048; //camera.getBestPreviewFmt().getWidth();
+		ph = 1536; //camera.getBestPreviewFmt().getHeight();
+		pfps = 15; //camera.getBestPreviewFmt().getFps();
 		
 		// Get the default picture format
-		fw = camera.getBestPictureFmt().getWidth();
-		fh = camera.getBestPictureFmt().getHeight();
+		fw = 2048; //camera.getBestPictureFmt().getWidth();
+		fh = 1536; //camera.getBestPictureFmt().getHeight();
 
 		// Get all the available sizes
 		avSizes = camera.getAvailableSizes();
@@ -942,13 +943,14 @@ void CameraHardware::initDefaultParameters()
 	p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FRAME_RATES, fps);
 	p.setPreviewFrameRate( pfps );
 	p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_SIZES, szs);
-	p.setPreviewSize(pw,ph); 
+	p.setPreviewSize(pw,ph);
+	p.set("preview-size", "2048x1536");
 
 	// Video - Supporting yuv422i-yuyv,yuv422sp,yuv420sp and defaulting to yuv420p
     p.set("video-size-values"/*CameraParameters::KEY_SUPPORTED_VIDEO_SIZES*/, szs);
     p.setVideoSize(pw,ph);
     p.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420P);
-    p.set("preferred-preview-size-for-video", "640x480");
+    p.set("preferred-preview-size-for-video", "2048x1536"); // 640x480
 	
 	// supported rotations
 	p.set("rotation-values","0");

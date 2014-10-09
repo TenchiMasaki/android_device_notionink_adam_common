@@ -108,7 +108,10 @@ static int my_abs(int x)
 int V4L2Camera::Init(int width, int height, int fps)
 {
 	ALOGD("V4L2Camera::Init");
-	
+/*	width = 2048;
+	height = 1536;
+	fps = 7;
+*/
 	/* Initialize the capture to the specified width and height */
 	static const struct {
 		int fmt;			/* PixelFormat */
@@ -280,7 +283,7 @@ int V4L2Camera::Init(int width, int height, int fps)
 	memset(&videoIn->params,0,sizeof(videoIn->params));
 	videoIn->params.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	videoIn->params.parm.capture.timeperframe.numerator = 1;
-	videoIn->params.parm.capture.timeperframe.denominator = closest.getFps();
+	videoIn->params.parm.capture.timeperframe.denominator = 15; //closest.getFps();
 
 	/* Set the framerate. If it fails, it wont be fatal */
 	if (ioctl(fd,VIDIOC_S_PARM,&videoIn->params) < 0) 
