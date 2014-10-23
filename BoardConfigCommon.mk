@@ -258,6 +258,7 @@ BOARD_SEPOLICY_UNION := \
 	genfs_contexts \
 	healthd.te \
 	init.te \
+	isolated_app.te \
 	media_app.te \
 	release_app.te \
 	mediaserver.te \

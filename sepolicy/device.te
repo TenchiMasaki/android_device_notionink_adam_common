@@ -5,3 +5,5 @@ type nvhost_writable_device, dev_type, mlstrustedobject;
 type diag_device, dev_type;
 type rfkill_device, dev_type, mlstrustedobject;
 type sensors_block_device, dev_type;
+allow gps_device sysfs:filesystem associate;
+
