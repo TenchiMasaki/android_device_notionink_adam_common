@@ -321,6 +321,10 @@ status_t CameraHardware::getCameraInfo(int camera_id, struct camera_info* info)
 {
     ALOGD("CameraHardware::getCameraInfo");
 
+    if (!info) {
+    	return 1;
+    }
+
     if (camera_id == 0) {
 	info->facing = CAMERA_FACING_BACK;
 	info->orientation = 0;
@@ -479,7 +483,7 @@ status_t CameraHardware::startPreviewLocked()
 	
 	int fps = mParameters.getPreviewFrameRate();
 	
-    ALOGD("CameraHardware::startPreviewLocked: Open, %dx%d", width, height);
+    ALOGD("CameraHardware::startPreviewLocked: Open, %dx%d fps: %d", width, height, fps);
 
     status_t ret = camera.Open(videodevice);
 	if (ret != NO_ERROR) {
@@ -724,7 +728,7 @@ status_t CameraHardware::setParameters(const char* parms)
 	}	
 	
     int w, h;
-    params.setPreviewSize(2048, 1536);
+
     params.getPreviewSize(&w, &h);
     ALOGD("CameraHardware::setParameters: PREVIEW: Size %dx%d, %d fps, format: %s", w, h, params.getPreviewFrameRate(), params.getPreviewFormat());
 
@@ -824,13 +828,13 @@ void CameraHardware::initDefaultParameters()
     } else {
 	
 		// Get the default preview format
-		pw = 2048; //camera.getBestPreviewFmt().getWidth();
-		ph = 1536; //camera.getBestPreviewFmt().getHeight();
-		pfps = 15; //camera.getBestPreviewFmt().getFps();
+		pw = camera.getBestPreviewFmt().getWidth();
+		ph = camera.getBestPreviewFmt().getHeight();
+		pfps = camera.getBestPreviewFmt().getFps();
 		
 		// Get the default picture format
-		fw = 2048; //camera.getBestPictureFmt().getWidth();
-		fh = 1536; //camera.getBestPictureFmt().getHeight();
+		fw = camera.getBestPictureFmt().getWidth();
+		fh = camera.getBestPictureFmt().getHeight();
 
 		// Get all the available sizes
 		avSizes = camera.getAvailableSizes();
@@ -943,14 +947,13 @@ void CameraHardware::initDefaultParameters()
 	p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FRAME_RATES, fps);
 	p.setPreviewFrameRate( pfps );
 	p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_SIZES, szs);
-	p.setPreviewSize(pw,ph);
-	p.set("preview-size", "2048x1536");
+	p.setPreviewSize(pw,ph); 
 
 	// Video - Supporting yuv422i-yuyv,yuv422sp,yuv420sp and defaulting to yuv420p
     p.set("video-size-values"/*CameraParameters::KEY_SUPPORTED_VIDEO_SIZES*/, szs);
     p.setVideoSize(pw,ph);
     p.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420P);
-    p.set("preferred-preview-size-for-video", "2048x1536"); // 640x480
+    p.set("preferred-preview-size-for-video", "640x480");
 	
 	// supported rotations
 	p.set("rotation-values","0");
@@ -1079,7 +1082,7 @@ void CameraHardware::initHeapLocked()
 			ALOGE("Unable to allocate memory for RawPreview");
 		}
 		
-        ALOGD("CameraHardware::initHeapLocked: Raw preview heap allocated");
+        ALOGD("CameraHardware::initHeapLocked: Raw preview heap %d", mRawPreviewFrameSize);
     }
 	
 
@@ -1123,7 +1126,7 @@ void CameraHardware::initHeapLocked()
 		
 		how_preview_big = size;
 	}
-	
+
     if (how_preview_big != mPreviewFrameSize) {
 
 		// Stop the preview thread if needed
@@ -1153,7 +1156,7 @@ void CameraHardware::initHeapLocked()
 			ALOGE("Unable to allocate memory for Preview");
 		}
         
-        ALOGD("CameraHardware::initHeapLocked: preview heap allocated");
+        ALOGD("CameraHardware::initHeapLocked: preview heap allocated %d",mPreviewFrameSize);
     }
 	
 	int how_recording_big = 0;
@@ -1224,7 +1227,7 @@ void CameraHardware::initHeapLocked()
 			ALOGE("Unable to allocate memory for Recording");
 		}
 	
-        ALOGD("CameraHardware::initHeapLocked: recording heap allocated");
+        ALOGD("CameraHardware::initHeapLocked: recording heap allocated %d", mRecordingFrameSize);
     }
 
 	int how_picture_big = picture_width * picture_height << 1; // Raw picture heap always in YUYV
@@ -1250,7 +1253,7 @@ void CameraHardware::initHeapLocked()
 			ALOGE("Unable to allocate memory for RawPicture");
 		}
 	
-        ALOGD("CameraHardware::initHeapLocked: Raw picture heap allocated");
+        ALOGD("CameraHardware::initHeapLocked: Raw picture heap allocated %d", mRawPictureBufferSize);
     }
 
 	int how_jpeg_big = picture_width * picture_height << 1; // jpeg maximum size
@@ -1272,7 +1275,7 @@ void CameraHardware::initHeapLocked()
 			ALOGE("Unable to allocate memory for RawPicture");
 		}
 
-        ALOGD("CameraHardware::initHeapLocked: Jpeg picture heap allocated");
+        ALOGD("CameraHardware::initHeapLocked: Jpeg picture heap allocated %d", how_jpeg_big);
     }
 
 	// Don't forget to restart the preview if it was stopped...
@@ -1703,7 +1706,7 @@ int CameraHardware::pictureThread()
 			
 			ALOGD("CameraHardware::pictureThread: waiting until camera picture stabilizes...");
 	
-			int maxFramesToWait = 8;
+			int maxFramesToWait = 64; //8;
 			int luminanceStableFor = 0;
 			int prevLuminance = 0;
 			int prevDif = -1;
