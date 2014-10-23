@@ -8,7 +8,6 @@ import /init.environ.rc
 import /init.usb.rc
 import /init.${ro.hardware}.rc
 import /init.trace.rc
-import /init.carrier.rc
 
 on early-init
     # Set init and its forked children's oom_adj. # RC mod:was -16, default -12, -930
@@ -371,7 +370,7 @@ on boot
 
 # Define TCP buffer sizes for various networks
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.default 4096,87380,704512,4096,16384,110208
     setprop net.tcp.buffersize.wifi    524288,1048576,2097152,262144,524288,1048576
     setprop net.tcp.buffersize.lte     524288,1048576,2097152,262144,524288,1048576
     setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
@@ -394,8 +393,12 @@ on boot
     setprop net.tcp.default_init_rwnd 60
 
 
+# Set these so we can remotely update SELinux policy
+    chown system system /sys/fs/selinux/load
+    chown system system /sys/fs/selinux/enforce
+
 # Set this property so surfaceflinger is not started by system_init # **RC ADD try ...ok
-    setprop system_init.startsurfaceflinger 0
+#    setprop system_init.startsurfaceflinger 0
 
     class_start core
     class_start main

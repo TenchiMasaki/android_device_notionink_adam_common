@@ -49,9 +49,6 @@ PRODUCT_LOCALES += en mdpi
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    device/notionink/adam_common/files/init.rc:root/init.rc \
-    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
-    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
@@ -60,6 +57,12 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/adam_postboot.sh:root/sbin/adam_postboot.sh \
+    device/notionink/adam_common/files/init.rc:root/init.rc \
+    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
+    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
+#    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
+#    device/notionink/adam_common/files/file_contexts:root/file_contexts \
+#    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
@@ -164,8 +167,8 @@ PRODUCT_PACKAGES += \
     libwebcore
 
 # Webkit (classic webview provider)
-#PRODUCT_PROPERTY_OVERRIDES += \
-#    persist.webview.provider=classic
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.webview.provider=classic
 
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -206,12 +209,9 @@ PRODUCT_COPY_FILES += \
 #    ro.boot.selinux=disabled \
 #    ro.build.selinux=0
 
-#Set default.prop properties for root + mtp
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-persist.sys.usb.config=mtp
-
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
+	persist.sys.usb.config=mtp \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \

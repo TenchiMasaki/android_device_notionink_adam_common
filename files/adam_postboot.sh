@@ -1,6 +1,9 @@
 #!/system/bin/sh
 #                                     # RCmod: 24/8/14
-# /system/etc/adam_postboot.sh   
+# /sbin/adam_postboot.sh
+# reset vendorID to correct value for adb.
+echo 0955 > /sys/class/android_usb/android0/f_rndis/vendorID
+
 # reconfigure adb on persist-property changes, but only after boot completed.
 # also lets wait 2 secs and try again..
 for i in 1 2 3 ;do
