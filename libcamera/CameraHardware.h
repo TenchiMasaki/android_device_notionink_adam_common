@@ -169,6 +169,10 @@ public:
 	
 	status_t dumpCamera(int fd);
 
+    int getWidthFPS(int width);
+
+    static int vflip;
+
 private:
 
 	bool PowerOn();
@@ -293,7 +297,7 @@ private:
     // only used from PreviewThread
     int                 mCurrentPreviewFrame;
     int                 mCurrentRecordingFrame;
-	
+    
     /****************************************************************************
      * Camera API callbacks as defined by camera_device_ops structure.
      * See hardware/libhardware/include/hardware/camera.h for information on

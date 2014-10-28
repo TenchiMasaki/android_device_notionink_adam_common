@@ -112,6 +112,8 @@ extern "C" {
 namespace android {
 
 char videodevice[64];
+int devnum;
+int CameraHardware::vflip = 0;
 
 bool CameraHardware::PowerOn()
 {
@@ -212,6 +214,8 @@ CameraHardware::CameraHardware(const hw_module_t* module, const char* videodev)
      */
     ALOGI("Using camera %s", videodev);
     strncpy(videodevice, videodev, sizeof(videodevice));
+	devnum = atoi(&videodevice[strlen(videodevice)-1]);
+	ALOGI("Using camera %d", devnum);
 
     /* Common header */
     common.tag = HARDWARE_DEVICE_TAG;
@@ -269,7 +273,7 @@ CameraHardware::~CameraHardware()
 
 bool CameraHardware::NegotiatePreviewFormat(struct preview_stream_ops* win)
 {
-	ALOGD("CameraHardware::NegotiatePreviewFormat");
+	ALOGD("CameraHardware::NegotiatePreviewFormat record: %d msg: %d", mRecordingEnabled, mMsgEnabled);
 	
 	// Get the preview size... If we are recording, use the recording video size instead of the preview size
 	int pw, ph;
@@ -322,16 +326,20 @@ status_t CameraHardware::getCameraInfo(int camera_id, struct camera_info* info)
     ALOGD("CameraHardware::getCameraInfo");
 
     if (!info) {
-    	return 1;
+    	return -1;
     }
 
     if (camera_id == 0) {
-	info->facing = CAMERA_FACING_BACK;
-	info->orientation = 0;
+		info->facing = CAMERA_FACING_BACK;
+		info->orientation = 0;
+		CameraHardware::vflip = 0;
     } else {
-	info->facing = CAMERA_FACING_FRONT;
-	info->orientation = 180;
+		info->facing = CAMERA_FACING_FRONT;
+		info->orientation = 0;
+		CameraHardware::vflip = 1;
     }
+	
+    ALOGD("CameraHardware::getCameraInfo vflip: %d", CameraHardware::vflip);
 
     return NO_ERROR;
 }
@@ -463,6 +471,33 @@ bool CameraHardware::PreviewThread::threadLoop()
 	return true;
 }
 
+int CameraHardware::getWidthFPS(int width) {
+	int fps = 0;
+
+	struct width_fps {
+		int width;
+		int fps;
+	};
+
+	struct width_fps w_fps[] = {
+		{2048, 15},
+		{1280, 20},
+		{800, 20},
+		{640, 30},
+		{352, 30},
+		{320, 30},
+		{176, 30}
+	};
+
+	for (int i = 0; i < sizeof w_fps; i++) {
+		if (width == w_fps[i].width) {
+			fps = w_fps[i].fps;
+			break;
+		}
+	}
+	return fps;
+}
+
 status_t CameraHardware::startPreviewLocked()
 {
     ALOGD("CameraHardware::startPreviewLocked");
@@ -477,8 +512,11 @@ status_t CameraHardware::startPreviewLocked()
 	// If we are recording, use the recording video size instead of the preview size
 	if (mRecordingEnabled && mMsgEnabled & CAMERA_MSG_VIDEO_FRAME) {
 		mParameters.getVideoSize(&width, &height);
+		mParameters.setPreviewSize(width, height);
+		mParameters.setPreviewFrameRate(getWidthFPS(width));
 	} else {
 		mParameters.getPreviewSize(&width, &height);
+		mParameters.setPreviewFrameRate(getWidthFPS(width));
 	}
 	
 	int fps = mParameters.getPreviewFrameRate();
@@ -498,7 +536,11 @@ status_t CameraHardware::startPreviewLocked()
 		ALOGE("Failed to setup streaming");
 		return ret;
 	}
-	
+
+	camera.setCapMode(mRecordingEnabled? CAP_MODE_VIDEO : CAP_MODE_PREVIEW);
+	camera.setVFlip(vflip);
+
+
 	/* Retrieve the real size being used */
 	camera.getSize(width, height);
 	
@@ -729,6 +771,7 @@ status_t CameraHardware::setParameters(const char* parms)
 	
     int w, h;
 
+	//if (devnum == 0) params.setPreviewSize(2048, 1536);
     params.getPreviewSize(&w, &h);
     ALOGD("CameraHardware::setParameters: PREVIEW: Size %dx%d, %d fps, format: %s", w, h, params.getPreviewFrameRate(), params.getPreviewFormat());
 
@@ -1690,11 +1733,14 @@ int CameraHardware::pictureThread()
 
 		if (camera.Open(videodevice) == NO_ERROR) {
 			camera.Init(w, h, 1);
-			
+			camera.setCapMode(CAP_MODE_PICTURE);
+			camera.setVFlip(vflip);
 			/* Retrieve the real size being used */
 			camera.getSize(w,h);
 
-			ALOGD("CameraHardware::pictureThread: effective size: %dx%d",w, h);
+			int fps = getWidthFPS(w);
+
+			ALOGD("CameraHardware::pictureThread: dev: %s effective size: %dx%d fps: %d", videodevice, w, h, fps);
 
 			/* Store it as the picture size to use */
 			mParameters.setPictureSize(w, h);
@@ -1706,12 +1752,12 @@ int CameraHardware::pictureThread()
 			
 			ALOGD("CameraHardware::pictureThread: waiting until camera picture stabilizes...");
 	
-			int maxFramesToWait = 64; //8;
+			int maxFramesToWait = fps * 15; //8;
 			int luminanceStableFor = 0;
 			int prevLuminance = 0;
 			int prevDif = -1;
 			int stride = w << 1;
-			int thresh = (w >> 4) * (h >> 4) * 12; // 5% of full range
+			int thresh = (w >> 4) * (h >> 4) * 6; // *12 5% of full range
 	
 			while (maxFramesToWait > 0 && luminanceStableFor < 4) {
 				uint8_t* ptr = (uint8_t *)mRawBuffer;
