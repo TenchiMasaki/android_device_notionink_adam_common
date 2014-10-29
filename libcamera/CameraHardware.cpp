@@ -335,7 +335,7 @@ status_t CameraHardware::getCameraInfo(int camera_id, struct camera_info* info)
 		CameraHardware::vflip = 0;
     } else {
 		info->facing = CAMERA_FACING_FRONT;
-		info->orientation = 0;
+		info->orientation = 180;
 		CameraHardware::vflip = 1;
     }
 	
@@ -538,8 +538,6 @@ status_t CameraHardware::startPreviewLocked()
 	}
 
 	camera.setCapMode(mRecordingEnabled? CAP_MODE_VIDEO : CAP_MODE_PREVIEW);
-	camera.setVFlip(vflip);
-
 
 	/* Retrieve the real size being used */
 	camera.getSize(width, height);
@@ -741,7 +739,17 @@ status_t CameraHardware::setParameters(const char* parms)
     params.unflatten(str8_param);
 	
     Mutex::Autolock lock(mLock);
+    int w, h;	
+
+	const char *s = params.get("camera-mode");
 	
+	ALOGD("camera-mode: %s devnum: %d parms: %s", s == NULL? "": s, devnum, parms);
+	
+	if (s != NULL && devnum == 0) {
+		params.getPictureSize(&w, &h);
+		params.setPreviewSize(w, h);
+	}
+
 	// If no changes, trivially accept it!
 	if (params.flatten() == mParameters.flatten()) {
 		ALOGD("Trivially accept it. No changes detected");
@@ -769,8 +777,6 @@ status_t CameraHardware::setParameters(const char* parms)
         return BAD_VALUE;
 	}	
 	
-    int w, h;
-
 	//if (devnum == 0) params.setPreviewSize(2048, 1536);
     params.getPreviewSize(&w, &h);
     ALOGD("CameraHardware::setParameters: PREVIEW: Size %dx%d, %d fps, format: %s", w, h, params.getPreviewFrameRate(), params.getPreviewFormat());
@@ -787,9 +793,7 @@ status_t CameraHardware::setParameters(const char* parms)
 	// Recreate the heaps if toggling recording changes the raw preview size
 	//  and also restart the preview so we use the new size if needed
 	initHeapLocked();
-	
     ALOGD("CameraHardware::setParameters: OK");
-
     return NO_ERROR;
 }
 
