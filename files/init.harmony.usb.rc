@@ -1,21 +1,10 @@
-#                                      RCver: y2
+#                                      RCmod: ver24c
 
-on init
-    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
-    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
-    write /sys/class/android_usb/android0/iSerial ${ro.serial}
-    write /sys/class/android_usb/android0/f_rndis/manufacturer Nvidia
-    write /sys/class/android_usb/android0/f_rndis/vendorID 0955
-    write /sys/class/android_usb/android0/f_rndis/wceis 1
-
-on boot
-    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
-    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
-    write /sys/class/android_usb/android0/iSerial ${ro.serial}
-    write /sys/class/android_usb/android0/f_rndis/manufacturer Nvidia
-    write /sys/class/android_usb/android0/f_rndis/vendorID 0955
-    write /sys/class/android_usb/android0/f_rndis/wceis 1
-
+on property:service.adb.root=1
+    write /sys/class/android_usb/android0/enable 0
+    restart adbd
+    write /sys/class/android_usb/android0/enable 1
+    
 # adb only USB configuration
 # This should only be used during device bringup
 # and as a fallback if the USB manager fails to set a standard configuration

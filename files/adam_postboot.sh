@@ -1,6 +1,6 @@
 #!/system/bin/sh
 #                                     # RCmod: 24/8/14
-# /sbin/adam_postboot.sh
+# /system/etc/adam_postboot.sh
 # reset vendorID to correct value for adb.
 echo 0955 > /sys/class/android_usb/android0/f_rndis/vendorID
 
@@ -15,6 +15,6 @@ for i in 1 2 3 ;do
       ($newargs)
     fi
   fi
-sleep 2
+  sleep 2
 done
 

@@ -1,6 +1,6 @@
 # Copyright (C) 2012 The Android Open Source Project
 #
-# USB configuration common for all android devices   # RC mod: ver23 y2
+# USB configuration common for all android devices   # RC mod: ver24c
 #
 on post-fs-data
     chown system system /sys/class/android_usb/android0/f_mass_storage/lun/file
@@ -33,3 +33,4 @@ on property:sys.usb.config=adb
 # Used to set USB configuration at boot and to switch the configuration
 #on property:persist.sys.usb.config=*
 #    setprop sys.usb.config ${persist.sys.usb.config}
+

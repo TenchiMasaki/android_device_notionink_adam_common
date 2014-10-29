@@ -10,9 +10,9 @@ import /init.${ro.hardware}.rc
 import /init.trace.rc
 
 on early-init
-    # Set init and its forked children's oom_adj. # RC mod:was -16, default -12, -930
-    write /proc/1/oom_adj -12
-    write /proc/1/oom_score_adj -12
+    # Set init and its forked children's oom_adj. # RC mod:was -16, default -12
+    #write /proc/1/oom_adj -14
+    write /proc/1/oom_score_adj -930
 
     # Set the security context for the init process.
     # This should occur before anything else (e.g. ueventd) is started.
@@ -364,10 +364,6 @@ on boot
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
 
-# Set these so we can remotely update SELinux policy
-    chown system system /sys/fs/selinux/load
-    chown system system /sys/fs/selinux/enforce
-
 # Define TCP buffer sizes for various networks
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,704512,4096,16384,110208
@@ -398,7 +394,7 @@ on boot
     chown system system /sys/fs/selinux/enforce
 
 # Set this property so surfaceflinger is not started by system_init # **RC ADD try ...ok
-#    setprop system_init.startsurfaceflinger 0
+    setprop system_init.startsurfaceflinger 0
 
     class_start core
     class_start main
