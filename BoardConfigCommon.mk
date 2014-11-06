@@ -51,7 +51,7 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := tegra2
+TARGET_CPU_VARIANT := generic
 ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
@@ -128,6 +128,7 @@ BOARD_USES_PROPRIETARY_OMX := TF101
 TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
+BOARD_USE_LEGACY_UI := true
 
 #MAX_EGL_CACHE_KEY_SIZE := 4096
 #MAX_EGL_CACHE_SIZE := 2146304
@@ -248,26 +249,28 @@ ifeq ($(HAVE_SELINUX),true)
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
- 
+
 BOARD_SEPOLICY_UNION := \
 	file_contexts \
 	app.te \
+	boot_anim.te \
 	device.te \
 	drmserver.te \
 	file.te \
 	genfs_contexts \
 	healthd.te \
 	init.te \
+	init_shell.te \
 	isolated_app.te \
 	media_app.te \
 	release_app.te \
 	mediaserver.te \
+	netd.te \
 	platform_app.te \
 	sensors_config.te \
 	shared_app.te \
 	surfaceflinger.te \
 	system_app.te \
-	system.te \
 	ueventd.te \
 	untrusted_app.te \
 	vold.te \
