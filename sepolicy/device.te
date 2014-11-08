@@ -6,4 +6,8 @@ type diag_device, dev_type;
 type rfkill_device, dev_type, mlstrustedobject;
 type sensors_block_device, dev_type;
 allow gps_device sysfs:filesystem associate;
-
+allow gps_device sysfs:file relabelto;
+#allow system_server nvhost_writable_device:chr_file { rw_file_perms read write };
+#allow system_server device:chr_file { rw_file_perms read write };
+#allow system_server knv_device:chr_file { rw_file_perms read write };
+allow bluetooth sysfs:file { read write };

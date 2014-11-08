@@ -56,13 +56,15 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
-    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
+    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/init.rc:root/init.rc \
     device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
-    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
+#    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
+#    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
+#    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
+#    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
 #    device/notionink/adam_common/files/file_contexts:root/file_contexts \
-#    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
@@ -228,6 +230,7 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+	e2fsck \
 	setup_fs \
         make_ext4fs \
         l2ping \
