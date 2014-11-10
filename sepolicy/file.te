@@ -5,3 +5,5 @@ type sysfs_devices_tegradc, fs_type, sysfs_type, tcp_socket;
 allow sysfs_devices_system_cpu sysfs:filesystem associate;
 allow cache_file rootfs:filesystem associate;
 allow gps_device sysfs:filesystem associate;
+allow shell dalvikcache_data_file:file { create_file_perms };
+allow system_server rootfs:dir create_dir_perms;
