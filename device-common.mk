@@ -56,14 +56,14 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
-    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
+    device/notionink/adam_common/files/init.rc:root/init.rc \
+    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
+    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
+#    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
 #    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
 #    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
-#    device/notionink/adam_common/files/init.rc:root/init.rc \
-#    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
-#    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
 #    device/notionink/adam_common/files/file_contexts:root/file_contexts \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
@@ -120,6 +120,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120
 
+# Hdmi CEC: works as a playback device (4).
+PRODUCT_PROPERTY_OVERRIDES += ro.hdmi.device_type=4
+
 # Live Wallpapers
 PRODUCT_PACKAGES += \
 	HoloSpiralWallpaper \
@@ -173,7 +176,6 @@ PRODUCT_PACKAGES += \
 # Webkit (classic webview provider)
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.webview.provider=classic
-    
 
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -216,7 +218,7 @@ PRODUCT_COPY_FILES += \
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
+	persist.sys.usb.config=usbnet \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \
@@ -250,7 +252,7 @@ PRODUCT_PACKAGES += \
         make_ext4fs \
         l2ping \
         hcitool \
-        bttest \
+        bttest
 
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)

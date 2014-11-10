@@ -1,15 +1,17 @@
 #!/system/bin/sh
 
 # Enable PixelQi mode on boot
-#    echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
+    #echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
 
 rm /data/aplog
 /system/bin/logcat -f /data/aplog &
 dmesg > /data/dmsg &
 #cat /proc/kmsg > /data/kmsg &
 
-# Sleep freeze workaround
-    echo 1 > /sys/module/cpuidle/parameters/lp2_in_idle
+# Sleep freeze workaround (makes usb unstable, but suspend power usage less)
+    #echo 1 > /sys/module/cpuidle/parameters/lp2_in_idle
+
+# Alternate sleep freeze workaround to keep cpu awake (doesn't affect usb, but more power usage)
     echo keepawake > /sys/power/wake_lock # some Adams cannot deep sleep
 
 # Interactive Governor Settings   (write cpufreq before cpu0,cpu1)

@@ -51,7 +51,7 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT := tegra2
 ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
@@ -139,6 +139,8 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+TARGET_SUPPORT_HDMI_PRIMARY := true
+TARGET_32_BIT_SURFACEFLINGER := true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
@@ -267,6 +269,7 @@ BOARD_SEPOLICY_UNION := \
 	mediaserver.te \
 	netd.te \
 	platform_app.te \
+	rild.te \
 	sensors_config.te \
 	shared_app.te \
 	surfaceflinger.te \

@@ -26,6 +26,6 @@ on property:sys.usb.config=adb
 
 # Move to init.harmony.rc to start usb later
 # Used to set USB configuration at boot and to switch the configuration
-#on property:persist.sys.usb.config=*
-#    setprop sys.usb.config ${persist.sys.usb.config}
+on property:persist.sys.usb.config=*
+    setprop sys.usb.config ${persist.sys.usb.config}
 
