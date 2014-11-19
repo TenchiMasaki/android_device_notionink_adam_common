@@ -128,6 +128,7 @@ BOARD_USES_PROPRIETARY_OMX := TF101
 TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
+BOARD_USE_LEGACY_UI := true
 
 #MAX_EGL_CACHE_KEY_SIZE := 4096
 #MAX_EGL_CACHE_SIZE := 2146304
@@ -138,6 +139,8 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+TARGET_SUPPORT_HDMI_PRIMARY := true
+TARGET_32_BIT_SURFACEFLINGER := true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
@@ -248,23 +251,28 @@ ifeq ($(HAVE_SELINUX),true)
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
- 
+
 BOARD_SEPOLICY_UNION := \
 	file_contexts \
 	app.te \
+	boot_anim.te \
 	device.te \
 	drmserver.te \
 	file.te \
 	genfs_contexts \
 	healthd.te \
 	init.te \
+	init_shell.te \
 	isolated_app.te \
 	media_app.te \
 	release_app.te \
 	mediaserver.te \
+	netd.te \
 	platform_app.te \
+	rild.te \
 	sensors_config.te \
 	shared_app.te \
+	shell.te \
 	surfaceflinger.te \
 	system_app.te \
 	system.te \

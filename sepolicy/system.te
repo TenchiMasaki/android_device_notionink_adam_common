@@ -1,3 +1,4 @@
+type system;
 allow system adbd_socket:sock_file write;
 allow system init:binder { transfer call };
 allow system init:unix_stream_socket { read write setopt };
