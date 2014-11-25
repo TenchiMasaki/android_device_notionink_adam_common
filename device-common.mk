@@ -102,7 +102,11 @@ PRODUCT_COPY_FILES += \
 
 # Codecs
 PRODUCT_COPY_FILES += \
-     device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml
+     device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
+
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
@@ -121,7 +125,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.sf.lcd_density=120
 
 # Hdmi CEC: works as a playback device (4).
-PRODUCT_PROPERTY_OVERRIDES += ro.hdmi.device_type=4
+#PRODUCT_PROPERTY_OVERRIDES += ro.hdmi.device_type=4
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
