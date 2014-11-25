@@ -4,3 +4,5 @@ allow surfaceflinger sysfs_devices_system_cpu:dir w_dir_perms;
 allow surfaceflinger surfaceflinger:process execmem;
 allow surfaceflinger fuse:dir search;
 allow surfaceflinger surfaceflinger:tcp_socket { create read write };
+type property_service;
+allow surfaceflinger debug_prop:property_service set;

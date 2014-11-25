@@ -7,3 +7,7 @@ allow cache_file rootfs:filesystem associate;
 allow gps_device sysfs:filesystem associate;
 allow shell dalvikcache_data_file:file { create_file_perms };
 allow system_server rootfs:dir create_dir_perms;
+allow dhcp unlabeled:file r_file_perms;
+allow dex2oat property_socket:sock_file { read write };
+allow shell unlabeled:file { r_file_perms };
+
