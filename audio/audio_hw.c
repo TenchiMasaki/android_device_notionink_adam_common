@@ -388,7 +388,10 @@ static int start_input_stream(struct stream_in *in)
         pthread_mutex_unlock(&out->lock);
     }
 
-	ALOGD("inpcm open: card=%d, device=%d, rate=%d", PCM_CARD, device, adev && adev->active_out && adev->active_out->pcm_config? adev->active_out->pcm_config->rate : 0);
+	ALOGD("inpcm open: card=%d, device=%d, out-rate=%d, in-rate=%d, in-sample-rate=%d, buf-size=%d, frame-size=%d", 
+		PCM_CARD, device, adev && adev->active_out && adev->active_out->pcm_config?
+		adev->active_out->pcm_config->rate : 0, in->pcm_config->rate,
+		in_get_sample_rate(&in->stream.common), in->buffer_size, in->frames_in);
 
     in->pcm = pcm_open(PCM_CARD, device, PCM_IN, in->pcm_config);
 
@@ -402,7 +405,10 @@ static int start_input_stream(struct stream_in *in)
      * If the stream rate differs from the PCM rate, we need to
      * create a resampler.
      */
-    if (in_get_sample_rate(&in->stream.common) != in->pcm_config->rate) {
+    /*
+    if (adev->active_out->pcm_config && adev->active_out->pcm_config->rate && in->pcm_config->rate && 
+    	in_get_sample_rate(&in->stream.common) &&
+    	in_get_sample_rate(&in->stream.common) != in->pcm_config->rate) {
         in->buf_provider.get_next_buffer = get_next_buffer;
         in->buf_provider.release_buffer = release_buffer;
 
@@ -413,6 +419,7 @@ static int start_input_stream(struct stream_in *in)
                                &in->buf_provider,
                                &in->resampler);
     }
+    */
     in->buffer_size = pcm_frames_to_bytes(in->pcm,
                                           in->pcm_config->period_size);
     in->buffer = malloc(in->buffer_size);
