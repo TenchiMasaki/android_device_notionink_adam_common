@@ -491,9 +491,6 @@ on boot
     chown system system /sys/fs/selinux/load
     chown system system /sys/fs/selinux/enforce
 
-# Set this property so surfaceflinger is not started by system_init # **RC ADD try ...ok
-    setprop system_init.startsurfaceflinger 0
-
 # Define default initial receive window size in segments.
     setprop net.tcp.default_init_rwnd 60
 
@@ -592,6 +589,7 @@ service console /system/bin/sh
     seclabel u:r:shell:s0
 
 service auditd /system/bin/auditd -k
+    seclabel u:r:logd:s0
     class main
 
 # adbd is controlled via property triggers in init.<platform>.usb.rc
