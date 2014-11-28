@@ -138,7 +138,7 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # Use nicer font rendering
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+#TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 TARGET_SUPPORT_HDMI_PRIMARY := true
 TARGET_32_BIT_SURFACEFLINGER := true
 
@@ -148,7 +148,7 @@ TARGET_32_BIT_SURFACEFLINGER := true
 BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+#BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_HDMI_MIRROR_MODE := Scale
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
@@ -236,10 +236,6 @@ BOARD_RECOVERY_SWIPE := true
 
 # Compatibility with pre-kitkat Sensor HALs
 SENSORS_NEED_SETRATE_ON_ENABLE := true
-
-#define to use all of the Linaro Cortex-A9 optimized string funcs,
-#instead of subset known to work on all machines
-USE_ALL_OPTIMIZED_STRING_FUNCS := true
 
 # SELinux policies
 HAVE_SELINUX := true
