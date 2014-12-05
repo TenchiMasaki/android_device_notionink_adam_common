@@ -972,7 +972,7 @@ void CameraHardware::initDefaultParameters()
 	p.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES,"fixed");
 	p.set(CameraParameters::KEY_FOCUS_MODE,"fixed");
 	
-#if 0
+#if 1
 	p.set(CameraParameters::KEY_JPEG_THUMBNAIL_HEIGHT,0); 
 	p.set(CameraParameters::KEY_JPEG_THUMBNAIL_QUALITY,75);
 	p.set(CameraParameters::KEY_SUPPORTED_JPEG_THUMBNAIL_SIZES,"0x0");
@@ -1022,10 +1022,14 @@ void CameraHardware::initDefaultParameters()
     p.set(CameraParameters::KEY_ZOOM_RATIOS, "100");
     p.set(CameraParameters::KEY_ZOOM_SUPPORTED, "false");
 
-	p.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, "-1.0");
-	p.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, "1.0");
-	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP,"0.1");
-	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION,"0.0");
+	p.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, "-6");
+	p.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, "6");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP, "0.333333333");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION, "0");
+	p.set(CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
+	p.set(CameraParameters::KEY_AUTO_EXPOSURE_LOCK_SUPPORTED,"false");
+
+	p.set(CameraParameters::KEY_FOCAL_LENGTH, "4.31");
 
     // keep these in sync with hw specs, needed for panorama in Camera app.
     // VS6725 spec has only the diagonal view angle, the vertical view angle

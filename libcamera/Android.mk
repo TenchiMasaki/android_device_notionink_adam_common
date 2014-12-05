@@ -10,8 +10,9 @@ include $(CLEAR_VARS)
 LOCAL_CFLAGS:=-fno-short-enums -DHAVE_CONFIG_H 
 
 LOCAL_C_INCLUDES += \
-	external/jpeg
-	
+	external/jpeg \
+	system/media/camera/include \
+
 LOCAL_SRC_FILES:= \
 	CameraFactory.cpp \
 	CameraHal.cpp \

@@ -286,6 +286,7 @@
     <string-array name="config_locationProviderPackageNames">
         <item>com.android.location.fused</item>
         <item>com.google.android.location</item>
+        <item>com.google.android.gms</item>
     </string-array>
 
     <!-- The duration (in milliseconds) of a short animation. -->
@@ -314,6 +315,6 @@
             32 - Camera
          For example, a device with Home, Back and Menu keys would set this
          config to 7. -->
-    <integer name="config_deviceHardwareKeys">15</integer>
+    <!-- <integer name="config_deviceHardwareKeys">15</integer> -->
 
 </resources>

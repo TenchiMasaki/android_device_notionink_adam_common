@@ -56,13 +56,15 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
-    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
+    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/init.rc:root/init.rc \
     device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
-    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
-#    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
-#    device/notionink/adam_common/files/file_contexts:root/file_contexts \
+    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
+#    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
+#    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
+#    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
 #    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
+#    device/notionink/adam_common/files/file_contexts:root/file_contexts \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
@@ -100,7 +102,11 @@ PRODUCT_COPY_FILES += \
 
 # Codecs
 PRODUCT_COPY_FILES += \
-     device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml
+     device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
+
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
@@ -114,15 +120,24 @@ PRODUCT_COPY_FILES += \
 #PRODUCT_COPY_FILES += \
 #   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
+PRODUCT_COPY_FILES += \
+    out/target/product/adam_3g/symbols/system/lib/libjni_latinime.so:system/lib/libjni_latinime.so
+    vendor/liquid/prebuilt/common/bootanimation/480.zip:system/media/bootanimation.zip
+
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120
 
+# Hdmi CEC: works as a playback device (4).
+#PRODUCT_PROPERTY_OVERRIDES += ro.hdmi.device_type=4
+
 # Live Wallpapers
 PRODUCT_PACKAGES += \
 	HoloSpiralWallpaper \
+	LiveWallpapers \
         LiveWallpapersPicker \
-        VisualizationWallpapers
+        VisualizationWallpapers \
+	librs_jni
 
 #Audio
 PRODUCT_PACKAGES += \
@@ -140,9 +155,9 @@ PRODUCT_PACKAGES += \
 	sensors.harmony \
 	lights.harmony \
 	gps.harmony \
-	camera.tegra
+	camera.tegra \
+	hwcomposer.tegra \
 	#power.tegra \
-	#hwcomposer.tegra
 
 # These are the OpenMAX IL modules
 PRODUCT_PACKAGES += \
@@ -226,8 +241,21 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_PACKAGES += \
 	libnetcmdiface
 
+# Wifi
+PRODUCT_PACKAGES += \
+	libwpa_client \
+	hostapd \
+	dhcpcd.conf \
+	wpa_supplicant \
+	wpa_supplicant.conf
+	
+PRODUCT_PACKAGES += \
+	wpa_supplicant_overlay.conf \
+	p2p_supplicant_overlay.conf
+
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+	e2fsck \
 	setup_fs \
         make_ext4fs \
         l2ping \

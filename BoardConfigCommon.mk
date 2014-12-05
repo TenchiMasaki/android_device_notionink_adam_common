@@ -35,6 +35,7 @@ WITH_GMS := true
 # partitions
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x01000000
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x01000000
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x26be3680
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 0x105c0000
 
@@ -128,6 +129,8 @@ BOARD_USES_PROPRIETARY_OMX := TF101
 TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
+BOARD_USE_LEGACY_UI := true
+BOARD_HAVE_PIXEL_FORMAT_INFO := true
 
 #MAX_EGL_CACHE_KEY_SIZE := 4096
 #MAX_EGL_CACHE_SIZE := 2146304
@@ -138,6 +141,9 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+TARGET_SUPPORT_HDMI_PRIMARY := true
+TARGET_32_BIT_SURFACEFLINGER := true
+BOARD_HAVE_PIXEL_FORMAT_INFO := true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
@@ -217,8 +223,8 @@ TW_EXCLUDE_SUPERSU      := true
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := false
 TARGET_BOOTANIMATION_USE_RGB565 := true
-TARGET_SCREEN_WIDTH := 1024
-TARGET_SCREEN_HEIGHT := 600
+TARGET_SCREEN_WIDTH := 720
+TARGET_SCREEN_HEIGHT := 480
 
 # Recovery
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
@@ -234,10 +240,6 @@ BOARD_RECOVERY_SWIPE := true
 # Compatibility with pre-kitkat Sensor HALs
 SENSORS_NEED_SETRATE_ON_ENABLE := true
 
-#define to use all of the Linaro Cortex-A9 optimized string funcs,
-#instead of subset known to work on all machines
-USE_ALL_OPTIMIZED_STRING_FUNCS := true
-
 # SELinux policies
 HAVE_SELINUX := true
 
@@ -248,23 +250,28 @@ ifeq ($(HAVE_SELINUX),true)
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
- 
+
 BOARD_SEPOLICY_UNION := \
 	file_contexts \
 	app.te \
+	boot_anim.te \
 	device.te \
 	drmserver.te \
 	file.te \
 	genfs_contexts \
 	healthd.te \
 	init.te \
+	init_shell.te \
 	isolated_app.te \
 	media_app.te \
 	release_app.te \
 	mediaserver.te \
+	netd.te \
 	platform_app.te \
+	rild.te \
 	sensors_config.te \
 	shared_app.te \
+	shell.te \
 	surfaceflinger.te \
 	system_app.te \
 	system.te \
