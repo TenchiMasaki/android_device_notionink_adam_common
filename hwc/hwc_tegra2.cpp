@@ -15,6 +15,7 @@
  * limitations under the License.
  */ 
 
+#define DEBUG 1
 #define LOG_TAG "hwc"
 
 #include <utils/Log.h>
@@ -43,6 +44,7 @@
 #include <hardware/gralloc.h>
 #include <hardware/hardware.h>
 #include <hardware/hwcomposer.h>
+#include "hwcomposer_v0.h"
 #include <hardware_legacy/uevent.h>
 #include <utils/String8.h>
 #include <utils/Vector.h> 
@@ -111,6 +113,29 @@ struct tegra2_hwc_composer_device_1_t {
 	volatile bool fbblanked;	// Framebuffer disabled
 }; 
 
+static void sysfs_read(const char *path, char *s,int maxlen)
+{
+    char buf[80];
+    int len;
+    int fd = open(path, O_RDONLY);
+
+    if (fd < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGE("Error opening %s: %s\n", path, buf);
+        return;
+    }
+
+    len = read(fd, s, maxlen);
+    if (len < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGE("Error reading from %s: %s\n", path, buf);
+    }
+
+	s[len]=0;
+
+    close(fd);
+}
+
 static void copy_layer1_to_layer(hwc_layer_t* dst,hwc_layer_1_t* src)
 {
 	dst->compositionType = src->compositionType;	
@@ -164,7 +189,8 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
     tegra2_hwc_composer_device_1_t *pdev = (tegra2_hwc_composer_device_1_t *)dev;
 
     hwc_display_contents_1_t *contents = displays[0];
-    if (!contents)
+ 
+    if (!contents | !contents->numHwLayers)
 		return 0;
 
 	if (!contents->dpy || !contents->sur)
@@ -173,9 +199,9 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
 	// If blanking, make gralloc handle everything to aovid crashes
 	if (pdev->fbblanked)
 		return -ENODEV;
-
+		
 	int reqsz = sizeof (hwc_layer_list_t) + sizeof(hwc_layer_t) * contents->numHwLayers;
-
+	
 	// Make sure we have enough space on the translation buffer
 	if (pdev->set_xlatebufsz < reqsz) {
 		if (!pdev->set_xlatebuf) {
@@ -203,7 +229,7 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
 	}
 
 	int ret = pdev->org->set(pdev->org, contents->dpy, contents->sur, lst);
-
+	
 	copy_layer_list_to_display_contents_1(contents,lst);
 
     return ret;
@@ -212,6 +238,7 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
 static int tegra2_prepare(hwc_composer_device_1_t *dev,
         size_t numDisplays, hwc_display_contents_1_t** displays)
 {
+
     if (!numDisplays || !displays)
         return 0;
 
@@ -219,14 +246,14 @@ static int tegra2_prepare(hwc_composer_device_1_t *dev,
 		(tegra2_hwc_composer_device_1_t *)dev; 
     
 	hwc_display_contents_1_t *contents = displays[0];
-	if (!contents) 
+	if (!contents || !contents->numHwLayers) 
 		return 0;
 
 	// If blanking, make gralloc handle everything to aovid crashes
 	if (pdev->fbblanked)
 		return -ENODEV;
 
-	ALOGV("preparing %u layers", contents->numHwLayers);
+	ALOGV("preparing %u layer", contents->numHwLayers);
 
 	int reqsz = sizeof (hwc_layer_list_t) + sizeof(hwc_layer_t) * contents->numHwLayers;
 	// Make sure we have enough space on the translation buffer
@@ -239,7 +266,7 @@ static int tegra2_prepare(hwc_composer_device_1_t *dev,
 		pdev->prepare_xlatebufsz = reqsz;
 	}	
     hwc_layer_list_t* lst = (hwc_layer_list_t*) pdev->prepare_xlatebuf;
-
+	
 	copy_display_contents_1_to_layer_list(lst,contents);
 
 	int ret = pdev->org->prepare(pdev->org, lst);
@@ -619,8 +646,18 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
 {
     int ret;
  	hwc_module_t* hwc = get_hwc();
+ 	
 	if (!hwc)
 		return -ENOSYS;
+
+	// use hwc only if HDMI enabled to prevent lag when not connected
+	char s[1];
+	sysfs_read("/sys/devices/tegradc.1/enable", s, 1);
+        if (!strcmp(s, "0")) {
+		ALOGI("hwc disabled when hdmi not connected");
+        	return -ENOSYS;
+        }
+	ALOGI("hwc enabled hdmi connected");
 
 	struct tegra2_hwc_composer_device_1_t *dev
 		= (struct tegra2_hwc_composer_device_1_t *)calloc(1,sizeof(*dev));
@@ -723,7 +760,6 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
 
 		// Get the syncpoint id for VBLANK0
 		dev->vblank_syncpt_id = dc0_get_vblank_syncpt();
-
 		dev->vsync_running = true;
 		if (pthread_create(&dev->vsync_thread, NULL, tegra2_hwc_nv_vsync_thread, dev)) {
 			ALOGE("Unable to start VSYNC thread");
