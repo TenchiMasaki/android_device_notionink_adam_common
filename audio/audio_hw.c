@@ -405,7 +405,7 @@ static int start_input_stream(struct stream_in *in)
      * If the stream rate differs from the PCM rate, we need to
      * create a resampler.
      */
-    /*
+    
     if (adev->active_out->pcm_config && adev->active_out->pcm_config->rate && in->pcm_config->rate && 
     	in_get_sample_rate(&in->stream.common) &&
     	in_get_sample_rate(&in->stream.common) != in->pcm_config->rate) {
@@ -419,7 +419,7 @@ static int start_input_stream(struct stream_in *in)
                                &in->buf_provider,
                                &in->resampler);
     }
-    */
+    
     in->buffer_size = pcm_frames_to_bytes(in->pcm,
                                           in->pcm_config->period_size);
     in->buffer = malloc(in->buffer_size);
