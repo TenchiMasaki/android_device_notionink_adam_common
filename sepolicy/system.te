@@ -11,4 +11,7 @@ allow system knv_device:chr_file { read write ioctl open };
 allow system nvhost_writable_device:chr_file { read write ioctl open };
 allow system_app knv_device:chr_file { read write ioctl open };
 allow system anr_data_file:dir relabelto;
- 
+allow system_server default_android_service:service_manager add;
+allow system_server init:unix_dgram_socket write;
+allow system_server init_tmpfs:file rw_file_perms;
+allow system_server init:unix_stream_socket getopt;
