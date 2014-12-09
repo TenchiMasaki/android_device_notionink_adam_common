@@ -1,12 +1,15 @@
 #!/system/bin/sh
 
 # Enable PixelQi mode on boot
-    echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
+    #echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
+
+# Disable TCP/IP v6
+#sysctl -w net.ipv6.conf.default.disable_ipv6=1
 
 rm /data/aplog
 /system/bin/logcat -f /data/aplog &
 dmesg > /data/dmsg &
-cat /proc/kmsg > /data/kmsg &
+#cat /proc/kmsg > /data/kmsg &
 
 # Sleep freeze workaround (makes usb unstable, but suspend power usage less)
     #echo 1 > /sys/module/cpuidle/parameters/lp2_in_idle
