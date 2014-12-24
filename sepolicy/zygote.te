@@ -10,3 +10,5 @@ allow zygote knv_device:chr_file ioctl;
 allow zygote console_device:chr_file { read write open };
 allow zygote console_device:chr_file ioctl;
 allow zygote untrusted_app_devpts:chr_file { read write };
+#allow zygote rootfs:dir rw_dir_perms;
+#allow zygote rootfs:file rw_file_perms;
