@@ -129,13 +129,6 @@ on boot
 # backlight
     chown system system /sys/class/backlight/pwm-backlight/brightness
 
-# hdmi
-    mkdir /devices 0777 root root
-    mkdir /devices/virtual 0777 root root
-    mkdir /devices/virtual/switch 0777 root root
-    symlink /dev/graphics/hdmi /devices/virtual/switch/hdmi
-    chmod 0777 /devices/virtual/switch/hdmi
-
 # Camera power
     chmod 0666 /sys/devices/platform/tegra_camera.0/power/control
 
@@ -177,8 +170,8 @@ on boot
     chown system system /sys/bus/usb/devices/usb1/power/control
 
     # RC: forces usb devices to resume not reset after sleep, and to not self suspend.
-    write /sys/bus/usb/devices/usb1/power/control on
-    write /sys/class/android_usb/android0/f_rndis/power/control on
+    #write /sys/bus/usb/devices/usb1/power/control on
+    #write /sys/class/android_usb/android0/f_rndis/power/control on
 
 
 # Set NITZ Feature on or off
