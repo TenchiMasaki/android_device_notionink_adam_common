@@ -190,7 +190,7 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
 
     hwc_display_contents_1_t *contents = displays[0];
  
-    if (!contents | !contents->numHwLayers)
+    if (!contents || !contents->numHwLayers)
 		return 0;
 
 	if (!contents->dpy || !contents->sur)
@@ -253,7 +253,7 @@ static int tegra2_prepare(hwc_composer_device_1_t *dev,
 	if (pdev->fbblanked)
 		return -ENODEV;
 
-	ALOGV("preparing %u layer", contents->numHwLayers);
+	ALOGV("preparing %u layers", contents->numHwLayers);
 
 	int reqsz = sizeof (hwc_layer_list_t) + sizeof(hwc_layer_t) * contents->numHwLayers;
 	// Make sure we have enough space on the translation buffer
