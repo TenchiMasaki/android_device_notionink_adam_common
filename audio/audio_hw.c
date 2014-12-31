@@ -312,7 +312,7 @@ static int start_output_stream(struct stream_out *out)
         pthread_mutex_unlock(&in->lock);
     }
 
-	ALOGD("outpcm open: card=%d, device=%d, rate=%d", PCM_CARD, device, out->pcm_config->rate);
+	ALOGD("outpcm open: card=%d, device=%d, adev=%d, rate=%d", PCM_CARD, device, adev->out_device, out->pcm_config->rate);
 
     out->pcm = pcm_open(PCM_CARD, device, PCM_OUT | PCM_NORESTART | PCM_MONOTONIC, out->pcm_config);
 
@@ -388,8 +388,8 @@ static int start_input_stream(struct stream_in *in)
         pthread_mutex_unlock(&out->lock);
     }
 
-	ALOGD("inpcm open: card=%d, device=%d, out-rate=%d, in-rate=%d, in-sample-rate=%d, buf-size=%d, frame-size=%d", 
-		PCM_CARD, device, adev && adev->active_out && adev->active_out->pcm_config?
+	ALOGD("inpcm open: card=%d, device=%d, adev=%d, out-rate=%d, in-rate=%d, in-sample-rate=%d, buf-size=%d, frame-size=%d", 
+		PCM_CARD, device, adev->in_device, adev && adev->active_out && adev->active_out->pcm_config?
 		adev->active_out->pcm_config->rate : 0, in->pcm_config->rate,
 		in_get_sample_rate(&in->stream.common), in->buffer_size, in->frames_in);
 
