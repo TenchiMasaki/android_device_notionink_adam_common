@@ -71,8 +71,8 @@ PRODUCT_COPY_FILES := \
 
 # Modules
 PRODUCT_COPY_FILES += \
-    device/notionink/adam_common/modules/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko #\
-   #device/notionink/adam_common/modules/tun.ko:system/lib/modules/tun.ko
+    device/notionink/adam_common/modules/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko \
+    device/notionink/adam_common/modules/tun.ko:system/lib/modules/tun.ko
 
 # Bluetooth
 PRODUCT_COPY_FILES += \
@@ -120,6 +120,7 @@ PRODUCT_COPY_FILES += \
 #PRODUCT_COPY_FILES += \
 #   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
+# Boot animation
 PRODUCT_COPY_FILES += \
     vendor/cm/prebuilt/common/bootanimation/halfres/600.zip:system/media/bootanimation.zip
 
@@ -136,7 +137,6 @@ PRODUCT_PACKAGES += \
 	LiveWallpapers \
         LiveWallpapersPicker \
         VisualizationWallpapers \
-	librs_jni
 
 #Audio
 PRODUCT_PACKAGES += \
@@ -144,10 +144,14 @@ PRODUCT_PACKAGES += \
 	audio.primary.harmony \
 	audio.usb.default \
         audio.r_submix.default \
+        libaudio-resampler \
         libaudioutils \
         tinymix \
         tinyplay \
-        tinyrec
+        tinyrec \
+        libaudioamp \
+        FM2 \
+        FMRecord
 
 # Harmony Hardware
 PRODUCT_PACKAGES += \
@@ -156,7 +160,7 @@ PRODUCT_PACKAGES += \
 	gps.harmony \
 	camera.tegra \
 	hwcomposer.tegra \
-	#power.tegra \
+	power.tegra
 
 # These are the OpenMAX IL modules
 PRODUCT_PACKAGES += \
@@ -170,19 +174,36 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory
 
-# Media
+# OMX
 PRODUCT_PACKAGES += \
-    libstagefrighthw \
-    libmm-omxcore \
-    libOmxCore
+	libc2dcolorconvert \
+	libdivxdrmdecrypt \
+	libOmxCore \
+	libOmxVdec \
+	libOmxVenc \
+	libOmxAacEnc \
+	libOmxAmrEnc \
+	libOmxEvrcEnc \
+	libOmxQcelp13Enc \
+	libstagefrighthw \
+	libdashplayer \
+	qcmediaplayer
+
+PRODUCT_BOOT_JARS += \
+	qcmediaplayer
 
 # WebKit
 PRODUCT_PACKAGES += \
-    libwebcore
+	libwebcore
 
 # Webkit (classic webview provider)
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.webview.provider=classic
+	persist.webview.provider=classic
+
+# IPv6 tethering
+PRODUCT_PACKAGES += \
+	ebtables \
+	ethertypes
 
 PRODUCT_PACKAGES += \
 	librs_jni \
@@ -192,8 +213,10 @@ PRODUCT_PACKAGES += \
 	webview \
 	WebViewDream \
 	PhotoTable \
-	libwebkit
-        
+	libwebkit \
+	libmmcamera_interface2 \
+	libmmcamera_interface
+    
 # Sensor daemon
 PRODUCT_PACKAGES += \
        g5sensord
@@ -202,7 +225,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
+    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
+    frameworks/native/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.location.xml:system/etc/permissions/android.hardware.location.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
@@ -216,6 +241,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
+    frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
@@ -244,6 +270,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	libwpa_client \
 	hostapd \
+	hostapd_default.conf \
 	dhcpcd.conf \
 	wpa_supplicant \
 	wpa_supplicant.conf
@@ -260,6 +287,18 @@ PRODUCT_PACKAGES += \
         l2ping \
         hcitool \
         bttest
+        
+# GPS
+PRODUCT_PACKAGES += \
+	libloc_adapter \
+	libloc_eng \
+	libloc_api_v02 \
+	libloc_ds_api \
+	libloc_core \
+	libizat_core \
+	libgeofence \
+	libgps.utils \
+	gps.conf
 
 $(call inherit-product, device/common/gps/gps_us_supl.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
