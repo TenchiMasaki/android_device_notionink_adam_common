@@ -6,9 +6,10 @@
 # Disable TCP/IP v6
 #sysctl -w net.ipv6.conf.default.disable_ipv6=1
 
-rm /data/aplog
+mv /data/aplog /data/last_aplog
 /system/bin/logcat -f /data/aplog &
 dmesg > /data/dmsg &
+#mv /data/kmsg /data/last_kmsg
 #cat /proc/kmsg > /data/kmsg &
 
 # Sleep freeze workaround (makes usb unstable, but suspend power usage less)
@@ -19,10 +20,10 @@ dmesg > /data/dmsg &
 
 # Interactive Governor Settings   (write cpufreq before cpu0,cpu1)
     echo 216000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq # Minimum clock speed
-    echo 1600000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq # ** Set 1.6Ghz nax clock speed **
+    echo 1504000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq # ** Set 1.6Ghz nax clock speed **
     echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor # Set governor
     echo 216000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq # Minimum clock speed for second core
-    echo 1600000 >/sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq # Max clock speed for second core
+    echo 1504000 >/sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq # Max clock speed for second core
     echo interactive > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor # Set governor for second core
     echo 80 > /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
     echo 1 > /sys/devices/system/cpu/cpufreq/interactive/input_boost
