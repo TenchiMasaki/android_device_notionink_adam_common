@@ -70,8 +70,16 @@ USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
 
-# Kernel   
+# defines to support legacy blobs
+COMMON_GLOBAL_CFLAGS += \
+    -DNEEDS_VECTORIMPL_SYMBOLS \
+    -DADD_LEGACY_SET_POSITION_SYMBOL \
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
+#    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+
+# Kernel
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
@@ -81,7 +89,7 @@ TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
-#kernel/notionink/adam/arch/arm/boot/zImage
+#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -92,6 +100,9 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
+
+# Custom Tools
+TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
 
 # Wifi related defines
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
@@ -231,7 +242,7 @@ TARGET_BOOTANIMATION_HALF_RES := true
 # Recovery
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
-TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
+#TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.recovery.harmony.rc
 TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
 # Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
