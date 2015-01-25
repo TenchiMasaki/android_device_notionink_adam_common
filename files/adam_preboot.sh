@@ -16,7 +16,7 @@ dmesg > /data/dmsg &
     #echo 1 > /sys/module/cpuidle/parameters/lp2_in_idle
 
 # Alternate sleep freeze workaround to keep cpu awake (doesn't affect usb, but more power usage)
-    echo keepawake > /sys/power/wake_lock # some Adams cannot deep sleep
+    #echo keepawake > /sys/power/wake_lock # some Adams cannot deep sleep
 
 # Interactive Governor Settings   (write cpufreq before cpu0,cpu1)
     echo 216000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq # Minimum clock speed
