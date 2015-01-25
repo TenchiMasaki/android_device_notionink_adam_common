@@ -105,7 +105,8 @@ extern "C" {
 #endif
 
 // File to control camera power
-#define CAMERA_POWER	    "/sys/devices/platform/tegra_camera.0/power/control"
+#define CAMERA_POWER "/sys/kernel/debug/camera/power"
+//"/sys/devices/platform/tegra_camera.0/power/control"
 // "/sys/devices/platform/adam-pm-camera/power_on"
 
 
@@ -127,7 +128,7 @@ bool CameraHardware::PowerOn()
 	} else {
 		ALOGE("Could not open %s for writing.", CAMERA_POWER);
 		return false;
-    } 
+    }
 	
 	// Wait until the camera is recognized or timed out
 	int timeOut = 500;
@@ -155,7 +156,7 @@ bool CameraHardware::PowerOff()
 {
 	ALOGD("CameraHardware::PowerOff: Power OFF camera.");
 	
-	// power on camera
+	// power off camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
 		::write(handle,"0\n",2);
