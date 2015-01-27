@@ -80,7 +80,7 @@ TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
-#kernel/notionink/adam/arch/arm/boot/zImage
+#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -143,7 +143,7 @@ TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
 # Tegra2 EGL support
-BOARD_USES_OVERLAY := true
+BOARD_USES_OVERLAY := false
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
@@ -234,10 +234,6 @@ BOARD_RECOVERY_SWIPE := true
 
 # Compatibility with pre-kitkat Sensor HALs
 SENSORS_NEED_SETRATE_ON_ENABLE := true
-
-#define to use all of the Linaro Cortex-A9 optimized string funcs,
-#instead of subset known to work on all machines
-USE_ALL_OPTIMIZED_STRING_FUNCS := true
 
 # SELinux policies
 HAVE_SELINUX := true
