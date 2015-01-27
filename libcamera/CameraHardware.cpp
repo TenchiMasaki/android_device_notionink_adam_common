@@ -105,7 +105,8 @@ extern "C" {
 #endif
 
 // File to control camera power
-#define CAMERA_POWER	    "/sys/devices/platform/tegra_camera.0/power/control"
+#define CAMERA_POWER "/sys/kernel/debug/camera/power"
+//"/sys/devices/platform/tegra_camera.0/power/control"
 // "/sys/devices/platform/adam-pm-camera/power_on"
 
 
