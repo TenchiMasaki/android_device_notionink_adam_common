@@ -57,10 +57,10 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
-    device/notionink/adam_common/files/init.rc:root/init.rc \
-    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
-    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
-    device/notionink/adam_common/recovery/init.recovery.harmony.rc:recovery/root/init.recovery.harmony.rc
+#    device/notionink/adam_common/files/init.rc:root/init.rc \
+#    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
+#    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
+#    device/notionink/adam_common/recovery/init.recovery.harmony.rc:recovery/root/init.recovery.harmony.rc
 #    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
 #    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
