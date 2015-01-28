@@ -381,7 +381,8 @@ on property:init.svc.vold=running
     start adam_preboot
     #start g5sensord
 
-on property:init.svc.bootanim=stopped
+on property:sys.boot_completed=1
     class_start postbootinit
     start wwlanselect
+    write /sys/kernel/debug/camera/power 0
     start adam_postboot
