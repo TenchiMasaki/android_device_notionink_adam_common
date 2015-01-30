@@ -2103,11 +2103,13 @@ int CameraHardware::send_command(struct camera_device* dev,
 void CameraHardware::release(struct camera_device* dev)
 {
     CameraHardware* ec = reinterpret_cast<CameraHardware*>(dev->priv);
+	ALOGD("CameraHardWare::release");
     if (ec == NULL) {
         ALOGE("%s: Unexpected NULL camera device", __FUNCTION__);
         return;
     }
     ec->releaseCamera();
+    ec->PowerOff();
 }
 
 int CameraHardware::dump(struct camera_device* dev, int fd)
@@ -2124,6 +2126,7 @@ int CameraHardware::close(struct hw_device_t* device)
 {
     CameraHardware* ec =
         reinterpret_cast<CameraHardware*>(reinterpret_cast<struct camera_device*>(device)->priv);
+    ALOGD("CameraHardWare::close");
     if (ec == NULL) {
         ALOGE("%s: Unexpected NULL camera device", __FUNCTION__);
         return -EINVAL;
