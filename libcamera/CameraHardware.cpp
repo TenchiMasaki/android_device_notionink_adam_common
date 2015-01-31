@@ -15,6 +15,8 @@
 ** limitations under the License.
 */
 
+#define DEBUG 1
+
 #define LOG_TAG "CameraHardware"
 
 extern "C" {
@@ -115,11 +117,13 @@ namespace android {
 char videodevice[64];
 int devnum;
 int CameraHardware::vflip = 0;
+static bool power = false;
 
 bool CameraHardware::PowerOn()
 {
 	ALOGD("CameraHardware::PowerOn: Power ON camera.");
-	
+
+	if (power) return true;
 	// power on camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
@@ -144,6 +148,7 @@ bool CameraHardware::PowerOn()
 	if (handle >= 0) {
 		ALOGD("Camera powered on");
 		::close(handle);
+		power = true;
 		return true;
 	} else {
 		ALOGE("Unable to power camera");
@@ -156,6 +161,7 @@ bool CameraHardware::PowerOff()
 {
 	ALOGD("CameraHardware::PowerOff: Power OFF camera.");
 	
+	if (!power) return true;
 	// power off camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
@@ -164,7 +170,8 @@ bool CameraHardware::PowerOff()
 	} else {
 		ALOGE("Could not open %s for writing.", CAMERA_POWER);
 		return false;
-    } 
+    }
+    power = false;
 	return true;
 }
 
@@ -312,6 +319,7 @@ status_t CameraHardware::connectCamera(hw_device_t** device)
 	ALOGD("CameraHardware::connectCamera");
 
     *device = &common;
+	PowerOn();
     return NO_ERROR;
 }
 
@@ -319,6 +327,7 @@ status_t CameraHardware::closeCamera()
 {
 	ALOGD("CameraHardware::closeCamera");
 	releaseCamera();
+	PowerOff();
     return NO_ERROR;
 }
 
@@ -2109,7 +2118,6 @@ void CameraHardware::release(struct camera_device* dev)
         return;
     }
     ec->releaseCamera();
-    ec->PowerOff();
 }
 
 int CameraHardware::dump(struct camera_device* dev, int fd)
@@ -2165,16 +2173,3 @@ camera_device_ops_t CameraHardware::mDeviceOps = {
 };
 
 }; // namespace android
-
-
-
-
-
-
-
-
-
-
-
-
-
