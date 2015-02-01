@@ -163,6 +163,10 @@ PRODUCT_PACKAGES += \
 	hwcomposer.tegra \
 	power.tegra
 
+# Camera
+PRODUCT_PROPERTY_OVERRIDES += \
+    camera2.portability.force_api=1
+
 # These are the OpenMAX IL modules
 PRODUCT_PACKAGES += \
     libSEC_OMX_Core \
