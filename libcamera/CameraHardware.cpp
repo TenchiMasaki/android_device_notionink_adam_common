@@ -15,6 +15,8 @@
 ** limitations under the License.
 */
 
+#define DEBUG 1
+
 #define LOG_TAG "CameraHardware"
 
 extern "C" {
@@ -115,11 +117,13 @@ namespace android {
 char videodevice[64];
 int devnum;
 int CameraHardware::vflip = 0;
+static bool power = false;
 
 bool CameraHardware::PowerOn()
 {
+	if (power) return true;
 	ALOGD("CameraHardware::PowerOn: Power ON camera.");
-	
+
 	// power on camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
@@ -128,7 +132,7 @@ bool CameraHardware::PowerOn()
 	} else {
 		ALOGE("Could not open %s for writing.", CAMERA_POWER);
 		return false;
-    } 
+    }
 	
 	// Wait until the camera is recognized or timed out
 	int timeOut = 500;
@@ -144,6 +148,7 @@ bool CameraHardware::PowerOn()
 	if (handle >= 0) {
 		ALOGD("Camera powered on");
 		::close(handle);
+		power = true;
 		return true;
 	} else {
 		ALOGE("Unable to power camera");
@@ -154,9 +159,10 @@ bool CameraHardware::PowerOn()
 
 bool CameraHardware::PowerOff()
 {
+	if (!power) return true;
 	ALOGD("CameraHardware::PowerOff: Power OFF camera.");
-	
-	// power on camera
+
+	// power off camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
 		::write(handle,"0\n",2);
@@ -164,7 +170,8 @@ bool CameraHardware::PowerOff()
 	} else {
 		ALOGE("Could not open %s for writing.", CAMERA_POWER);
 		return false;
-    } 
+    }
+    power = false;
 	return true;
 }
 
@@ -267,9 +274,7 @@ CameraHardware::~CameraHardware()
 		mJpegPictureHeap->release(mJpegPictureHeap);
 		mJpegPictureHeap = NULL;
 	}
-	
-	// Power off camera
-	PowerOff();
+
 }
 
 bool CameraHardware::NegotiatePreviewFormat(struct preview_stream_ops* win)
@@ -319,6 +324,7 @@ status_t CameraHardware::closeCamera()
 {
 	ALOGD("CameraHardware::closeCamera");
 	releaseCamera();
+	PowerOff();
     return NO_ERROR;
 }
 
@@ -973,7 +979,7 @@ void CameraHardware::initDefaultParameters()
 	p.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES,"fixed");
 	p.set(CameraParameters::KEY_FOCUS_MODE,"fixed");
 	
-#if 0
+#if 1
 	p.set(CameraParameters::KEY_JPEG_THUMBNAIL_HEIGHT,0); 
 	p.set(CameraParameters::KEY_JPEG_THUMBNAIL_QUALITY,75);
 	p.set(CameraParameters::KEY_SUPPORTED_JPEG_THUMBNAIL_SIZES,"0x0");
@@ -1023,10 +1029,14 @@ void CameraHardware::initDefaultParameters()
     p.set(CameraParameters::KEY_ZOOM_RATIOS, "100");
     p.set(CameraParameters::KEY_ZOOM_SUPPORTED, "false");
 
-	p.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, "-1.0");
-	p.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, "1.0");
-	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP,"0.1");
-	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION,"0.0");
+	p.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, "-6");
+	p.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, "6");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP, "0.333333333");
+	p.set(CameraParameters::KEY_EXPOSURE_COMPENSATION, "0");
+	p.set(CameraParameters::KEY_AUTO_EXPOSURE_LOCK, "false");
+	p.set(CameraParameters::KEY_AUTO_EXPOSURE_LOCK_SUPPORTED,"false");
+
+	p.set(CameraParameters::KEY_FOCAL_LENGTH, "4.31");
 
     // keep these in sync with hw specs, needed for panorama in Camera app.
     // VS6725 spec has only the diagonal view angle, the vertical view angle
@@ -2099,6 +2109,7 @@ int CameraHardware::send_command(struct camera_device* dev,
 void CameraHardware::release(struct camera_device* dev)
 {
     CameraHardware* ec = reinterpret_cast<CameraHardware*>(dev->priv);
+	ALOGD("CameraHardWare::release");
     if (ec == NULL) {
         ALOGE("%s: Unexpected NULL camera device", __FUNCTION__);
         return;
@@ -2120,6 +2131,7 @@ int CameraHardware::close(struct hw_device_t* device)
 {
     CameraHardware* ec =
         reinterpret_cast<CameraHardware*>(reinterpret_cast<struct camera_device*>(device)->priv);
+    ALOGD("CameraHardWare::close");
     if (ec == NULL) {
         ALOGE("%s: Unexpected NULL camera device", __FUNCTION__);
         return -EINVAL;
@@ -2158,16 +2170,3 @@ camera_device_ops_t CameraHardware::mDeviceOps = {
 };
 
 }; // namespace android
-
-
-
-
-
-
-
-
-
-
-
-
-
