@@ -121,9 +121,9 @@ static bool power = false;
 
 bool CameraHardware::PowerOn()
 {
+	if (power) return true;
 	ALOGD("CameraHardware::PowerOn: Power ON camera.");
 
-	if (power) return true;
 	// power on camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
@@ -159,9 +159,9 @@ bool CameraHardware::PowerOn()
 
 bool CameraHardware::PowerOff()
 {
-	ALOGD("CameraHardware::PowerOff: Power OFF camera.");
-	
 	if (!power) return true;
+	ALOGD("CameraHardware::PowerOff: Power OFF camera.");
+
 	// power off camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
@@ -274,9 +274,7 @@ CameraHardware::~CameraHardware()
 		mJpegPictureHeap->release(mJpegPictureHeap);
 		mJpegPictureHeap = NULL;
 	}
-	
-	// Power off camera
-	PowerOff();
+
 }
 
 bool CameraHardware::NegotiatePreviewFormat(struct preview_stream_ops* win)
@@ -319,7 +317,6 @@ status_t CameraHardware::connectCamera(hw_device_t** device)
 	ALOGD("CameraHardware::connectCamera");
 
     *device = &common;
-	PowerOn();
     return NO_ERROR;
 }
 
