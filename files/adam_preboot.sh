@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
 # Enable PixelQi mode on boot
-    #echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
+    echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
 
 # Disable TCP/IP v6
 #sysctl -w net.ipv6.conf.default.disable_ipv6=1
@@ -35,8 +35,8 @@ dmesg > /data/dmsg &
     echo 256 > /sys/block/mtdblock4/queue/read_ahead_kb
 
 # Set I/O scheduler noop deadline cfq sio bfq row
-    echo noop > /sys/block/mmcblk0/queue/scheduler
-    echo noop > /sys/block/mmcblk1/queue/scheduler
-    echo noop > /sys/block/mtdblock3/queue/scheduler
-    echo noop > /sys/block/mtdblock4/queue/scheduler
+    echo sio > /sys/block/mmcblk0/queue/scheduler
+    echo sio > /sys/block/mmcblk1/queue/scheduler
+    echo sio > /sys/block/mtdblock3/queue/scheduler
+    echo sio > /sys/block/mtdblock4/queue/scheduler
 

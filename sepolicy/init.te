@@ -1,3 +1,5 @@
+type userinit_exec;
+type proc_dirty_ratio;
 #allow init self:binder set_context_mgr;
 allow init wpa_socket:unix_dgram_socket { bind create };
 #allow init sysfs:filesystem { associate };
@@ -26,3 +28,9 @@ allow sysinit init:process dyntransition;
 allow sysinit kernel:security read_policy;
 allow sysinit sysinit:capability { dac_override dac_read_search };
 allow sysinit surfaceflinger_exec:file r_file_perms;
+allow sysinit unlabeled:file r_file_perms;
+allow sysinit proc:file rw_file_perms;
+allow sysinit proc_net:file rw_file_perms;
+allow sysinit sysfs:file rw_file_perms;
+allow sysinit userinit_exec:file rx_file_perms;
+allow sysinit proc_dirty_ratio:file rw_file_perms;

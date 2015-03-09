@@ -49,10 +49,10 @@ PRODUCT_LOCALES += en mdpi
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
+    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
-    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
@@ -106,7 +106,8 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
+     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
+     frameworks/av/media/libstagefright/data/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
