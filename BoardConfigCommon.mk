@@ -33,10 +33,14 @@ WITH_GMS := true
 -include vendor/notionink/adam/BoardConfigVendor.mk
 
 # partitions
+# TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
+TARGET_USERIMAGES_USE_EXT4 := false
 BOARD_FLASH_BLOCK_SIZE := 131072
-BOARD_BOOTIMAGE_PARTITION_SIZE := 0x01000000
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x26be3680
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 0x105c0000
+BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 650000000
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # platform
 TARGET_ARCH := arm
@@ -69,8 +73,16 @@ USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
+BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
 
-# Kernel   
+# defines to support legacy blobs
+COMMON_GLOBAL_CFLAGS += \
+    -DNEEDS_VECTORIMPL_SYMBOLS \
+    -DADD_LEGACY_SET_POSITION_SYMBOL \
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
+#    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+
+# Kernel
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
@@ -80,7 +92,7 @@ TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
-#kernel/notionink/adam/arch/arm/boot/zImage
+#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -129,6 +141,7 @@ TARGET_DISABLE_TRIPLE_BUFFERING := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 BOARD_USE_LEGACY_UI := true
+#BOARD_HAVE_PIXEL_FORMAT_INFO := true
 
 #MAX_EGL_CACHE_KEY_SIZE := 4096
 #MAX_EGL_CACHE_SIZE := 2146304
@@ -138,14 +151,15 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # Use nicer font rendering
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+#TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 TARGET_SUPPORT_HDMI_PRIMARY := true
 TARGET_32_BIT_SURFACEFLINGER := true
+BOARD_HAVE_PIXEL_FORMAT_INFO := true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
 # Tegra2 EGL support
-BOARD_USES_OVERLAY := true
+BOARD_USES_OVERLAY := false
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
@@ -181,6 +195,7 @@ BOARD_SECOND_CAMERA_DEVICE := false
 BOARD_CAMERA_HAVE_ISO := true
 ICS_CAMERA_BLOB := true
 BOARD_VENDOR_USE_NV_CAMERA := true
+USE_DEVICE_SPECIFIC_CAMERA := true
 
 # Audio
 BOARD_USES_GENERIC_AUDIO := false
@@ -237,10 +252,6 @@ BOARD_RECOVERY_SWIPE := true
 # Compatibility with pre-kitkat Sensor HALs
 SENSORS_NEED_SETRATE_ON_ENABLE := true
 
-#define to use all of the Linaro Cortex-A9 optimized string funcs,
-#instead of subset known to work on all machines
-USE_ALL_OPTIMIZED_STRING_FUNCS := true
-
 # SELinux policies
 HAVE_SELINUX := true
 
@@ -272,8 +283,10 @@ BOARD_SEPOLICY_UNION := \
 	rild.te \
 	sensors_config.te \
 	shared_app.te \
+	shell.te \
 	surfaceflinger.te \
 	system_app.te \
+	system.te \
 	ueventd.te \
 	untrusted_app.te \
 	vold.te \

@@ -1,6 +1,14 @@
 import init.harmony.usb.rc
 #                                    RC mod: ver24c
 on early-init
+    # "control" auto-suspend                                  # RC addition: ver23
+    chmod 0660 /sys/bus/usb/devices/usb1/power/control
+    chown system system /sys/bus/usb/devices/usb1/power/control
+
+    # RC: forces usb devices to resume not reset after sleep, and to not self suspend.
+    write /sys/bus/usb/devices/usb1/power/control on
+    write /sys/class/android_usb/android0/f_rndis/power/control on
+    
     mount debugfs debugfs /sys/kernel/debug
 
 on init
@@ -164,15 +172,6 @@ on boot
     chmod 0660 /dev/cdc-wdm0
     chown radio radio /dev/cdc-wdm1
     chmod 0660 /dev/cdc-wdm1
-
-    # "control" auto-suspend                                  # RC addition: ver23
-    chmod 0660 /sys/bus/usb/devices/usb1/power/control
-    chown system system /sys/bus/usb/devices/usb1/power/control
-
-    # RC: forces usb devices to resume not reset after sleep, and to not self suspend.
-    write /sys/bus/usb/devices/usb1/power/control on
-    write /sys/class/android_usb/android0/f_rndis/power/control on
-
 
 # Set NITZ Feature on or off
     setprop mbm.ril.config.nitz yes
@@ -381,7 +380,7 @@ on property:init.svc.vold=running
     start adam_preboot
     #start g5sensord
 
-on property:init.svc.bootanim=stopped
+on property:sys.boot_completed=1
     class_start postbootinit
     start wwlanselect
     start adam_postboot

@@ -17,3 +17,5 @@ allow bluetooth sysfs:file { read write };
 allow kernel video_device:file { rw_file_perms relabelto };
 allow ueventd video_device:file { rw_file_perms relabelto };
 allow video_device sysfs:filesystem associate;
+allow debuggerd knv_device:chr_file rw_file_perms;
+allow debuggerd device:chr_file rw_file_perms;

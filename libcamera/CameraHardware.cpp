@@ -15,6 +15,8 @@
 ** limitations under the License.
 */
 
+#define DEBUG 1
+
 #define LOG_TAG "CameraHardware"
 
 extern "C" {
@@ -105,7 +107,8 @@ extern "C" {
 #endif
 
 // File to control camera power
-#define CAMERA_POWER	    "/sys/devices/platform/tegra_camera.0/power/control"
+#define CAMERA_POWER "/sys/kernel/debug/camera/power"
+//"/sys/devices/platform/tegra_camera.0/power/control"
 // "/sys/devices/platform/adam-pm-camera/power_on"
 
 
@@ -114,11 +117,13 @@ namespace android {
 char videodevice[64];
 int devnum;
 int CameraHardware::vflip = 0;
+static bool power = false;
 
 bool CameraHardware::PowerOn()
 {
+	if (power) return true;
 	ALOGD("CameraHardware::PowerOn: Power ON camera.");
-	
+
 	// power on camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
@@ -127,7 +132,7 @@ bool CameraHardware::PowerOn()
 	} else {
 		ALOGE("Could not open %s for writing.", CAMERA_POWER);
 		return false;
-    } 
+    }
 	
 	// Wait until the camera is recognized or timed out
 	int timeOut = 500;
@@ -143,6 +148,7 @@ bool CameraHardware::PowerOn()
 	if (handle >= 0) {
 		ALOGD("Camera powered on");
 		::close(handle);
+		power = true;
 		return true;
 	} else {
 		ALOGE("Unable to power camera");
@@ -153,9 +159,10 @@ bool CameraHardware::PowerOn()
 
 bool CameraHardware::PowerOff()
 {
+	if (!power) return true;
 	ALOGD("CameraHardware::PowerOff: Power OFF camera.");
-	
-	// power on camera
+
+	// power off camera
 	int handle = ::open(CAMERA_POWER,O_RDWR);
 	if (handle >= 0) {
 		::write(handle,"0\n",2);
@@ -163,7 +170,8 @@ bool CameraHardware::PowerOff()
 	} else {
 		ALOGE("Could not open %s for writing.", CAMERA_POWER);
 		return false;
-    } 
+    }
+    power = false;
 	return true;
 }
 
@@ -266,9 +274,7 @@ CameraHardware::~CameraHardware()
 		mJpegPictureHeap->release(mJpegPictureHeap);
 		mJpegPictureHeap = NULL;
 	}
-	
-	// Power off camera
-	PowerOff();
+
 }
 
 bool CameraHardware::NegotiatePreviewFormat(struct preview_stream_ops* win)
@@ -318,6 +324,7 @@ status_t CameraHardware::closeCamera()
 {
 	ALOGD("CameraHardware::closeCamera");
 	releaseCamera();
+	PowerOff();
     return NO_ERROR;
 }
 
@@ -2102,6 +2109,7 @@ int CameraHardware::send_command(struct camera_device* dev,
 void CameraHardware::release(struct camera_device* dev)
 {
     CameraHardware* ec = reinterpret_cast<CameraHardware*>(dev->priv);
+	ALOGD("CameraHardWare::release");
     if (ec == NULL) {
         ALOGE("%s: Unexpected NULL camera device", __FUNCTION__);
         return;
@@ -2123,6 +2131,7 @@ int CameraHardware::close(struct hw_device_t* device)
 {
     CameraHardware* ec =
         reinterpret_cast<CameraHardware*>(reinterpret_cast<struct camera_device*>(device)->priv);
+    ALOGD("CameraHardWare::close");
     if (ec == NULL) {
         ALOGE("%s: Unexpected NULL camera device", __FUNCTION__);
         return -EINVAL;
@@ -2161,16 +2170,3 @@ camera_device_ops_t CameraHardware::mDeviceOps = {
 };
 
 }; // namespace android
-
-
-
-
-
-
-
-
-
-
-
-
-

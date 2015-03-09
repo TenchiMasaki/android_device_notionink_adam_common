@@ -10,4 +10,10 @@ allow system_server rootfs:dir create_dir_perms;
 allow dhcp unlabeled:file r_file_perms;
 allow dex2oat property_socket:sock_file { read write };
 allow shell unlabeled:file { r_file_perms };
-
+allow radio init_tmpfs:file rw_file_perms;
+allow { debuggerd logd installd keystore } vfat:dir rw_dir_perms;
+allow { debuggerd logd installd keystore } vfat:file rw_file_perms;
+allow radio device:chr_file rw_file_perms;
+allow logd system_file:file entrypoint;
+allow fsck kernel:system module_request;
+allow fsck block_device:blk_file rw_file_perms;
