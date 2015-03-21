@@ -24,8 +24,8 @@
 
 # recovery
 misc			/misc		mtd		defaults	recoveryonly
-recovery		/recovery	mtd		defaults	recoveryonly
-boot			/boot		mtd		defaults	recoveryonly
+recovery		/recovery	bml		defaults	recoveryonly
+boot			/boot		bml		defaults	recoveryonly
 system			/system		yaffs2		defaults	recoveryonly
 cache			/cache		yaffs2		defaults	recoveryonly
 /dev/null		/internal_sd	datamedia	defaults	recoveryonly
