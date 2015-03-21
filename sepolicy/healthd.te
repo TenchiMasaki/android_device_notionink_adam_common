@@ -1,1 +1,2 @@
 allow healthd rootfs:file entrypoint;
+#allow healthd init:binder call;

@@ -19,3 +19,4 @@ allow logd system_file:file entrypoint;
 allow fsck kernel:system module_request;
 allow fsck block_device:blk_file rw_file_perms;
 allow installd system_data_file:file rw_file_perms;
+allow logd unlabeled:file entrypoint;
