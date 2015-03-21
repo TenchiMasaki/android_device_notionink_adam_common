@@ -1,6 +1,6 @@
-type sysinit;
-type userinit_exec;
-type proc_dirty_ratio;
+#type sysinit;
+#type userinit_exec;
+#type proc_dirty_ratio;
 #allow init self:binder set_context_mgr;
 allow init wpa_socket:unix_dgram_socket { bind create };
 #allow init sysfs:filesystem { associate };

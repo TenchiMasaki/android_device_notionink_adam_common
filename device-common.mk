@@ -119,6 +119,10 @@ PRODUCT_COPY_FILES += \
 #PRODUCT_COPY_FILES += \
 #   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
+# Boot animation
+PRODUCT_COPY_FILES += \
+    vendor/pa/prebuilt/bootanimation/res/800x480.zip:system/media/bootanimation.zip
+
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     ro.sf.lcd_density=120
