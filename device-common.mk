@@ -121,7 +121,6 @@ PRODUCT_COPY_FILES += \
 #   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
 PRODUCT_COPY_FILES += \
-    out/target/product/adam_3g/symbols/system/lib/libjni_latinime.so:system/lib/libjni_latinime.so
     vendor/liquid/prebuilt/common/bootanimation/480.zip:system/media/bootanimation.zip
 
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -193,7 +192,8 @@ PRODUCT_PACKAGES += \
 	webview \
 	WebViewDream \
 	PhotoTable \
-	libwebkit
+	libwebkit \
+	libjni_latinime
         
 # Sensor daemon
 PRODUCT_PACKAGES += \
