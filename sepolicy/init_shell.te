@@ -1,4 +1,4 @@
-type init_shell;
+#type init_shell;
 allow init_shell sysfs:file write;
 allow init_shell init_shell:capability dac_override;
 allow init_shell system_data_file:dir rw_dir_perms;

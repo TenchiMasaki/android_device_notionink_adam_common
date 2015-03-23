@@ -68,7 +68,9 @@ PRODUCT_COPY_FILES := \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
-
+# Keyboard
+PRODUCT_COPY_FILES += \
+    device/notionink/adam_common/files/hackerskeyboard-v1037.apk:system/app/HackersKeyboard/hackerskeyboard-v1037.apk
 # Modules
 PRODUCT_COPY_FILES += \
     device/notionink/adam_common/modules/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko \
