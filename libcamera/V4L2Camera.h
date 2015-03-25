@@ -11,6 +11,10 @@
 
 #define NB_BUFFER 4
 
+#define CAP_MODE_PREVIEW 0
+#define CAP_MODE_PICTURE 1
+#define CAP_MODE_VIDEO 2
+
 #include <binder/MemoryBase.h>
 #include <binder/MemoryHeapBase.h>
 #include <utils/SortedVector.h>
@@ -65,7 +69,9 @@ public:
 	SortedVector<SurfaceSize> getAvailableSizes() const;
 	SortedVector<int> getAvailableFps() const;
 	const SurfaceDesc& getBestPreviewFmt() const;
-	const SurfaceDesc& getBestPictureFmt() const; 	
+	const SurfaceDesc& getBestPictureFmt() const;
+	int setVFlip(int vflip);
+	int setCapMode(int mode);
 	
 private:
 	bool EnumFrameIntervals(int pixfmt, int width, int height);

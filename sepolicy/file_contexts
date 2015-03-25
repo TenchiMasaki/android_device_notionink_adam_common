@@ -24,3 +24,4 @@
 /sys/devices/platform/rfkill_gpio/rfkill/rfkill0//type    --  u:object_r:sysfs_bluetooth_writable:s0
 
 /sys/devices/platform/smba1006-pm-gps/power_on  u:object_r:gps_device:s0
+/sys/devices/platform/pwm-backlight/PQiModeOn u:object_r:video_device:s0

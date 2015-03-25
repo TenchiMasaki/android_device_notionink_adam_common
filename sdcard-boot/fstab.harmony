@@ -1,0 +1,37 @@
+# Android fstab file.
+#<src>	<mnt_point>	<type>	<mnt_flags and options>	<fs_mgr_flags>
+# The filesystem that contains the filesystem checker binary (typically /system) cannot
+# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
+
+/dev/block/mmcblk1p1	/storage/sdcard2	vfat	defaults	wait,check
+/dev/block/mmcblk1p2	/cache	ext4	defaults	wait,check
+/dev/block/mmcblk1p3	/system	ext4	defaults	wait
+/dev/block/mmcblk1p4	/data	ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer
+
+## Vold 2.0 fstab for NI Adam
+
+#######################
+## Regular device mount
+##
+## Format: dev_mount <label> <mount_point> <part> <sysfs_path1...>
+## label        - Label for the volume
+## mount_point  - Where the volume will be mounted
+## part         - Partition # (1 based), or 'auto' for first usable partition.
+## <sysfs_path> - List of sysfs paths to source devices
+######################
+
+/devices/platform/sdhci-tegra.3/mmc_host/mmc1 auto auto defaults voldmanaged=sdcard1:auto
+#/devices/platform/sdhci-tegra.2/mmc_host/mmc2 auto auto defaults voldmanaged=sdcard2:auto
+/devices/platform/tegra-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0 auto auto defaults voldmanaged=usbdisk0:auto
+/devices/platform/tegra-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0 auto auto defaults voldmanaged=usbdisk1:auto
+
+# recovery
+misc			/misc		mtd		defaults	recoveryonly
+recovery		/recovery	mtd		defaults	recoveryonly
+boot			/boot		mtd		defaults	recoveryonly
+/dev/block/mmcblk1p3	/system		ext4		defaults	recoveryonly
+/dev/block/mmcblk1p2	/cache		ext4		defaults	recoveryonly
+/dev/null		/internal_sd	datamedia	defaults	recoveryonly
+/dev/block/mmcblk1p4	/data		ext4		defaults	recoveryonly
+/dev/block/mmcblk1p1	/external_sd	auto		defaults	recoveryonly
+/dev/block/mmcblk0p1	/sdcard		auto		defaults	recoveryonly

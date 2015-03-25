@@ -8,7 +8,7 @@ on init
     export LD_LIBRARY_PATH .:/sbin
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
-    export EXTERNAL_STORAGE /internal_sd
+    export EXTERNAL_STORAGE /sdcard
 
     write /sys/devices/platform/pwm-backlight/PQiModeOn 1
 
@@ -19,9 +19,6 @@ on init
     mkdir /sdcard
     mkdir /internal_sd
     mkdir /external_sd
-    mkdir /sd-ext
-    mkdir /datadata
-    mkdir /emmc
     mkdir /system
     mkdir /data
     mkdir /cache
@@ -85,10 +82,13 @@ on boot
     write /sys/bus/usb/devices/2-1/power/control auto
     write /sys/bus/usb/devices/2-1/power/wakeup enabled
 
-    # ril control auto-suspend                                  # RC addition: ver23
+    # "control" auto-suspend                                  # RC addition: ver23
     chmod 0660 /sys/bus/usb/devices/usb1/power/control
-    chown radio radio /sys/bus/usb/devices/usb1/power/control
-    write /sys/bus/usb/devices/usb1/power/control on  # RC: devices resumes not resets, not self suspend. apply earlier
+    chown system system /sys/bus/usb/devices/usb1/power/control
+
+    # RC: forces usb devices to resume not reset after sleep, and to not self suspend.
+    write /sys/bus/usb/devices/usb1/power/control on
+    write /sys/class/android_usb/android0/f_rndis/power/control on
 
     setprop service.adb.root 1
     
