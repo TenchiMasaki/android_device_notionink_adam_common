@@ -206,14 +206,14 @@ static void sysfs_read(const char *path, char *s,int maxlen)
 
     if (fd < 0) {
         strerror_r(errno, buf, sizeof(buf));
-        ALOGE("Error opening %s: %s\n", path, buf);
+        //ALOGE("Error opening %s: %s\n", path, buf);
         return;
     }
 
     len = read(fd, s, maxlen);
     if (len < 0) {
         strerror_r(errno, buf, sizeof(buf));
-        ALOGE("Error reading from %s: %s\n", path, buf);
+        //ALOGE("Error reading from %s: %s\n", path, buf);
     }
 
 	s[len]=0;
@@ -235,12 +235,12 @@ static void select_devices(struct audio_device *adev)
 
 	sysfs_read("/proc/asound/card0/id", id0, 20);
 	sysfs_read("/proc/asound/card1/id", id1, 20);
-
+	
     headphone_on = adev->out_device & (AUDIO_DEVICE_OUT_WIRED_HEADSET | AUDIO_DEVICE_OUT_WIRED_HEADPHONE);
     speaker_on = adev->out_device & AUDIO_DEVICE_OUT_SPEAKER;
     hdmi_on = adev->out_device & AUDIO_DEVICE_OUT_AUX_DIGITAL;
     main_mic_on = adev->active_in ? AUDIO_DEVICE(adev->active_in->device) : 0;//adev->in_device & AUDIO_DEVICE_IN_BUILTIN_MIC;
-    usb_on = (strlen(id0) != 0 && strstr(id0, TEGRA_AUDIO)) || (strlen(id1) != 0 && !strstr(id1, TEGRA_AUDIO)); //adev->out_device & AUDIO_DEVICE_OUT_ALL_USB;
+    usb_on = strlen(id1) ? 1: 0; //adev->out_device & AUDIO_DEVICE_OUT_ALL_USB;
 
     reset_mixer_state(adev->ar);
 

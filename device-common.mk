@@ -32,6 +32,24 @@ PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_LOCALES += en mdpi
 
+# Enable optional sensor types
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.qti.sensors.smd=false \
+    ro.qti.sensors.game_rv=true \
+    ro.qti.sensors.georv=true \
+    ro.qti.sensors.smgr_mag_cal_en=true \
+    ro.qti.sensors.step_detector=false \
+    ro.qti.sensors.step_counter=false \
+    ro.qti.sensors.tap=false \
+    ro.qti.sensors.facing=false \
+    ro.qti.sensors.tilt=false \
+    ro.qti.sensors.amd=false \
+    ro.qti.sensors.rmd=false \
+    ro.qti.sensors.vmd=false \
+    ro.qti.sensors.pedometer=false \
+    ro.qti.sensors.pam=false \
+    ro.qti.sdk.sensors.gestures=false
+
 # Dalvik
 # DONT_INSTALL_DEX_FILES := true
 #PRODUCT_PROPERTY_OVERRIDES += \
@@ -49,15 +67,15 @@ PRODUCT_LOCALES += en mdpi
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
+    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
-    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
-device/notionink/adam_common/recovery/init.recovery.harmony.rc:root/init.recovery.harmony.rc
+    device/notionink/adam_common/recovery/init.recovery.harmony.rc:root/init.recovery.harmony.rc
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
@@ -106,7 +124,7 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
+     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
      frameworks/av/media/libstagefright/data/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml
 
 # Mixer paths
