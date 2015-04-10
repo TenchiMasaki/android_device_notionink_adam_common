@@ -53,29 +53,9 @@ on init
 
 on fs
     # Mount cache and system yaffs2 partitions here
-    #mount yaffs2 mtd@cache /cache nosuid nodev
-    #mount yaffs2 mtd@system /system
-    mount vfat /dev/block/mmcblk1p1 /storage/sdcard2 nosuid nodev
-    mount ext4 /dev/block/mmcblk1p2 /cache nosuid nodev
-    mount ext4 /dev/block/mmcblk1p3 /system
-    mount ext4 /dev/block/mmcblk1p4 /data nosuid nodev
-    
+    # mount yaffs2 mtd@cache /cache nosuid nodev
+    # mount yaffs2 mtd@system /system 
     mount_all /fstab.harmony
-    
-    # use microsd filesystem
-    #rmdir /system
-    #rmdir /cache
-    #rmdir /data
-    #symlink /storage/sdcard2/system /system
-    #symlink /storage/sdcard2/cache /cache
-    #symlink /storage/sdcard2/data /data
-    
-    #mount ext4 loop@/storage/sdcard2/cm12/cache.img /cache nosuid nodev
-    #mount ext4 loop@/storage/sdcard2/cm12/data.img /data nosuid nodev
-    #mount ext4 loop@/storage/sdcard2/cm12/system.img /system
-	
-    #symlink /storage/sdcard2 /sdcard
-    #symlink /storage/sdcard2 /mnt/sdcard
 
     # setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.fuse_sdcard true
@@ -117,7 +97,7 @@ on early-boot
     setenforce 1                                # RC:    1 is implied value?
 
 on boot
-    #mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
+    # mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
 
 # PQi Permissions
     chmod 0666 /sys/class/gpio/gpio27/value

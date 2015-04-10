@@ -33,11 +33,16 @@ WITH_GMS := true
 -include vendor/notionink/adam/BoardConfigVendor.mk
 
 # partitions
+# TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 650000000
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 924999680
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
+# BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
+# TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+
+BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # platform
 TARGET_ARCH := arm
@@ -57,6 +62,9 @@ ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
+
+BLISSIFY := true
+BLISS_O3 := true
 
 # Compiler Optimization - This is a @codefireX specific flag to use -O3 everywhere.
 ARCH_ARM_HIGH_OPTIMIZATION := true
@@ -100,9 +108,10 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
+BOARD_KERNEL_CMDLINE :=
 
 # Custom Tools
-TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
+# TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
 
 # Wifi related defines
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
@@ -143,8 +152,8 @@ TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 BOARD_USE_LEGACY_UI := true
 BOARD_HAVE_PIXEL_FORMAT_INFO := true
 
-#MAX_EGL_CACHE_KEY_SIZE := 4096
-#MAX_EGL_CACHE_SIZE := 2146304
+MAX_EGL_CACHE_KEY_SIZE := 4096
+MAX_EGL_CACHE_SIZE := 2146304
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # display
@@ -162,7 +171,7 @@ BOARD_HAVE_PIXEL_FORMAT_INFO := true
 BOARD_USES_OVERLAY := false
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+# BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_HDMI_MIRROR_MODE := Scale
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true

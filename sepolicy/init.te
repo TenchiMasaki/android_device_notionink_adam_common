@@ -1,6 +1,8 @@
 #allow init self:binder set_context_mgr;
 allow init wpa_socket:unix_dgram_socket { bind create };
 #allow init sysfs:filesystem { associate };
+allow init system_file:dir { rw_dir_perms create_dir_perms relabelfrom };
+allow init system_file:lnk_file { create relabelfrom };
 #allow init system_file:file execute_no_trans;
 allow init app_data_file:dir { create_dir_perms };
 allow init app_data_file:file { rw_file_perms };
@@ -22,6 +24,7 @@ allow bluetooth init:unix_dgram_socket write;
 allow bluetooth init_tmpfs:file rw_file_perms;
 allow init kmem_device:chr_file rw_file_perms;
 allow init init:tcp_socket { create setopt bind };
+allow init system_file:dir mounton;
 allow sysinit init:process dyntransition;
 allow sysinit kernel:security read_policy;
 allow sysinit sysinit:capability { dac_override dac_read_search };
