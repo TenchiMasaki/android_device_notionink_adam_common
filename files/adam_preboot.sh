@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
 # Enable PixelQi mode on boot
-#    echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
+    #echo 1 > /sys/devices/platform/pwm-backlight/PQiModeOn
 
 # Disable TCP/IP v6
 #sysctl -w net.ipv6.conf.default.disable_ipv6=1

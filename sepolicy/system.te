@@ -26,3 +26,6 @@ allow sdcardd kernel:system module_request;
 allow bootanim kernel:system module_request;
 allow zygote kernel:system module_request;
 allow dex2oat kernel:system module_request;
+allow installd kernel:system module_request;
+allow drmserver kernel:system module_request;
+allow keystore kernel:system module_request;

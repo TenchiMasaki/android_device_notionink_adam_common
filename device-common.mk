@@ -32,6 +32,24 @@ PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_LOCALES += en mdpi
 
+# Enable optional sensor types
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.qti.sensors.smd=false \
+    ro.qti.sensors.game_rv=true \
+    ro.qti.sensors.georv=true \
+    ro.qti.sensors.smgr_mag_cal_en=true \
+    ro.qti.sensors.step_detector=false \
+    ro.qti.sensors.step_counter=false \
+    ro.qti.sensors.tap=false \
+    ro.qti.sensors.facing=false \
+    ro.qti.sensors.tilt=false \
+    ro.qti.sensors.amd=false \
+    ro.qti.sensors.rmd=false \
+    ro.qti.sensors.vmd=false \
+    ro.qti.sensors.pedometer=false \
+    ro.qti.sensors.pam=false \
+    ro.qti.sdk.sensors.gestures=false
+
 # Dalvik
 # DONT_INSTALL_DEX_FILES := true
 #PRODUCT_PROPERTY_OVERRIDES += \
@@ -105,7 +123,7 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
+     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
@@ -156,6 +174,10 @@ PRODUCT_PACKAGES += \
 	camera.tegra \
 	hwcomposer.tegra \
 	power.tegra
+
+# Camera
+PRODUCT_PROPERTY_OVERRIDES += \
+    camera2.portability.force_api=1
 
 # These are the OpenMAX IL modules
 PRODUCT_PACKAGES += \
