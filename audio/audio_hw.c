@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <fcntl.h>
 
 #include <cutils/log.h>
 #include <cutils/properties.h>
@@ -55,6 +56,12 @@
 #define SCO_PERIOD_SIZE 256
 #define SCO_PERIOD_COUNT 4
 #define SCO_SAMPLING_RATE 8000
+
+#define USB_SAMPLING_RATE 32000
+
+#define TEGRA_AUDIO "tegraalc5623"
+#define HEADSET_AUDIO "Headset"
+#define PRO_AUDIO "Pro"
 
 #define AUDIO_DEVICE(x) ((x) & (~(AUDIO_DEVICE_BIT_IN | AUDIO_DEVICE_BIT_DEFAULT))) 
 
@@ -95,6 +102,16 @@ struct pcm_config pcm_config_sco = {
     .period_count = SCO_PERIOD_COUNT,
     .format = PCM_FORMAT_S16_LE,
 };
+
+struct pcm_config pcm_config_usb = {
+    .channels = 2,
+    .rate = USB_SAMPLING_RATE,
+    .period_size = OUT_PERIOD_SIZE,
+    .period_count = OUT_LONG_PERIOD_COUNT,
+    .format = PCM_FORMAT_S16_LE,
+    .start_threshold = OUT_PERIOD_SIZE * OUT_SHORT_PERIOD_COUNT,
+};
+
 
 struct audio_device {
     struct audio_hw_device hw_device;
@@ -179,6 +196,31 @@ static void release_buffer(struct resampler_buffer_provider *buffer_provider,
 
 /* Helper functions */
 
+static void sysfs_read(const char *path, char *s,int maxlen)
+{
+    char buf[80];
+    int len;
+    int fd = open(path, O_RDONLY);
+    
+    *s = 0;
+
+    if (fd < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        //ALOGE("Error opening %s: %s\n", path, buf);
+        return;
+    }
+
+    len = read(fd, s, maxlen);
+    if (len < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        //ALOGE("Error reading from %s: %s\n", path, buf);
+    }
+
+	s[len]=0;
+
+    close(fd);
+}
+
 static void select_devices(struct audio_device *adev)
 {	
 	ALOGD("select_devices+");
@@ -186,13 +228,19 @@ static void select_devices(struct audio_device *adev)
     int speaker_on;
     int hdmi_on;
     int main_mic_on;
+    int usb_on;
+    char id0[21], id1[21];
 
 	ALOGV("out_devices=%d in_devices=%d active_out=%c active_in=%c", adev->out_device, adev->in_device, adev->active_out!=NULL?'y':'n', adev->active_in!=NULL?'y':'n');
 
+	sysfs_read("/proc/asound/card0/id", id0, 20);
+	sysfs_read("/proc/asound/card1/id", id1, 20);
+	
     headphone_on = adev->out_device & (AUDIO_DEVICE_OUT_WIRED_HEADSET | AUDIO_DEVICE_OUT_WIRED_HEADPHONE);
     speaker_on = adev->out_device & AUDIO_DEVICE_OUT_SPEAKER;
     hdmi_on = adev->out_device & AUDIO_DEVICE_OUT_AUX_DIGITAL;
     main_mic_on = adev->active_in ? AUDIO_DEVICE(adev->active_in->device) : 0;//adev->in_device & AUDIO_DEVICE_IN_BUILTIN_MIC;
+    usb_on = strlen(id1) ? 1: 0; //adev->out_device & AUDIO_DEVICE_OUT_ALL_USB;
 
     reset_mixer_state(adev->ar);
 
@@ -205,12 +253,13 @@ static void select_devices(struct audio_device *adev)
     if (main_mic_on)
         audio_route_apply_path(adev->ar, "mic_on");
     else audio_route_apply_path(adev->ar, "mic_off");
-    
+    if (usb_on)
+		audio_route_apply_path(adev->ar, "usb");
 
     update_mixer_state(adev->ar);
 
-    ALOGV("hp=%c speaker=%c hdmi=%c main-mic=%c", headphone_on ? 'y' : 'n',
-          speaker_on ? 'y' : 'n', hdmi_on ? 'y' : 'n', main_mic_on ? 'y' : 'n');
+    ALOGV("hp=%c speaker=%c hdmi=%c main-mic=%c usb=%c", headphone_on ? 'y' : 'n',
+          speaker_on ? 'y' : 'n', hdmi_on ? 'y' : 'n', main_mic_on ? 'y' : 'n', usb_on ? 'y' : 'n');
 
 	ALOGD("select_devices-");
 }
@@ -272,9 +321,16 @@ static void do_in_standby(struct stream_in *in)
 static int start_output_stream(struct stream_out *out)
 {
     struct audio_device *adev = out->dev;
-    unsigned int device;
+    unsigned int card, device;
     int ret;
+    char id0[21], id1[21];
 
+	sysfs_read("/proc/asound/card0/id", id0, 20);
+	sysfs_read("/proc/asound/card1/id", id1, 20);
+	
+	ALOGI("id0=%s, id1=%s", id0, id1);
+	card = 0;
+	
     /*
      * Due to the lack of sample rate converters in the SoC,
      * it greatly simplifies things to have only the main
@@ -294,6 +350,23 @@ static int start_output_stream(struct stream_out *out)
         out->buffer_type = OUT_BUFFER_TYPE_UNKNOWN;
     }
 
+	if (strlen(id0) == 0) {
+		card = 1;
+	}
+	else if (strstr(id0, HEADSET_AUDIO)) {
+		sysfs_read("/proc/asound/card0/usbid", id0, 20);
+		if (strstr(id0, "046d:0a15")) // Logitech G35 Headset static unless 32k sample rate
+			out->pcm_config = &pcm_config_usb;
+	}
+	else if (strstr(id0, TEGRA_AUDIO) && strlen(id1) != 0 && !strstr(id1, TEGRA_AUDIO)) {
+		card = 1;
+		if (strstr(id1, HEADSET_AUDIO)) {
+			sysfs_read("/proc/asound/card1/usbid", id1, 20);
+			if (strstr(id1, "046d:0a15")) // Logitech G35 Headset static unless 32k sample rate
+				out->pcm_config = &pcm_config_usb;
+		}
+	}
+
     /*
      * All open PCMs can only use a single group of rates at once:
      * Group 1: 11.025, 22.05, 44.1
@@ -312,9 +385,9 @@ static int start_output_stream(struct stream_out *out)
         pthread_mutex_unlock(&in->lock);
     }
 
-	ALOGD("outpcm open: card=%d, device=%d, rate=%d", PCM_CARD, device, out->pcm_config->rate);
+	ALOGD("outpcm open: card=%d, device=%d, adev=%d, rate=%d", card, device, adev->out_device, out->pcm_config->rate);
 
-    out->pcm = pcm_open(PCM_CARD, device, PCM_OUT | PCM_NORESTART | PCM_MONOTONIC, out->pcm_config);
+    out->pcm = pcm_open(card, device, PCM_OUT | PCM_NORESTART | PCM_MONOTONIC, out->pcm_config);
 
     if (out->pcm && !pcm_is_ready(out->pcm)) {
         ALOGE("pcm_open(out) failed: %s", pcm_get_error(out->pcm));
@@ -350,8 +423,13 @@ static int start_output_stream(struct stream_out *out)
 static int start_input_stream(struct stream_in *in)
 {
     struct audio_device *adev = in->dev;
-    unsigned int device;
+    unsigned int card, device;
     int ret;
+    char id0[21], id1[21];
+
+	sysfs_read("/proc/asound/card0/id", id0, 20);
+	sysfs_read("/proc/asound/card1/id", id1, 20);
+	card = 0;
 
     /*
      * Due to the lack of sample rate converters in the SoC,
@@ -370,6 +448,23 @@ static int start_input_stream(struct stream_in *in)
         in->pcm_config = &pcm_config_in;
     }
 
+	if (strlen(id0) == 0) {
+		card = 1;
+	}
+	else if (strstr(id0, HEADSET_AUDIO)) {
+		sysfs_read("/proc/asound/card0/usbid", id0, 20);
+		if (strstr(id0, "046d:0a15")) // Logitech G35 Headset static unless 32k sample rate
+			in->pcm_config = &pcm_config_usb;
+	}
+	else if (strstr(id0, TEGRA_AUDIO) && strlen(id1) != 0 && !strstr(id1, TEGRA_AUDIO)) {
+		card = 1;
+		if (strstr(id1, HEADSET_AUDIO)) {
+			sysfs_read("/proc/asound/card1/usbid", id1, 20);
+			if (strstr(id1, "046d:0a15")) // Logitech G35 Headset static unless 32k sample rate
+				in->pcm_config = &pcm_config_usb;
+		}
+	}
+	
     /*
      * All open PCMs can only use a single group of rates at once:
      * Group 1: 11.025, 22.05, 44.1
@@ -388,9 +483,12 @@ static int start_input_stream(struct stream_in *in)
         pthread_mutex_unlock(&out->lock);
     }
 
-	ALOGD("inpcm open: card=%d, device=%d, rate=%d", PCM_CARD, device, adev && adev->active_out && adev->active_out->pcm_config? adev->active_out->pcm_config->rate : 0);
+	ALOGD("inpcm open: card=%d, device=%d, adev=%d, out-rate=%d, in-rate=%d, in-sample-rate=%d, buf-size=%d, frame-size=%d", 
+		card, device, adev->in_device, adev && adev->active_out && adev->active_out->pcm_config?
+		adev->active_out->pcm_config->rate : 0, in->pcm_config->rate,
+		in_get_sample_rate(&in->stream.common), in->buffer_size, in->frames_in);
 
-    in->pcm = pcm_open(PCM_CARD, device, PCM_IN, in->pcm_config);
+    in->pcm = pcm_open(card, device, PCM_IN, in->pcm_config);
 
     if (in->pcm && !pcm_is_ready(in->pcm)) {
         ALOGE("pcm_open(in) failed: %s", pcm_get_error(in->pcm));
@@ -402,7 +500,10 @@ static int start_input_stream(struct stream_in *in)
      * If the stream rate differs from the PCM rate, we need to
      * create a resampler.
      */
-    if (in_get_sample_rate(&in->stream.common) != in->pcm_config->rate) {
+    
+    if (&in->stream && &in->stream.common && in->pcm_config && in->pcm_config->rate && 
+    	in_get_sample_rate(&in->stream.common) &&
+    	in_get_sample_rate(&in->stream.common) != in->pcm_config->rate) {
         in->buf_provider.get_next_buffer = get_next_buffer;
         in->buf_provider.release_buffer = release_buffer;
 
@@ -413,6 +514,7 @@ static int start_input_stream(struct stream_in *in)
                                &in->buf_provider,
                                &in->resampler);
     }
+    
     in->buffer_size = pcm_frames_to_bytes(in->pcm,
                                           in->pcm_config->period_size);
     in->buffer = malloc(in->buffer_size);

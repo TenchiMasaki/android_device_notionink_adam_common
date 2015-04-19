@@ -169,6 +169,10 @@ public:
 	
 	status_t dumpCamera(int fd);
 
+    int getWidthFPS(int width);
+
+    static int vflip;
+
 private:
 
 	bool PowerOn();

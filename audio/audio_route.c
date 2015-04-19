@@ -346,6 +346,9 @@ void update_mixer_state(struct audio_route *ar)
     unsigned int i;
     unsigned int j;
 
+    if (!ar || !ar->num_mixer_ctls)
+        return;
+
     for (i = 0; i < ar->num_mixer_ctls; i++) {
         /* if the value has changed, update the mixer */
         if (ar->mixer_state[i].old_value != ar->mixer_state[i].new_value) {
@@ -373,6 +376,9 @@ static void save_mixer_state(struct audio_route *ar)
 void reset_mixer_state(struct audio_route *ar)
 {
     unsigned int i;
+
+    if (!ar || !ar->num_mixer_ctls)
+        return;
 
     /* load all of the saved values */
     for (i = 0; i < ar->num_mixer_ctls; i++)

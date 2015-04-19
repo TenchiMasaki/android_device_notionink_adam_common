@@ -982,6 +982,36 @@ const SurfaceDesc& V4L2Camera::getBestPictureFmt() const
 {
 	return m_BestPictureFmt;
 }
- 
+
+int V4L2Camera::setVFlip(int vflip) {
+    struct v4l2_control *ctrl = (v4l2_control *)calloc(1, sizeof(struct v4l2_control));
+    ALOGD("V4L2Camera::setVFlip %d", vflip);
+	memset(ctrl, 0, sizeof(struct v4l2_control));
+    ctrl->id = V4L2_CID_VFLIP;
+    ctrl->value = vflip;
+    int ret = ioctl(fd, VIDIOC_S_CTRL, ctrl);
+    if (ret < 0) {
+        ALOGE("setVFlip: VIDIOC_S_CTRL Failed: %s",  strerror(errno));
+    }
+	free(ctrl);
+
+    return ret;
+}
+
+// mode=CAP_MODE_PREVIEW, CAP_MODE_PICTURE, CAP_MODE_VIDEO
+int V4L2Camera::setCapMode(int mode) {
+    struct v4l2_control *ctrl = (v4l2_control *)calloc(1, sizeof(struct v4l2_control));
+    ALOGD("V4L2Camera::setCapMode %d", mode);
+	memset(ctrl, 0, sizeof(struct v4l2_control));
+    ctrl->id = V4L2_CID_CAP_MODE;
+    ctrl->value = mode;
+    int ret = ioctl(fd, VIDIOC_S_CTRL, ctrl);
+    if (ret < 0) {
+        ALOGE("setCapMode: VIDIOC_S_CTRL Failed: %s",  strerror(errno));
+    }
+	free(ctrl);
+
+    return ret;
+}
 
 }; // namespace android
