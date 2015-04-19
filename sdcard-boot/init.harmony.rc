@@ -1,10 +1,6 @@
 import init.harmony.usb.rc
-#                                    RC mod: ver23y
+#                                    RC mod: ver24c
 on early-init
-    # Set init and its forked children's oom_adj. # RC mod:was -16, default -12
-    #write /proc/1/oom_adj -14
-    write /proc/1/oom_score_adj -930
-
     # "control" auto-suspend                                  # RC addition: ver23
     chmod 0660 /sys/bus/usb/devices/usb1/power/control
     chown system system /sys/bus/usb/devices/usb1/power/control
@@ -12,7 +8,7 @@ on early-init
     # RC: forces usb devices to resume not reset after sleep, and to not self suspend.
     write /sys/bus/usb/devices/usb1/power/control on
     write /sys/class/android_usb/android0/f_rndis/power/control on
-        
+    
     mount debugfs debugfs /sys/kernel/debug
 
 on init
@@ -33,9 +29,9 @@ on init
     #External storage directories
     mkdir /mnt/media_rw/sdcard1 0750 media_rw media_rw
     mkdir /mnt/media_rw/sdcard2 0750 media_rw media_rw
-    mkdir /storage/usbdisk0 0000 system system
+    mkdir /storage/usbdisk0 0750 media_rw media_rw
     mkdir /mnt/media_rw/usbdisk0 0750 media_rw media_rw
-    mkdir /storage/usbdisk1 0000 system system
+    mkdir /storage/usbdisk1 0750 media_rw media_rw
     mkdir /mnt/media_rw/usbdisk1 0750 media_rw media_rw
     mkdir /storage/sdcard1 0750 media_rw media_rw                # relax perms to allow access
     mkdir /storage/sdcard2 0750 media_rw media_rw
@@ -55,51 +51,11 @@ on init
     symlink /storage/usbdisk1 /mnt/usbdisk1
     symlink /storage/usbdisk1 /usbdisk1
 
-    # Create private mountpoint so we can MS_MOVE from staging  # RC ADD *******
-    mount tmpfs tmpfs /mnt/secure mode=0700,uid=0,gid=0
- 
-on early-boot
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    restorecon /sys/devices/system/cpu
-    restorecon /sys/devices/system/cpu/cpu0
-    restorecon /sys/devices/system/cpu/cpu1
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boost_factor
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    restorecon /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
-    restorecon /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    restorecon /sys/devices/system/cpu/cpufreq/hispeed_freq
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    restorecon /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-    
-
 on fs
-    mount_all /fstab.harmony
     # Mount cache and system yaffs2 partitions here
-    mount yaffs2 mtd@cache /cache nosuid nodev
-    mount yaffs2 mtd@system /system
+    # mount yaffs2 mtd@cache /cache nosuid nodev
+    # mount yaffs2 mtd@system /system 
+    mount_all /fstab.harmony
 
     # setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.fuse_sdcard true
@@ -111,9 +67,8 @@ on post-fs
 on post-fs-data
     # some apps need access to this
     chmod 777 /mnt/shell
-
-    # Set SELinux security contexts on upgrade or policy update.
-    restorecon /data    # RC not exist: restorecon_recursive
+    chmod 0775 /data
+    chmod 775 /data/app
 
     # we will remap this as /mnt/sdcard with the sdcard fuse tool
     mkdir /data/media 0775 media_rw media_rw
@@ -142,22 +97,19 @@ on early-boot
     setenforce 1                                # RC:    1 is implied value?
 
 on boot
-    mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
+    # mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
 
 # PQi Permissions
-    chmod 0666 /sys/class/gpio/gpio27/value 
+    chmod 0666 /sys/class/gpio/gpio27/value
+
+    # create symlink for fb1 as HDMI
+    symlink /dev/graphics/fb1 /dev/graphics/hdmi
 
     chmod 0664 /sys/power/wait_for_fb_sleep  # RC mod ver19: use for cpufreq control?
     chmod 0664 /sys/power/wait_for_fb_wake   # RC mod ver19:         kernel 3.1???
     chown system system /sys/power/wait_for_fb_sleep                # RC mod
-    chown system system /sys/power/wait_for_fb_wake                 # RC mod    
+    chown system system /sys/power/wait_for_fb_wake                 # RC mod
 
-# Set these so we can remotely update SELinux policy
-    chown system system /sys/fs/selinux/load
-    chown system system /sys/fs/selinux/enforce
-
-# Set this property so surfaceflinger is not started by system_init # **RC ADD try ...ok
-    setprop system_init.startsurfaceflinger 0
 
 # bluetooth permissions
     chmod 0660 /dev/ttyHS2
@@ -203,41 +155,6 @@ on boot
     chmod 664 /sys/bus/iio/devices/device0/illuminance0_input
     chmod 664 /sys/bus/iio/devices/device0/lux
     chmod 664 /sys/bus/iio/devices/device0/proximity_raw
-
-# Interactive governor settings
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/
-    chown system system /sys/devices/system/cpu/cpu1/cpufreq/
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    chown 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
-    chown 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
-    
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/hispeed_freq
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-    chmod 0666 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
     chmod 664 /sys/bus/iio/devices/device0/proxim_ir
     chown 666 /dev/mmc31xx
     chown 666 /dev/ecompass_ctrl
@@ -245,20 +162,6 @@ on boot
 
 # Power management settings
     chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
-
-# Interactive governor settings
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost_factor
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boost_factor
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/max_boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
-
-    write /sys/devices/system/cpu/cpufreq/interactive/io_is_busy  1
 
 # MBM modem
 # Enable USB auto suspend for MBM devices
@@ -469,7 +372,7 @@ service adam_preboot /system/bin/sh /system/etc/adam_preboot.sh
     oneshot
 
 # Postboot service
-service adam_postboot /system/bin/sh /sbin/adam_postboot.sh
+service adam_postboot /system/bin/sh /system/etc/adam_postboot.sh
     user root
     oneshot
 
@@ -477,13 +380,7 @@ on property:init.svc.vold=running
     start adam_preboot
     #start g5sensord
 
-on property:init.svc.bootanim=stopped
+on property:sys.boot_completed=1
     class_start postbootinit
-    start adam_postboot
     start wwlanselect
-
-on property:selinux.reload_policy=1
-    restart ueventd
-    restart installd
-    chown -R system system /selinux/booleans
-    chown -R system system /sys/fs/selinux/booleans
+    start adam_postboot
