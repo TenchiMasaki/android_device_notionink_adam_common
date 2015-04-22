@@ -30,7 +30,7 @@ DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 # uses mdpi artwork where available
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += mdpi
+PRODUCT_LOCALES += en mdpi
 
 # Dalvik
 # DONT_INSTALL_DEX_FILES := true
@@ -58,7 +58,7 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
-    device/notionink/adam_common/files/adam_postboot.sh:root/sbin/adam_postboot.sh \
+    # device/notionink/adam_common/files/adam_postboot.sh:root/sbin/adam_postboot.sh \
 #    device/notionink/adam_common/files/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 #    device/notionink/adam_common/files/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
@@ -136,9 +136,13 @@ PRODUCT_PACKAGES += \
 	sensors.harmony \
 	lights.harmony \
 	gps.harmony \
-	#power.tegra \
-	camera.tegra #\
-	#hwcomposer.tegra
+	camera.tegra \
+	hwcomposer.tegra \
+	#power.tegra
+
+# Camera
+PRODUCT_PROPERTY_OVERRIDES += \
+    camera2.portability.force_api=1
 
 # These are the OpenMAX IL modules
 PRODUCT_PACKAGES += \

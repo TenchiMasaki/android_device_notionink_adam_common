@@ -1,6 +1,6 @@
 # Copyright (C) 2012 The Android Open Source Project
 #
-# USB configuration common for all android devices   # RC mod: ver23 y2
+# USB configuration common for all android devices   # RC mod: ver24c
 #
 # Used to disable USB when switching states
 on property:sys.usb.config=none
@@ -26,5 +26,6 @@ on property:sys.usb.config=adb
 
 # Move to init.harmony.rc to start usb later
 # Used to set USB configuration at boot and to switch the configuration
-#on property:persist.sys.usb.config=*
-#    setprop sys.usb.config ${persist.sys.usb.config}
+on property:persist.sys.usb.config=*
+    setprop sys.usb.config ${persist.sys.usb.config}
+
