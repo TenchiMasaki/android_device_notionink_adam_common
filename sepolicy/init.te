@@ -41,3 +41,6 @@ allow sysinit sysfs:file rw_file_perms;
 allow sysinit userinit_exec:file rx_file_perms;
 allow sysinit proc_dirty_ratio:file rw_file_perms;
 allow init shell_exec:file execute_no_trans;
+allow init untrusted_app:process setpgid;
+allow init isolated_app:process dyntransition;
+allow isolated_app init:unix_dgram_socket write;
