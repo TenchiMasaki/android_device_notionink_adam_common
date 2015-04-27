@@ -13,12 +13,20 @@
   <ctl name="Right Headphone Mux" value="HP Right Mix" />
   <ctl name="AuxOut Mux" value="HPOut Mix" />
   
+  <ctl name="Speaker Playback Switch" value="1" />
+  <ctl name="Mic Capture Switch" value="1" />
+  
   <ctl name="PCM Playback Volume" value="20" />
   <ctl name="Rec Capture Volume" value="31" />
   <ctl name="Headphone Playback Volume" value="31" />
   <ctl name="Auxout Playback Volume" value="31" />
   <ctl name="Mic1 Capture Volume" value="31" />
   <ctl name="Mic 1 Boost Volume" value="2" />
+  
+  <ctl name="Speaker Playback Volume" value="40" />
+  <ctl name="Mic Capture Volume" value="50" />
+  <ctl name="Tone Control - Treble" value="0" />
+  <ctl name="Tone Control - Bass" value="48" />
   
   <path name="speaker">
     <ctl name="Auxout Playback Switch" value="1" />
@@ -49,4 +57,9 @@
     <ctl name="Left Capture Mix Mic1 Capture Switch" value="0" />
     <ctl name="Right Capture Mix Mic1 Capture Switch" value="0" />
   </path>
+  <path name="usb">
+    <ctl name="Speaker Playback Switch" value="1" />
+    <ctl name="Mic Capture Switch" value="1" />
+    
+  </path>>
 </mixer>
