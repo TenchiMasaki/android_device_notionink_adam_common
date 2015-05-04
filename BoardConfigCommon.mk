@@ -21,6 +21,9 @@ BOARD_ADAM := true
 
 TARGET_ARCH_LOWMEM := true
 
+# Dex-preoptimization
+WITH_DEXPREOPT := true
+
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
@@ -33,6 +36,7 @@ WITH_GMS := true
 -include vendor/notionink/adam/BoardConfigVendor.mk
 
 # partitions
+# TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
 # TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
@@ -58,7 +62,7 @@ TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := tegra2
-ARCH_ARM_HAVE_NEON := false
+# ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
@@ -160,15 +164,17 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # Use nicer font rendering
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
-#TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 TARGET_SUPPORT_HDMI_PRIMARY := true
 TARGET_32_BIT_SURFACEFLINGER := true
 BOARD_HAVE_PIXEL_FORMAT_INFO := true
+BOARD_USES_LEGACY_SET_POSITION := true
+BOARD_USES_LEGACY_ACQUIRE_WVM := true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
 # Tegra2 EGL support
-BOARD_USES_OVERLAY := false
+# BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
 # BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
