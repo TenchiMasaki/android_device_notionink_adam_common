@@ -30,7 +30,7 @@ DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 # uses mdpi artwork where available
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += mdpi
+PRODUCT_LOCALES += en mdpi
 
 
 # Adam/Harmony Configs
@@ -42,6 +42,8 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
+    device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
+    device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/02do:system/etc/init.d/02do
 
 # Modules
@@ -181,7 +183,11 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.secure=0 \
-	ro.adb.secure=0
+	ro.adb.secure=0 \
+	persist.fuse_sdcard=true \
+	ro.serial=0123456789ABCDEF \
+	ro.product.manufacturer=NotionInk \
+	ro.product.model=Notion_Ink_ADAM
 
 PRODUCT_CHARACTERISTICS := tablet
 
@@ -193,6 +199,7 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+	e2fsck \
 	setup_fs \
         make_ext4fs \
         l2ping \

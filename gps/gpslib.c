@@ -18,7 +18,7 @@
 
 #define  LOG_TAG  "gps_adam"
 #define GPS_TTYPORT "/dev/ttyHS3"
-#define GPS_POWER_CTRL	"/sys/class/gpio/gpio203/value"
+#define GPS_POWER_CTRL "/sys/devices/platform/smba1006-pm-gps/power_on"
 #define MAX_NMEA_CHARS 85
 
 
@@ -462,17 +462,18 @@ static int gpslib_init(GpsCallbacks* callbacks) {
 		goto end;
 	}
 
-//	if (gps_pfd == -1) {
-//		gps_pfd = open(GPS_POWER_CTRL, O_WRONLY);
-//		if (gps_pfd == -1) {
-//			ret = -1;
-//			LOGE("Power control: open failed: %s. GPS will not be activated.", GPS_POWER_CTRL);
-//			status->size = sizeof (GpsStatus);
-//			status->status = GPS_STATUS_ENGINE_OFF;
-//			adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
-//			goto end;
-//		}
-//	}
+	if (gps_pfd == -1) {
+		gps_pfd = open(GPS_POWER_CTRL, O_WRONLY);
+		if (gps_pfd == -1) {
+			ret = -1;
+			LOGE("Power control: open failed: %s. GPS will not be activated.", GPS_POWER_CTRL);
+			status->size = sizeof (GpsStatus);
+			status->status = GPS_STATUS_ENGINE_OFF;
+			adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
+			goto end;
+		}
+	}
+	gps_power(1);
 	status->size = sizeof(GpsStatus);
 	status->status = GPS_STATUS_ENGINE_ON;
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, status);
@@ -489,7 +490,7 @@ static int gpslib_start() {
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
 	pthread_mutex_lock(&mutGPS);
 	gpsOn = 1;
-	gps_power(gpsOn);
+	//gps_power(gpsOn);
 	pthread_mutex_unlock(&mutGPS);	
 	pthread_create(&NMEAThread, NULL, doGPS, NULL);
 	return 0;
@@ -512,11 +513,11 @@ static void gpslib_cleanup() {
 	stat->size = sizeof(GpsStatus);
 	stat->status = GPS_STATUS_ENGINE_OFF;
 	
-/*	if (gps_pfd != -1) {
+	if (gps_pfd != -1) {
+		gps_power(0);
 		close(gps_pfd);
 		gps_pfd = -1;
 	}
-*/	
 	adamGpsCallbacks->create_thread_cb("adamgps-status", updateStatus, stat);
 	LOGV("GPS clean");
 	return;

@@ -122,5 +122,24 @@ struct v4l2_frmivalenum {
 #define VIDIOC_ENUM_FRAMEINTERVALS	_IOWR('V', 75, struct v4l2_frmivalenum)
 #endif
 
+#ifndef VIDIOC_S_CTRL
+struct v4l2_control {
+	__u32		     id;
+	__s32		     value;
+};
+
+#define V4L2_CTRL_CLASS_USER 0x00980000	/* Old-style 'user' controls */
+#define V4L2_CID_BASE			(V4L2_CTRL_CLASS_USER | 0x900)
+#define V4L2_CID_HFLIP			(V4L2_CID_BASE+20)
+#define V4L2_CID_VFLIP			(V4L2_CID_BASE+21)
+
+#define VIDIOC_S_CTRL _IOWR ('V', 28, struct v4l2_control)
+
+#endif
+
+#ifndef V4L2_CID_CAP_MODE
+#define V4L2_CID_CAP_MODE			(V4L2_CID_BASE+41)
+#endif
+
 #endif /* _UVC_COMPAT_H */
 
