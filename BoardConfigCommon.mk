@@ -21,7 +21,7 @@ BOARD_ADAM := true
 
 TARGET_ARCH_LOWMEM := true
 
-# Dex-preoptimization
+# Dex-preoptimization not working in Slim 5.1.1
 # WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
