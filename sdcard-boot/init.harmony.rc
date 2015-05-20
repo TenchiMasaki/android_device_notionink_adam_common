@@ -97,7 +97,7 @@ on early-boot
     setenforce 1                                # RC:    1 is implied value?
 
 on boot
-    #mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
+    # mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
 
 # PQi Permissions
     chmod 0666 /sys/class/gpio/gpio27/value
