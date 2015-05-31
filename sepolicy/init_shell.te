@@ -1,6 +1,8 @@
 type init_shell;
 allow init_shell sysfs:file write;
 allow init_shell init_shell:capability dac_override;
+allow init_shell system_file:dir { rw_dir_perms create_dir_perms };
+allow init_shell system_file:file { rw_file_perms create_file_perms };
 allow init_shell system_data_file:dir rw_dir_perms;
 allow init_shell system_data_file:file { rw_file_perms unlink create };
 #allow init_shell logcat_exec:file { r_file_perms execute_no_trans execute };

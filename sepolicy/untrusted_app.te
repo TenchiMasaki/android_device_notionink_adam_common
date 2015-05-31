@@ -73,3 +73,6 @@ allow untrusted_app graphics_device:dir rw_file_perms;
 allow untrusted_app sysfs_devices_tegradc:dir { search rw_dir_perms };
 allow untrusted_app sysfs_devices_tegradc:file { rw_file_perms };
 allow untrusted_app kernel:system module_request;
+allow untrusted_app app_data_file:file rwx_file_perms;
+allow untrusted_app adb_data_file:dir r_file_perms;
+allow untrusted_app audio_device:dir r_dir_perms;
