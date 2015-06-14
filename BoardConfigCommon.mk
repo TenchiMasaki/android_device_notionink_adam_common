@@ -78,6 +78,7 @@ NEED_WORKAROUND_CORTEX_A9_745320 := true
 USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
+MALLOC_IMPL := dlmalloc
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
 
@@ -87,6 +88,10 @@ COMMON_GLOBAL_CFLAGS += \
     -DADD_LEGACY_SET_POSITION_SYMBOL \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
 #    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+
+TARGET_RELEASE_CPPFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS \
+    -DADD_LEGACY_SET_POSITION_SYMBOL \
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
@@ -109,7 +114,8 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
-BOARD_KERNEL_CMDLINE :=
+BOARD_KERNEL_CMDLINE := 
+#zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
 
 # Custom Tools
 # TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
