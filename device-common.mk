@@ -28,9 +28,10 @@ endif
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
 # uses mdpi artwork where available
-PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
-PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += en mdpi
+PRODUCT_AAPT_CONFIG := normal large
+PRODUCT_AAPT_PREF_CONFIG := tvdpi
+PRODUCT_AAPT_PREBUILT_DPI := hdpi
+# PRODUCT_LOCALES += en mdpi
 
 # Enable optional sensor types
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -67,10 +68,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.harmony \
-    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.harmony.rc \
+    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
+    device/notionink/adam_common/files/fstab.harmony:root/fstab.unknown \
+    device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
+    device/notionink/adam_common/files/init.harmony.rc:root/init.unknown.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
+    device/notionink/adam_common/files/init.harmony.usb.rc:root/init.unknown.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
+    device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.unknown.rc \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
@@ -274,7 +279,8 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 	persist.fuse_sdcard=true \
 	ro.serial=0123456789ABCDEF \
 	ro.product.manufacturer=NotionInk \
-	ro.product.model=Notion_Ink_ADAM
+	ro.product.model=Notion_Ink_ADAM \
+	ro.boot.hardware=harmony
 
 PRODUCT_CHARACTERISTICS := tablet
 
