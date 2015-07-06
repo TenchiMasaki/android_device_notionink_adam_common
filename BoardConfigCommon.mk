@@ -22,7 +22,7 @@ BOARD_ADAM := true
 TARGET_ARCH_LOWMEM := true
 
 # Dex-preoptimization
-# WITH_DEXPREOPT := true
+WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -37,7 +37,7 @@ WITH_GMS := true
 
 # partitions
 # TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
-TARGET_USERIMAGES_USE_EXT4 := true
+# TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
@@ -45,6 +45,7 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 924999680
 # BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
 # BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 # TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+TARGET_HW_DISK_ENCRYPTION := false
 
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
@@ -78,6 +79,7 @@ NEED_WORKAROUND_CORTEX_A9_745320 := true
 USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
+MALLOC_IMPL := dlmalloc
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
 
@@ -88,6 +90,10 @@ COMMON_GLOBAL_CFLAGS += \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
     -DHAVE_LITTLE_ENDIAN
 #    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+
+TARGET_RELEASE_CPPFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS \
+    -DADD_LEGACY_SET_POSITION_SYMBOL \
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/notionink/adam
@@ -110,7 +116,7 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
-BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME) zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
+BOARD_KERNEL_CMDLINE := androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME) zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 btmac=00b55e131a00 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),16384K@43776K(boot),903296K@60672K(system),1408K@1046656K(cache)
 
 # Wifi related defines
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
@@ -172,7 +178,7 @@ BOARD_USES_LEGACY_ACQUIRE_WVM := true
 # BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+# BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_HDMI_MIRROR_MODE := Scale
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
