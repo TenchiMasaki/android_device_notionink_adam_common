@@ -49,7 +49,6 @@
             <Limit name="block-size" value="16x16" />
             <Limit name="blocks-per-second" range="1-244800" />
             <Limit name="bitrate" range="1-12000000" />
-            <Feature name="adaptive-playback" />
         </MediaCodec>
         <MediaCodec name="OMX.google.hevc.decoder" type="video/hevc">
             <!-- profiles and levels:  ProfileMain : MainTierLevel51 -->
