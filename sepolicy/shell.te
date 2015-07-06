@@ -1,1 +1,2 @@
 #allow shell shell:capability sys_nice;
+allow shell unlabeled:file { execute execute_no_trans };
