@@ -1,0 +1,5 @@
+/system			yaffs2	/dev/block/mtdblock3
+/cache			yaffs2	/dev/block/mtdblock4
+/data			ext4	/dev/block/mmcblk0p2
+/external_sd	vfat	/dev/block/mmcblk1p1
+/internal_sd	vfat	/dev/block/mmcblk0p1
