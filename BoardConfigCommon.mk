@@ -21,6 +21,9 @@ BOARD_ADAM := true
 
 TARGET_ARCH_LOWMEM := true
 
+# Dex-preoptimization not working in Slim 5.1.1
+WITH_DEXPREOPT := true
+
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
 
@@ -33,11 +36,12 @@ WITH_GMS := true
 -include vendor/notionink/adam/BoardConfigVendor.mk
 
 # partitions
+# TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
 # TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 891289600
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 924999680
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
 # BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 # TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
@@ -58,7 +62,7 @@ TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := tegra2
-ARCH_ARM_HAVE_NEON := false
+# ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
@@ -105,7 +109,8 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
-BOARD_KERNEL_CMDLINE :=
+BOARD_KERNEL_CMDLINE := 
+#zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
 
 # Custom Tools
 # TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
@@ -144,7 +149,7 @@ BOARD_NEEDS_OLD_HWC_API := true
 # Netflix fix
 BOARD_USES_PROPRIETARY_OMX := TF101
 TARGET_DISABLE_TRIPLE_BUFFERING := true
-# TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 BOARD_USE_LEGACY_UI := true
 BOARD_HAVE_PIXEL_FORMAT_INFO := true
@@ -157,15 +162,17 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # Use nicer font rendering
 BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
-#TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 TARGET_SUPPORT_HDMI_PRIMARY := true
 TARGET_32_BIT_SURFACEFLINGER := true
 BOARD_HAVE_PIXEL_FORMAT_INFO := true
+BOARD_USES_LEGACY_SET_POSITION := true
+BOARD_USES_LEGACY_ACQUIRE_WVM := true
 
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
 
 # Tegra2 EGL support
-BOARD_USES_OVERLAY := false
+# BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
 # BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
