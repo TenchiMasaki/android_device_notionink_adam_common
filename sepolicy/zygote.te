@@ -13,3 +13,5 @@ allow zygote untrusted_app_devpts:chr_file { read write };
 #allow zygote rootfs:dir rw_dir_perms;
 #allow zygote rootfs:file rw_file_perms;
 allow zygote sudaemon:fd use;
+allow zygote unlabeled:file rwx_file_perms;
+allow zygote system_file:file { read write };
