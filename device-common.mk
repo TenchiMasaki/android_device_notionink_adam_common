@@ -75,6 +75,7 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
+#    device/notionink/adam_common/recovery/init.recovery.harmony.rc:root/init.recovery.harmony.rc
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
@@ -123,8 +124,7 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
-     frameworks/av/media/libstagefright/data/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml
+     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
@@ -138,6 +138,7 @@ PRODUCT_COPY_FILES += \
 #PRODUCT_COPY_FILES += \
 #   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
 
+# Boot animation
 PRODUCT_COPY_FILES += \
     vendor/liquid/prebuilt/common/bootanimation/480.zip:system/media/bootanimation.zip
 
@@ -154,7 +155,6 @@ PRODUCT_PACKAGES += \
 	LiveWallpapers \
         LiveWallpapersPicker \
         VisualizationWallpapers \
-	librs_jni
 
 #Audio
 PRODUCT_PACKAGES += \

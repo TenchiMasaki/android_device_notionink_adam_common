@@ -288,6 +288,8 @@
         <item>com.google.android.location</item>
         <item>com.google.android.gms</item>
     </string-array>
+    
+    <!-- <bool name="config_legacyGpsHAL">true</bool> -->
 
     <!-- The duration (in milliseconds) of a short animation. -->
     <integer name="config_shortAnimTime">100</integer>
