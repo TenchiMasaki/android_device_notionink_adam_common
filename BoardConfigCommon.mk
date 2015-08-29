@@ -80,16 +80,18 @@ USE_ALL_OPTIMIZED_STRING_FUNCS := true
 BOARD_MALLOC_ALIGNMENT := 16
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
+BOARD_ALLOW_EGL_HIBERNATION := true
 
 # defines to support legacy blobs
 COMMON_GLOBAL_CFLAGS += \
     -DNEEDS_VECTORIMPL_SYMBOLS \
     -DADD_LEGACY_SET_POSITION_SYMBOL \
-    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
-#    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
+    -DUSES_LEGACY_ACQUIRE_WVM \
+    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
 
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/notionink/adam
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -97,7 +99,7 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 #TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
@@ -153,6 +155,7 @@ TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 BOARD_USE_LEGACY_UI := true
 BOARD_HAVE_PIXEL_FORMAT_INFO := true
+BOARD_USES_LEGACY_ACQUIRE_WVM := true
 
 MAX_EGL_CACHE_KEY_SIZE := 4096
 MAX_EGL_CACHE_SIZE := 2146304
