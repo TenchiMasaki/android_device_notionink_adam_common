@@ -1,4 +1,10 @@
 type system;
+type sensorservice_service;
+type batterystats_service;
+type appops_service;
+type power_service;
+type display_service;
+type gatekeeper_service;
 allow system adbd_socket:sock_file write;
 allow system init:binder { transfer call };
 allow system init:unix_stream_socket { read write setopt };
