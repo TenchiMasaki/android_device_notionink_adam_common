@@ -10,3 +10,4 @@ allow surfaceflinger system_data_file:dir rw_dir_perms;
 allow surfaceflinger system_data_file:file create_file_perms;
 allow surfaceflinger sysfs_devices_tegradc:dir rw_dir_perms;
 allow surfaceflinger sysfs_devices_tegradc:file rw_file_perms;
+allow surfaceflinger system_file:file execmod;
