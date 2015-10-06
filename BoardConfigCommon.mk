@@ -101,7 +101,7 @@ TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
-TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
+TARGET_PREBUILT_KERNEL := kernel/notionink/adam.cm12.1/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
