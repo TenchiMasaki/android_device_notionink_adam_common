@@ -39,4 +39,3 @@ dmesg > /data/dmsg &
     echo sio > /sys/block/mmcblk1/queue/scheduler
     echo sio > /sys/block/mtdblock3/queue/scheduler
     echo sio > /sys/block/mtdblock4/queue/scheduler
-

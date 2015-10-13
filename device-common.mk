@@ -68,22 +68,20 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
-    device/notionink/adam_common/files/fstab.harmony:root/fstab.unknown \
-    device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
-    device/notionink/adam_common/files/init.harmony.rc:root/init.unknown.rc \
+    device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.harmony \
+    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.harmony.rc \
+        device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.unknown.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
-    device/notionink/adam_common/files/init.harmony.usb.rc:root/init.unknown.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.unknown.rc \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
+    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
-#    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
 #    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
 #    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
@@ -169,7 +167,8 @@ PRODUCT_PACKAGES += \
         tinyrec \
         libaudioamp \
         FM2 \
-        FMRecord
+        FMRecord \
+        sound_trigger.primary
 
 # Harmony Hardware
 PRODUCT_PACKAGES += \
@@ -237,8 +236,10 @@ PRODUCT_PACKAGES += \
 	PhotoTable \
 	libwebkit \
 	libmmcamera_interface2 \
-	libmmcamera_interface
-    
+	libmmcamera_interface \
+	Launcher3 \
+	radio.primary
+
 # Sensor daemon
 PRODUCT_PACKAGES += \
        g5sensord

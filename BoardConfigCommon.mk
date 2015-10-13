@@ -22,7 +22,7 @@ BOARD_ADAM := true
 TARGET_ARCH_LOWMEM := true
 
 # Dex-preoptimization
-WITH_DEXPREOPT := true
+# WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -37,7 +37,7 @@ WITH_GMS := true
 
 # partitions
 # TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
-# TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
@@ -96,7 +96,7 @@ TARGET_RELEASE_CPPFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
 
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/notionink/adam
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam.cm12.1
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -104,7 +104,7 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 #TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
@@ -117,7 +117,8 @@ BOARD_PAGE_SIZE := 0x00000800
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
 BOARD_KERNEL_CMDLINE := 
-#zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
+# androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
+# mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200,n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
 
 # Custom Tools
 # TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
@@ -182,7 +183,7 @@ BOARD_USES_LEGACY_ACQUIRE_WVM := true
 # BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
-# BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_HDMI_MIRROR_MODE := Scale
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
@@ -279,42 +280,10 @@ HAVE_SELINUX := true
 
 ifeq ($(HAVE_SELINUX),true)
 
-	#POLICYVERS := 24
+	#POLICYVERS := 26
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
-
-BOARD_SEPOLICY_UNION := \
-	file_contexts \
-	app.te \
-	boot_anim.te \
-	device.te \
-	drmserver.te \
-	file.te \
-	genfs_contexts \
-	healthd.te \
-	init.te \
-	init_shell.te \
-	isolated_app.te \
-	media_app.te \
-	release_app.te \
-	mediaserver.te \
-	netd.te \
-	platform_app.te \
-	rild.te \
-	sensors_config.te \
-	shared_app.te \
-	shell.te \
-	surfaceflinger.te \
-	system_app.te \
-	system.te \
-	ueventd.te \
-	untrusted_app.te \
-	vold.te \
-	wpa_socket.te \
-	wpa.te \
-	zygote.te
-
 endif
 
 # TWRP Settings

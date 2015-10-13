@@ -1,8 +1,9 @@
 #type fsck;
-type mnt_media_rw_file;
-type storage_file;
-type bootchart_data_file;
-type gatekeeper_data_file;
+#type mnt_media_rw_file;
+#type storage_file;
+#type bootchart_data_file;
+#type gatekeeper_data_file
+type sysinit;
 #type sysfs_firmware_writable, fs_type, sysfs_type;
 #type sysfs_devices_system_cpu, fs_type, sysfs_type;
 attribute tcp_socket;
