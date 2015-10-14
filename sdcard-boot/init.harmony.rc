@@ -20,47 +20,11 @@ on init
 
     chown system sdcard_rw /storage
 
-#    mkdir /mnt/runtime 0700 shell shell
-#    mkdir /mnt/runtime/default 0700 shell shell
-#    mkdir /mnt/runtime/default/mnt 0700 shell shell
-#    mkdir /mnt/runtime/default/mnt/shell 0700 shell shell
-#    mkdir /mnt/runtime/default/mnt/shell/emulated 0700 shell shell
-#    mkdir /mnt/runtime/read 0700 shell shell
-#    mkdir /mnt/runtime/read/mnt 0700 shell shell
-#    mkdir /mnt/runtime/read/mnt/shell/ 0700 shell shell
-#    mkdir /mnt/runtime/read/mnt/shell/emulated 0700 shell shell
-#    mkdir /mnt/runtime/write 0700 shell shell
-#    mkdir /mnt/runtime/write/mnt 0700 shell shell
-#    mkdir /mnt/runtime/write/mnt/shell/ 0700 shell shell
-#    mkdir /mnt/runtime/write/mnt/shell/emulated 0700 shell shell
-#    mkdir /mnt/shell/emulated 0700 shell shell
-#    mkdir /storage/emulated 0750 media_rw media_rw # 0555 root root
-
     symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
-    
+    mkdir /microsd 0775 sdcard_rw sdcard_rw
+
     mkdir /data/system 0775 system system
-
-    #External storage directories
-    #mkdir /mnt/media_rw/sdcard1 0750 media_rw media_rw
-    #mkdir /mnt/media_rw/sdcard2 0750 media_rw media_rw
-    mkdir /storage/usbdisk0 0750 media_rw media_rw
-    #mkdir /mnt/media_rw/usbdisk0 0750 media_rw media_rw
-    #mkdir /storage/usbdisk1 0750 media_rw media_rw
-    #mkdir /mnt/media_rw/usbdisk1 0750 media_rw media_rw
-    #mkdir /storage/sdcard1 0750 media_rw media_rw                # relax perms to allow access
-    #mkdir /storage/sdcard2 0750 media_rw media_rw
-
-    # for backwards compatibility
-    symlink /storage/sdcard1 /internal_sd
-    symlink /storage/sdcard1 /mnt/internal_sd
-    symlink /storage/sdcard2 /microsd
-    symlink /storage/sdcard2 /mnt/microsd
-    symlink /storage/sdcard2 /sd-ext
-    symlink /storage/usbdisk0 /mnt/usbdisk0
-    symlink /storage/usbdisk0 /usbdisk0
-    symlink /storage/usbdisk1 /mnt/usbdisk1
-    symlink /storage/usbdisk1 /usbdisk1
 
 on fs
     # Mount cache and system yaffs2 partitions here
