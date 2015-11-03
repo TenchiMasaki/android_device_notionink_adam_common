@@ -67,3 +67,7 @@ allow isolated_app init:unix_dgram_socket write;
 allow init unlabeled:file { execute execute_no_trans };
 allow init init:capability2 mac_admin;
 allow init kernel:security setenforce;
+allow init video_device:file relabelto;
+allow init gps_device:file relabelto;
+allow init tmpfs:lnk_file create;
+allow init video_device:file rw_file_perms;
