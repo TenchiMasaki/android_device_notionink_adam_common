@@ -4,3 +4,7 @@ allow bootanim device:chr_file { rw_file_perms };
 allow bootanim fuse:dir search;
 allow bootanim bootanim:tcp_socket { create read write };
 #allow bootanim property_socket:sock_file { read write };
+allow bootanim system_file:file rx_file_perms;
+allow bootanim storage_file:dir r_file_perms;
+allow bootanim storage_file:lnk_file r_file_perms;
+allow bootanim mnt_user_file:dir r_dir_perms;

@@ -20,4 +20,3 @@ allow sensors_config sdcard_external:filesystem { mount unmount };
 allow sensors_config sdcard_external:file r_file_perms;
 allow sensors_config tty_device:chr_file rw_file_perms;
 allow sensors_config self:capability sys_admin;
-

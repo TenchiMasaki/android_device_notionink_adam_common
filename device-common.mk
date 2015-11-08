@@ -67,10 +67,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
-    device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
+    device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.harmony \
+    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.harmony.rc \
+    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.unknown.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
+    device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.unknown.rc \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
@@ -235,7 +237,8 @@ PRODUCT_PACKAGES += \
 	PhotoTable \
 	libwebkit \
 	libmmcamera_interface2 \
-	libmmcamera_interface
+	libmmcamera_interface \
+	Launcher3
     
 # Sensor daemon
 PRODUCT_PACKAGES += \
@@ -277,7 +280,8 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 	persist.fuse_sdcard=true \
 	ro.serial=0123456789ABCDEF \
 	ro.product.manufacturer=NotionInk \
-	ro.product.model=Notion_Ink_ADAM
+	ro.product.model=Notion_Ink_ADAM \
+	ro.boot.hardware=harmony
 
 PRODUCT_CHARACTERISTICS := tablet
 

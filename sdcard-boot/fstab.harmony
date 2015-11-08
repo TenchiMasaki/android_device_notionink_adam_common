@@ -3,7 +3,7 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-/dev/block/mmcblk1p1	/storage/sdcard2	vfat	defaults	wait,check
+/dev/block/mmcblk1p1	/microsd	vfat	defaults	wait,check
 #/dev/block/mmcblk1p4	/cache	ext4	defaults	wait,check
 /dev/block/mmcblk1p2	/system	ext4	defaults	wait
 /dev/block/mmcblk1p3	/data	ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer
@@ -20,10 +20,8 @@
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
 
-/devices/platform/sdhci-tegra.3/mmc_host/mmc1 auto auto defaults voldmanaged=sdcard1:auto
-/devices/platform/sdhci-tegra.2/mmc_host/mmc2 auto auto defaults voldmanaged=sdcard2:auto
-/devices/platform/tegra-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0 auto auto defaults voldmanaged=usbdisk0:auto
-/devices/platform/tegra-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0 auto auto defaults voldmanaged=usbdisk1:auto
+/devices/platform/sdhci-tegra.2/mmc_host/mmc2 auto  auto defaults voldmanaged=sdcard1:auto,noemulatedsd
+/devices/platform/tegra-ehci.2/usb* auto auto defaults voldmanaged=usb:auto,noemulatedsd
 
 # recovery
 misc			/misc		mtd		defaults	recoveryonly

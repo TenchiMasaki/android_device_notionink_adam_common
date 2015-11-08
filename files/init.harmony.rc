@@ -10,53 +10,37 @@ on early-init
     write /sys/class/android_usb/android0/f_rndis/power/control on
     
     mount debugfs debugfs /sys/kernel/debug
+    symlink /data/tombstones /tombstones
 
 on init
-    export EXTERNAL_STORAGE  /storage/emulated/legacy
-    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-    export EMULATED_STORAGE_TARGET /storage/emulated
-    export SECONDARY_STORAGE /storage/sdcard1:/storage/sdcard2:/storage/usbdisk0:/storage/usbdisk1
-    export PRIMARY_STORAGE  /storage/emulated/legacy   # RC note: gets around issues
-    # Save bugreports as owner
-    export BUGREPORT_WRITE_PATH /storage/emulated/legacy/
-    export BUGREPORT_READ_PATH  /mnt/shell/emulated
+
+    # Set permissions for persist partition
+    mkdir /persist 0771 system system
+    mkdir /firmware 0771 system system
 
     chown system sdcard_rw /storage
 
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage/emulated 0750 media_rw media_rw # 0555 root root
+    symlink /sdcard /mnt/sdcard
+    symlink /sdcard /storage/sdcard0
+    
+    # Enable secondary storage
+    mkdir /microsd 0777 sdcard_rw sdcard_rw
+    export SECONDARY_STORAGE /microsd
 
-    #External storage directories
-    mkdir /mnt/media_rw/sdcard1 0750 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard2 0750 media_rw media_rw
-    mkdir /storage/usbdisk0 0750 media_rw media_rw
-    mkdir /mnt/media_rw/usbdisk0 0750 media_rw media_rw
-    mkdir /storage/usbdisk1 0750 media_rw media_rw
-    mkdir /mnt/media_rw/usbdisk1 0750 media_rw media_rw
-    mkdir /storage/sdcard1 0750 media_rw media_rw                # relax perms to allow access
-    mkdir /storage/sdcard2 0750 media_rw media_rw
-
-    # for backwards compatibility
-    symlink /storage/emulated/legacy /sdcard
-    symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/emulated/legacy /storage/sdcard0
-    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
-    symlink /storage/sdcard1 /internal_sd
-    symlink /storage/sdcard1 /mnt/internal_sd
-    symlink /storage/sdcard2 /microsd
-    symlink /storage/sdcard2 /mnt/microsd
-    symlink /storage/sdcard2 /sd-ext
-    symlink /storage/usbdisk0 /mnt/usbdisk0
-    symlink /storage/usbdisk0 /usbdisk0
-    symlink /storage/usbdisk1 /mnt/usbdisk1
-    symlink /storage/usbdisk1 /usbdisk1
+    mkdir /data/system 0775 system system
 
 on fs
     # Mount cache and system yaffs2 partitions here
     mount yaffs2 mtd@cache /cache nosuid nodev
     mount yaffs2 mtd@system /system 
     mount_all /fstab.harmony
-
+    
+    restorecon_recursive /persist
+    
+    # hack to make surfaceflinger work
+    symlink /system/lib/egl/ /egl
+    chmod system system /egl
+    
     # setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.fuse_sdcard true
 
@@ -70,13 +54,34 @@ on post-fs-data
     chmod 0775 /data
     chmod 775 /data/app
 
-    # we will remap this as /mnt/sdcard with the sdcard fuse tool
-    mkdir /data/media 0775 media_rw media_rw
-    
+    mkdir /tombstones/modem 0771 system system
+    mkdir /tombstones/lpass 0771 system system
+    mkdir /tombstones/wcnss 0771 system system
+    mkdir /tombstones/dsps 0771 system system
+    mkdir /tombstones/mdm 0771 system system
+
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
+
+    # Enable the setgid bit on the directory
+    mkdir /data/audio 0770 media audio
+    chmod 2770 /data/audio
+
+    # Create directory used by audio subsystem
+    mkdir /data/misc/audio 0770 audio audio
+
+    #Create directory used by sensor subsystem(dsps)
+    mkdir /data/system/sensors
+    chmod 775 /data/system/sensors
+    write /data/system/sensors/settings 1
+    chmod 660 /data/system/sensors/settings
+    # AKM setting data
+    mkdir /data/misc/sensors
+    chmod 775 /data/misc/sensors
+    mkdir /persist/sensors
+    chmod 775 /persist/sensors
 
     # Camera calibration                     # RC mod: add 
     mkdir /data/misc/camera 0770 media media
@@ -87,12 +92,29 @@ on post-fs-data
     mkdir /data/misc/wminput 0776 system system
     write /data/misc/wminput/connected 0
     chmod 0666 /data/misc/wminput/connected
-    
+
+# GPS
+    mkdir /data/gps
+    chown gps system /data/gps
+    chmod 774 /data/gps
+    chown gps system /dev/ttyHS3
+    chmod 0664 /dev/ttyHS3
+    chown gps system /sys/devices/platform/smba1006-pm-gps/power_on
+    chmod 0664 /sys/devices/platform/smba1006-pm-gps/power_on
+
+# GPS power gpio
+    write /sys/class/gpio/export 171 
+    write /sys/class/gpio/gpio171/value 0
+    write /sys/class/gpio/gpio171/direction out
+    chown gps system /sys/class/gpio/gpio171/value
+    chmod 0664 /sys/class/gpio/gpio171/value
+
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
 
 on early-boot
-    
+    # set RLIMIT_MEMLOCK to 64MB
+    setrlimit 8 67108864 67108864
 # Set the SELinux system-wide enforcing status  # RC mod: "setenforce 0" BROKE it
     setenforce 1                                # RC:    1 is implied value?
 
@@ -195,22 +217,6 @@ on boot
     chown system system /sys/block/mtdblock4/queue/scheduler
     chmod 0664 /sys/block/mtdblock4/queue/scheduler
 
-# GPS
-    mkdir /data/gps
-    chown gps system /data/gps
-    chmod 774 /data/gps
-    chown gps system /dev/ttyHS3
-    chmod 0664 /dev/ttyHS3
-    chown gps system /sys/devices/platform/smba1006-pm-gps/power_on
-    chmod 0664 /sys/devices/platform/smba1006-pm-gps/power_on
-
-# GPS power gpio
-    write /sys/class/gpio/export 171 
-    write /sys/class/gpio/gpio171/value 0
-    write /sys/class/gpio/gpio171/direction out
-    chown gps system /sys/class/gpio/gpio171/value
-    chmod 0664 /sys/class/gpio/gpio171/value
-
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=unknown
     stop ril-daemon
@@ -311,26 +317,6 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
-
-# virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
-    class late_start
-
-service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
-    class late_start
-    disabled
-
-service fuse_sdcard2 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard2 /storage/sdcard2
-    class late_start
-    disabled
-
-service fuse_usbdisk0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk0 /storage/usbdisk0
-    class late_start
-    disabled
-
-service fuse_usbdisk1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk1 /storage/usbdisk1
-    class late_start
-    disabled
 
 # G5Sensor daemon for ecompass
 #service g5sensord /system/bin/g5sensord
