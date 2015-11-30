@@ -3,3 +3,4 @@ allow ueventd sysfs_devices_tegradc:file { read open write };
 allow ueventd ueventd:capability2 mac_admin;
 allow ueventd unlabeled:chr_file create_file_perms;
 allow logd kernel:system syslog_mod;
+allow ueventd rootfs:file rw_file_perms;
