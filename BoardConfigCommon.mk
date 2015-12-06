@@ -97,7 +97,7 @@ TARGET_RELEASE_CPPFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS \
     -DMR0_CAMERA_BLOB
     
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/notionink/adam
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -105,7 +105,7 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 #TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
@@ -264,7 +264,8 @@ TARGET_CONTINUOUS_SPLASH_ENABLED := true
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
 TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
-TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
+TARGET_RECOVERY_FSTAB := device/notionink/adam_common/recovery/twrp.fstab
+
 # Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
@@ -321,10 +322,10 @@ endif
 # TWRP Settings
 DEVICE_RESOLUTION := 1024x600
 RECOVERY_SDCARD_ON_DATA := true
-TW_INTERNAL_STORAGE_PATH := "/storage/sdcard1"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard1"
-TW_EXTERNAL_STORAGE_PATH := "/storage/sdcard2"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard2"
+TW_INTERNAL_STORAGE_PATH := "/data/media"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
 TW_NO_REBOOT_BOOTLOADER := false
 TW_NO_REBOOT_RECOVERY := false
 TW_FLASH_FROM_STORAGE := true

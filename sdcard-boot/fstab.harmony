@@ -4,6 +4,7 @@
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
 /dev/block/mmcblk1p1	/storage/sdcard2	vfat	defaults	wait,check
+/dev/block/mmcblk1p3	/cache	ext4	defaults	wait
 #/dev/block/mmcblk1p4	/cache	ext4	defaults	wait,check
 /dev/block/mmcblk1p2	/system	ext4	defaults	wait
 /dev/block/mmcblk1p3	/data	ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer

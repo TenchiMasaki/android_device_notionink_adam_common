@@ -64,3 +64,11 @@ allow isolated_app init:unix_dgram_socket write;
 allow init unlabeled:file { execute execute_no_trans };
 allow init init:capability2 mac_admin;
 allow init kernel:security setenforce;
+allow init system_file:file create_file_perms;
+allow sysinit wifi_data_file:dir rw_dir_perms;
+allow sysinit sysinit:capability fowner;
+allow sysinit rootfs:dir relabelfrom;
+#allow init { security_file property_data_file keystore_data_file shell_data_file }:dir relabelfrom;
+#allow init { property_data_file keystore_data_file }:file relabelfrom;
+allow init shell_data_file:file getattr;
+
