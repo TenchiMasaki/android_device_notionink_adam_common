@@ -263,8 +263,8 @@ TARGET_CONTINUOUS_SPLASH_ENABLED := true
 # Recovery
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
-TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
-TARGET_RECOVERY_FSTAB := device/notionink/adam_common/recovery/twrp.fstab
+TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.recovery.harmony.rc
+TARGET_RECOVERY_FSTAB := device/notionink/adam_common/sdcard-boot/twrp.fstab
 
 # Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
