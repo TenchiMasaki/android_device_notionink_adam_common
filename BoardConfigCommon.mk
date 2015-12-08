@@ -22,7 +22,7 @@ BOARD_ADAM := true
 TARGET_ARCH_LOWMEM := true
 
 # Dex-preoptimization
-WITH_DEXPREOPT := true
+# WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -37,14 +37,15 @@ WITH_GMS := true
 
 # partitions
 # TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
-# TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 924999680
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
+# BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
 # BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 # TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+TARGET_HW_DISK_ENCRYPTION := false
 
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
@@ -61,7 +62,7 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := tegra2
+TARGET_CPU_VARIANT := generic
 # ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
@@ -78,18 +79,26 @@ NEED_WORKAROUND_CORTEX_A9_745320 := true
 USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
+MALLOC_IMPL := dlmalloc
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
+BOARD_ALLOW_EGL_HIBERNATION := true
+BOARD_EGL_NEEDS_HANDLE_VALUE := true
 
 # defines to support legacy blobs
 COMMON_GLOBAL_CFLAGS += \
     -DNEEDS_VECTORIMPL_SYMBOLS \
     -DADD_LEGACY_SET_POSITION_SYMBOL \
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
+    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL \
+    -DCAMERA_VENDOR_L_COMPAT
+
+TARGET_RELEASE_CPPFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS \
+    -DADD_LEGACY_SET_POSITION_SYMBOL \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
-#    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
 
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/notionink/adam
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -97,7 +106,7 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 #TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
@@ -111,6 +120,7 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
 # BOARD_MKBOOTIMG_ARGS  := --ramdisk_offset 0x05000000 --tags_offset 0x04800000
 BOARD_KERNEL_CMDLINE :=
+# androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
 #zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
 # BOARD_KERNEL_SEPARATED_DT := true
 
@@ -177,7 +187,7 @@ BOARD_USES_LEGACY_ACQUIRE_WVM := true
 # BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
-# BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_HDMI_MIRROR_MODE := Scale
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
@@ -258,7 +268,7 @@ TARGET_CONTINUOUS_SPLASH_ENABLED := true
 # Recovery
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
-TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.rc
+TARGET_RECOVERY_INITRC := device/notionink/adam_common/recovery/init.recovery.harmony.rc
 TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
 # Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
@@ -275,42 +285,10 @@ HAVE_SELINUX := true
 
 ifeq ($(HAVE_SELINUX),true)
 
-	#POLICYVERS := 24
+	#POLICYVERS := 26
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
-
-BOARD_SEPOLICY_UNION := \
-	file_contexts \
-	app.te \
-	boot_anim.te \
-	device.te \
-	drmserver.te \
-	file.te \
-	genfs_contexts \
-	healthd.te \
-	init.te \
-	init_shell.te \
-	isolated_app.te \
-	media_app.te \
-	release_app.te \
-	mediaserver.te \
-	netd.te \
-	platform_app.te \
-	rild.te \
-	sensors_config.te \
-	shared_app.te \
-	shell.te \
-	surfaceflinger.te \
-	system_app.te \
-	system.te \
-	ueventd.te \
-	untrusted_app.te \
-	vold.te \
-	wpa_socket.te \
-	wpa.te \
-	zygote.te
-
 endif
 
 # TWRP Settings

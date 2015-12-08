@@ -332,7 +332,7 @@
             64 - Volume rocker
          For example, a device with Home, Back and Menu keys would set this
          config to 7. -->
-    <integer name="config_deviceHardwareWakeKeys">2</integer>
+    <!-- <integer name="config_deviceHardwareWakeKeys">2</integer> -->
 
     <!-- Control the behavior when the user double-taps the home button.
             0 - Nothing
@@ -345,5 +345,8 @@
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
     <integer name="config_doubleTapOnHomeBehavior">2</integer>
+
+    <!-- enable doze powersaving mode -->
+    <bool name="config_enableAutoPowerModes">true</bool>
 
 </resources>

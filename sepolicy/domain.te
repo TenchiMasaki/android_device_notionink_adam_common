@@ -1,3 +1,4 @@
+type system;
 allow { surfaceflinger system system_app } { knv_device nvhost_writable_device }:chr_file rw_file_perms;
 
 allow surfaceflinger { sysfs_devices_tegradc }:file w_file_perms;

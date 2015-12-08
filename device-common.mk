@@ -67,19 +67,22 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
-    device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
+    device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.harmony \
+    device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.unknown \
+    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.harmony.rc \
+    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.unknown.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
+    device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.unknown.rc \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
-    device/notionink/adam_common/recovery/init.recovery.harmony.rc:root/init.recovery.harmony.rc
+    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
+    device/notionink/adam_common/recovery/init.recovery.harmony.rc:recovery/root/init.rc
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
-#    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
 #    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
 #    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
@@ -124,8 +127,7 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
-     frameworks/av/media/libstagefright/data/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml
+     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
@@ -238,7 +240,8 @@ PRODUCT_PACKAGES += \
 	PhotoTable \
 	libwebkit \
 	libmmcamera_interface2 \
-	libmmcamera_interface
+	libmmcamera_interface \
+	Launcher3
     
 # Sensor daemon
 PRODUCT_PACKAGES += \
@@ -268,19 +271,20 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
-#PRODUCT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
+    camera2.portability.force_api=1
 #    ro.boot.selinux=disabled \
 #    ro.build.selinux=0
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \
 	ro.serial=0123456789ABCDEF \
 	ro.product.manufacturer=NotionInk \
-	ro.product.model=Notion_Ink_ADAM
+	ro.product.model=Notion_Ink_ADAM \
+	ro.boot.hardware=harmony
 
 PRODUCT_CHARACTERISTICS := tablet
 
