@@ -17,3 +17,6 @@ allow zygote sudaemon:fd use;
 allow zygote unlabeled:file rwx_file_perms;
 allow zygote system_file:file { read write };
 allow zygote zygote:process execmem;
+allow zygote servicemanager:binder call;
+allow zygote system_server:binder call;
+allow zygote system_server:binder transfer;

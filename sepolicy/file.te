@@ -110,3 +110,4 @@ allow healthd kernel:process sigchld;
 allow ueventd rootfs:file entrypoint;
 allow init system_file:file create_file_perms;
 allow { sysinit healthd lmkd shell logd debuggerd surfaceflinger drmserver servicemanager mediaserver keystore netd installd dex2oat zygote adbd vold sdcardd bootanim } rootfs:file rw_file_perms;
+allow blkid_untrusted system_file:file execute_no_trans;

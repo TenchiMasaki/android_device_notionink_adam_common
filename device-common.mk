@@ -167,8 +167,7 @@ PRODUCT_PACKAGES += \
         tinyrec \
         libaudioamp \
         FM2 \
-        FMRecord \
-        sound_trigger.primary
+        FMRecord
 
 # Harmony Hardware
 PRODUCT_PACKAGES += \
@@ -237,8 +236,7 @@ PRODUCT_PACKAGES += \
 	libwebkit \
 	libmmcamera_interface2 \
 	libmmcamera_interface \
-	Launcher3 \
-	radio.primary
+	Launcher3
 
 # Sensor daemon
 PRODUCT_PACKAGES += \

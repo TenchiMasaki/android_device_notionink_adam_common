@@ -6,3 +6,4 @@ allow system_app init_tmpfs:file rw_file_perms;
 allow system_app dalvikcache_data_file:file rw_file_perms;
 allow system_app sysfs_ksm:dir r_dir_perms;
 allow system_app system_app_data_file:file { execute execute_no_trans };
+allow system_app system_file:file execmod;

@@ -96,7 +96,7 @@ TARGET_RELEASE_CPPFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
 
 # Kernel
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam.cm12.1
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig

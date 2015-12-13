@@ -8,3 +8,5 @@ allow bootanim system_file:file rx_file_perms;
 allow bootanim storage_file:dir r_file_perms;
 allow bootanim storage_file:lnk_file r_file_perms;
 allow bootanim mnt_user_file:dir r_dir_perms;
+allow bootanim storage_file:dir search;
+allow bootanim system_file:file execmod;
