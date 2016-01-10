@@ -20,8 +20,12 @@
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
 
-/devices/platform/sdhci-tegra.2/mmc_host/mmc2 auto  auto defaults voldmanaged=sdcard1:auto,noemulatedsd
-/devices/platform/tegra-ehci.2/usb* auto auto defaults voldmanaged=usb:auto,noemulatedsd
+*/block/sda*              	auto    	vfat	None	wait,voldmanaged=USBdisk1:auto
+*/block/sdb*              	auto    	vfat	None	wait,voldmanaged=USBdisk2:auto
+*/block/mmcblk0*          	auto            auto    defaults wait,voldmanaged=sdcard1:auto,noemulatedsd
+*/block/mmcblk1*          	auto            auto    defaults wait,voldmanaged=sdcard2:auto,noemulatedsd
+
+/dev/block/zram0                none            swap    defaults    zramsize=419430400
 
 # recovery
 misc			/misc		mtd		defaults	recoveryonly
