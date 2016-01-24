@@ -75,6 +75,7 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
+    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
     device/notionink/adam_common/recovery/twrp.fstab:recovery/root/etc/twrp.fstab \
 #    device/notionink/adam_common/recovery/init.recovery.harmony.rc:recovery/root/init.recovery.harmony.rc \
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
@@ -238,8 +239,9 @@ PRODUCT_PACKAGES += \
 	PhotoTable \
 	libwebkit \
 	libmmcamera_interface2 \
-	libmmcamera_interface
-    
+	libmmcamera_interface \
+	Launcher3
+
 # Sensor daemon
 PRODUCT_PACKAGES += \
        g5sensord
@@ -280,7 +282,8 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 	persist.fuse_sdcard=true \
 	ro.serial=0123456789ABCDEF \
 	ro.product.manufacturer=NotionInk \
-	ro.product.model=Notion_Ink_ADAM
+	ro.product.model=Notion_Ink_ADAM \
+	ro.boot.hardware=harmony
 
 PRODUCT_CHARACTERISTICS := tablet
 
