@@ -70,7 +70,7 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
     device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.harmony \
     device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.harmony.rc \
-        device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.unknown.rc \
+    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.unknown.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.unknown.rc \
@@ -264,7 +264,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
-    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+#    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
 #PRODUCT_PROPERTY_OVERRIDES += \
 #    ro.boot.selinux=disabled \
