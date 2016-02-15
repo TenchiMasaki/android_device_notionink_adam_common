@@ -303,6 +303,8 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+    ext4fixup \
+    badblocks \
 	e2fsck \
 	setup_fs \
         make_ext4fs \
