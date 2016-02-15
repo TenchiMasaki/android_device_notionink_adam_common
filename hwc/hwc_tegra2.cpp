@@ -40,14 +40,21 @@
 
 #include <cutils/compiler.h>
 #include <cutils/log.h>
+#include <cutils/iosched_policy.h>
 #include <cutils/properties.h>
 #include <hardware/gralloc.h>
 #include <hardware/hardware.h>
 #include <hardware/hwcomposer.h>
-#include "hwcomposer_v0.h"
 #include <hardware_legacy/uevent.h>
+#include <system/thread_defs.h>
+#include <utils/AndroidThreads.h>
 #include <utils/String8.h>
 #include <utils/Vector.h> 
+
+#include "hwcomposer_v0.h"
+
+#define likely(x)       __builtin_expect(!!(x), 1)
+#define unlikely(x)     __builtin_expect(!!(x), 0)
 
 // Get the original hw composer
 static hwc_module_t* get_hwc(void)
@@ -141,24 +148,58 @@ static void copy_layer1_to_layer(hwc_layer_t* dst,hwc_layer_1_t* src)
 	dst->compositionType = src->compositionType;	
     dst->hints = src->hints;
     dst->flags = src->flags;
-	dst->handle = src->handle;
-	dst->transform = src->transform;
-	dst->blending = src->blending;
-	memcpy(&dst->sourceCrop,&src->sourceCrop,sizeof( hwc_rect_t ));
-	memcpy(&dst->displayFrame,&src->displayFrame,sizeof( hwc_rect_t ));
-	memcpy(&dst->visibleRegionScreen,&src->visibleRegionScreen,sizeof( hwc_region_t ));
+    dst->handle = src->handle;
+    dst->transform = src->transform;
+    dst->blending = src->blending;
+    // memcpy(&dst->sourceCrop,&src->sourceCrop,sizeof( hwc_rect_t ));
+    // memcpy(&dst->displayFrame,&src->displayFrame,sizeof( hwc_rect_t ));
+    // memcpy(&dst->visibleRegionScreen,&src->visibleRegionScreen,sizeof( hwc_region_t ));
+
+    dst->sourceCrop.left = src->sourceCrop.left;
+    dst->sourceCrop.top = src->sourceCrop.top;
+    dst->sourceCrop.bottom = src->sourceCrop.bottom;
+    dst->sourceCrop.right = src->sourceCrop.right;
+    dst->displayFrame.left = src->displayFrame.left;
+    dst->displayFrame.top = src->displayFrame.top;
+    dst->displayFrame.bottom = src->displayFrame.bottom;
+    dst->displayFrame.right = src->displayFrame.right;
+
+    // dst->visibleRegionScreen.numRects = src->visibleRegionScreen.numRects;
+    // dst->visibleRegionScreen.rects->left = src->visibleRegionScreen.rects->left;
+    // dst->visibleRegionScreen.rects->top; = src->visibleRegionScreen.rects->top;
+    // dst->visibleRegionScreen.rects->bottom = src->visibleRegionScreen.rects->bottom;
+    // dst->visibleRegionScreen.rects->right = src->visibleRegionScreen.rects->right;
+
+    memcpy(&dst->visibleRegionScreen,&src->visibleRegionScreen,sizeof( hwc_region_t ));
 }
 
 static void copy_layer_to_layer1(hwc_layer_1_t* dst,hwc_layer_t* src)
 {
+    dst->compositionType = src->compositionType;
     dst->hints = src->hints;
     dst->flags = src->flags;
-	dst->handle = src->handle;
-	dst->transform = src->transform;
-	dst->blending = src->blending;
-	memcpy(&dst->sourceCrop,&src->sourceCrop,sizeof( hwc_rect_t ));
-	memcpy(&dst->displayFrame,&src->displayFrame,sizeof( hwc_rect_t ));
-	memcpy(&dst->visibleRegionScreen,&src->visibleRegionScreen,sizeof( hwc_region_t ));
+    dst->handle = src->handle;
+    dst->transform = src->transform;
+    dst->blending = src->blending;
+    // memcpy(&dst->sourceCrop,&src->sourceCrop,sizeof( hwc_rect_t ));
+    // memcpy(&dst->displayFrame,&src->displayFrame,sizeof( hwc_rect_t ));
+    // memcpy(&dst->visibleRegionScreen,&src->visibleRegionScreen,sizeof( hwc_region_t ));
+
+    dst->sourceCrop.left = src->sourceCrop.left;
+    dst->sourceCrop.top = src->sourceCrop.top;
+    dst->sourceCrop.bottom = src->sourceCrop.bottom;
+    dst->sourceCrop.right = src->sourceCrop.right;
+    dst->displayFrame.left = src->displayFrame.left;
+    dst->displayFrame.top = src->displayFrame.top;
+    dst->displayFrame.bottom = src->displayFrame.bottom;
+    dst->displayFrame.right = src->displayFrame.right;
+
+    // dst->visibleRegionScreen.numRects = src->visibleRegionScreen.numRects;
+    // dst->visibleRegionScreen.rects->left = src->visibleRegionScreen.rects->left;
+    // dst->visibleRegionScreen.rects->top; = src->visibleRegionScreen.rects->top;
+    // dst->visibleRegionScreen.rects->bottom = src->visibleRegionScreen.rects->bottom;
+    // dst->visibleRegionScreen.rects->right = src->visibleRegionScreen.rects->right;
+    memcpy(&dst->visibleRegionScreen,&src->visibleRegionScreen,sizeof( hwc_region_t ));
 }
 
 static void copy_display_contents_1_to_layer_list(hwc_layer_list_t* dst,hwc_display_contents_1_t* src)
@@ -213,7 +254,9 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
 	}	
     hwc_layer_list_t* lst = (hwc_layer_list_t*) pdev->set_xlatebuf;
 
-	copy_display_contents_1_to_layer_list(lst,contents);
+    copy_display_contents_1_to_layer_list(lst,contents);
+    int ret = pdev->org->set(pdev->org, contents->dpy, contents->sur, lst);
+    copy_layer_list_to_display_contents_1(contents,lst);
 
 	//Wait until all buffers are available
 	unsigned int d;
@@ -227,10 +270,6 @@ static int tegra2_set(struct hwc_composer_device_1 *dev,
 		// And let surfaceFlinger read inmediately...
 		contents->hwLayers[d].releaseFenceFd = -1;
 	}
-
-	int ret = pdev->org->set(pdev->org, contents->dpy, contents->sur, lst);
-	
-	copy_layer_list_to_display_contents_1(contents,lst);
 
     return ret;
 }
@@ -284,26 +323,27 @@ static void *tegra2_hwc_emulated_vsync_thread(void *data)
 
 	ALOGD("VSYNC thread emulator started");
 
-    setpriority(PRIO_PROCESS, 0, HAL_PRIORITY_URGENT_DISPLAY);
+    androidSetThreadPriority(0, HAL_PRIORITY_URGENT_DISPLAY
+            + ANDROID_PRIORITY_MORE_FAVORABLE);
+    android_set_rt_ioprio(0, 1);
 
-	// Store the time of the start of this thread as an initial timestamp
-	struct timespec nexttm;
-	clock_gettime(CLOCK_MONOTONIC,&nexttm);
+    // Store the time of the start of this thread as an initial timestamp
+    struct timespec nexttm;
+    clock_gettime(CLOCK_MONOTONIC,&nexttm);
 	signed long long nexttm_ns = (nexttm.tv_sec) * 1000000000LL + (nexttm.tv_nsec);
 
     while (1) {	
 		int err;
 
-		// Wait while display is blanked
-		pthread_mutex_lock(&pdev->vsync_mutex);
-		while (pdev->fbblanked && pdev->vsync_running) {
+        // Wait while display is blanked
+        pthread_mutex_lock(&pdev->vsync_mutex);
+        if (unlikely(pdev->fbblanked && pdev->vsync_running)) {
 
 			// When framebuffer is blanked, there must be no interrupts, so we can't wait on it
 			pthread_cond_wait(&pdev->vsync_cond, &pdev->vsync_mutex);
-
-		};
-		if (!pdev->vsync_running)
-			break;
+        }
+        if (unlikely(!pdev->vsync_running))
+            break;
 		pthread_mutex_unlock(&pdev->vsync_mutex);
 
 		// Estimate time of next emulated VSYNC
@@ -340,8 +380,8 @@ static void *tegra2_hwc_emulated_vsync_thread(void *data)
 			} while (err < 0 && errno == EINTR); 
 		}
 
-		// Do the VSYNC call
-		if (pdev->enabled_vsync && pdev->procs && !pdev->fbblanked) {
+        // Do the VSYNC call
+        if (likely(pdev->enabled_vsync && !pdev->fbblanked)) {
 
 			// Get current time in exactly the same timebase as Choreographer
 			struct timespec now;
@@ -439,11 +479,12 @@ static int nvhost_syncpt_wait(int ctrl_fd, int id, int thresh, unsigned int time
 /* Wait VSync using NVidia SyncPoints */
 static int tegra2_wait_vsync(struct tegra2_hwc_composer_device_1_t *pdev)
 {
-	unsigned int syncpt = 0;
-	unsigned long max_wait_us = pdev->time_between_frames_us; // NVHOST_NO_TIMEOUT
+    unsigned int syncpt = 0;
+    // unsigned long max_wait_us = pdev->time_between_frames_us; // NVHOST_NO_TIMEOUT
+    unsigned long max_wait_us = 1000000000;
 
-	/* get syncpt threshold */
-	if (nvhost_syncpt_read(pdev->nvhost_fd, pdev->vblank_syncpt_id, &syncpt)) {
+    /* get syncpt threshold */
+    if (nvhost_syncpt_read(pdev->nvhost_fd, pdev->vblank_syncpt_id, &syncpt)) {
 		ALOGE("Failed to read VBLANK syncpoint value!");
 		return -1;
 	} 
@@ -464,30 +505,31 @@ static void *tegra2_hwc_nv_vsync_thread(void *data)
      struct tegra2_hwc_composer_device_1_t *pdev =
             (struct tegra2_hwc_composer_device_1_t *) data;
 
-	ALOGD("NVidia VSYNC thread started");
+    ALOGD("NVidia VSYNC thread started");
 
-    setpriority(PRIO_PROCESS, 0, HAL_PRIORITY_URGENT_DISPLAY);
+    androidSetThreadPriority(0, HAL_PRIORITY_URGENT_DISPLAY
+            + ANDROID_PRIORITY_MORE_FAVORABLE);
+    android_set_rt_ioprio(0, 1);
 
-    while (1) {	
-		int err;
+    while (1) {
+        int err;
 
-		// Wait while display is blanked
-		pthread_mutex_lock(&pdev->vsync_mutex);
-		while (pdev->fbblanked && pdev->vsync_running) {
+        // Wait while display is blanked
+        pthread_mutex_lock(&pdev->vsync_mutex);
+        if (unlikely(pdev->fbblanked && pdev->vsync_running)) {
 
-			// When framebuffer is blanked, there must be no interrupts, so we can't wait on it
-			pthread_cond_wait(&pdev->vsync_cond, &pdev->vsync_mutex);
-
-		};
-		if (!pdev->vsync_running)
-			break;
-		pthread_mutex_unlock(&pdev->vsync_mutex);
+            // When framebuffer is blanked, there must be no interrupts, so we can't wait on it
+            pthread_cond_wait(&pdev->vsync_cond, &pdev->vsync_mutex);
+        }
+        if (unlikely(!pdev->vsync_running))
+            break;
+        pthread_mutex_unlock(&pdev->vsync_mutex);
 
 		// Wait for the next vsync
 		tegra2_wait_vsync(pdev);
 
-		// Do the VSYNC call
-		if (pdev->enabled_vsync && pdev->procs && !pdev->fbblanked) {
+        // Do the VSYNC call
+        if (likely(pdev->enabled_vsync && !pdev->fbblanked)) {
 
 			// Get current time in exactly the same timebase as Choreographer
 			struct timespec now;
@@ -558,7 +600,7 @@ static int tegra2_query(struct hwc_composer_device_1* dev, int what, int *value)
 	switch (what) {
     case HWC_BACKGROUND_LAYER_SUPPORTED:
         // we support the background layer
-        value[0] = 1;
+        value[0] = 0;
         break;
 
     case HWC_VSYNC_PERIOD:
@@ -692,11 +734,11 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
 	// Get framebuffer info
 	if (dev->fb_fd >= 0 && ioctl(dev->fb_fd, FBIOGET_VSCREENINFO, &info) != -1) {
 
-		unsigned long long refreshRate = 1000000000000LLU /
-			(
-			 uint64_t( info.upper_margin + info.lower_margin + info.yres )
-			 * ( info.left_margin  + info.right_margin + info.xres )
-			 * info.pixclock
+        uint64_t refreshRate = 1000000000000LLU /
+            (
+             uint64_t( info.upper_margin + info.lower_margin + info.vsync_len + info.yres )
+             * ( info.left_margin  + info.right_margin + info.hsync_len + info.xres )
+             * info.pixclock
 			);
 
 		if (refreshRate == 0) {
@@ -721,31 +763,32 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
 
 	}
 
-	// Try to query the original hw composer for the time between frames...
-	int value = 0;
+    // Try to query the original hw composer for the time between frames...
+    uint64_t value = 0;
+#if 0
+    if (dev->org->query && dev->org->query(dev->org,HWC_VSYNC_PERIOD,&value) == 0 && value != 0) {
+        ALOGD("Got time between frames from original hwcomposer: time in ns = %d",value);
 
-	if (dev->org->query && dev->org->query(dev->org,HWC_VSYNC_PERIOD,&value) == 0 && value != 0) {
-		ALOGD("Got time between frames from original hwcomposer: time in ns = %d",value);
+    } else {
+#endif
+        // Try to get the time from the framebuffer device...
+        if (dev->fb_fd >= 0) {
+            value = (
+                 uint64_t( info.upper_margin + info.lower_margin + info.vsync_len + info.yres )
+                 * ( info.left_margin  + info.right_margin + info.hsync_len + info.xres )
+                 * info.pixclock
+                ) / 1000ULL;
+            ALOGD("Got time between frames from framebuffer: time in ns = %llu",value);
+        }
+#if 0
+    }
+#endif
 
-	} else {
-		// Try to get the time from the framebuffer device...
-
-		if (dev->fb_fd >= 0) {
-
-			value =	(
-				 uint64_t( info.upper_margin + info.lower_margin + info.yres )
-				 * ( info.left_margin  + info.right_margin + info.xres )
-				 * info.pixclock
-				) / 1000ULL;
-
-			ALOGD("Got time between frames from framebuffer: time in ns = %d",value);
-		}
-	}	
-
-	if (!value) {
-		ALOGD("Unable to get time between frames. Assuming 60 hz rate");
-		value = 50000000 / 3;
-	}	
+    if (!value) {
+        ALOGD("Unable to get time between frames."
+            "Using DispSync refresh rate: time in ns = %llu", value);
+        value = 16672550400 / 1000ULL;
+    }
 	dev->time_between_frames_ns = value;
 	dev->time_between_frames_us = (unsigned long)(value / 1000ULL);
    

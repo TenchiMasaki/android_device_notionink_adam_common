@@ -14,6 +14,8 @@ on early-init
 
 on init
 
+    export LD_SHIM_LIBS /system/lib/libnvomxadaptor.so|libnvshim.so:/system/lib/libnvomxadaptor.so|libnvwinsys.so
+
     # Set permissions for persist partition
     mkdir /persist 0771 system system
     mkdir /firmware 0771 system system
@@ -22,10 +24,6 @@ on init
 
     symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
-    
-    # Enable secondary storage
-    mkdir /microsd 0777 sdcard_rw sdcard_rw
-    export SECONDARY_STORAGE /microsd
 
     mkdir /data/system 0775 system system
 
