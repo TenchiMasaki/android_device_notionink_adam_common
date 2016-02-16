@@ -28,9 +28,8 @@ endif
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
 # uses mdpi artwork where available
-PRODUCT_AAPT_CONFIG := normal large
-PRODUCT_AAPT_PREF_CONFIG := normal
-# PRODUCT_AAPT_PREBUILT_DPI := hdpi
+# PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
+# PRODUCT_AAPT_PREF_CONFIG := mdpi
 # PRODUCT_LOCALES += en mdpi
 
 # Enable optional sensor types
@@ -270,7 +269,6 @@ PRODUCT_COPY_FILES += \
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \
