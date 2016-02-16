@@ -29,8 +29,8 @@ DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
 # uses mdpi artwork where available
 PRODUCT_AAPT_CONFIG := normal large
-PRODUCT_AAPT_PREF_CONFIG := tvdpi
-PRODUCT_AAPT_PREBUILT_DPI := hdpi
+PRODUCT_AAPT_PREF_CONFIG := normal
+# PRODUCT_AAPT_PREBUILT_DPI := hdpi
 # PRODUCT_LOCALES += en mdpi
 
 # Enable optional sensor types
@@ -301,6 +301,7 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+	badblocks \
 	e2fsck \
 	setup_fs \
         make_ext4fs \
