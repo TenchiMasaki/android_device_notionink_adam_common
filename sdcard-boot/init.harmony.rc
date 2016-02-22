@@ -24,6 +24,10 @@ on init
 
     symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
+    
+    # Enable secondary storage
+    mkdir /microsd 0777 sdcard_rw sdcard_rw
+    export SECONDARY_STORAGE /microsd
 
     mkdir /data/system 0775 system system
 
