@@ -22,6 +22,7 @@
 
 #include <poll.h>
 #include <pthread.h>
+#include <string.h>
 
 #include <linux/input.h>
 

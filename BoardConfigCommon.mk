@@ -22,10 +22,11 @@ BOARD_ADAM := true
 TARGET_ARCH_LOWMEM := true
 
 # Dex-preoptimization
-WITH_DEXPREOPT := true
+# WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
+DISABLE_DROIDDOC := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
@@ -37,14 +38,15 @@ WITH_GMS := true
 
 # partitions
 # TARGET_RELEASETOOLS_EXTENSIONS := $(LOCAL_PATH)
-# TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 924999680
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
+# BOARD_USERDATAIMAGE_PARTITION_SIZE := 274464768
 # BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 # TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+TARGET_HW_DISK_ENCRYPTION := false
 
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
@@ -61,7 +63,7 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_ARCH_VARIANT_CPU := cortex-a9
 TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 TARGET_CPU_SMP := true
-TARGET_CPU_VARIANT := tegra2
+TARGET_CPU_VARIANT := generic
 # ARCH_ARM_HAVE_NEON := false
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
@@ -81,18 +83,33 @@ NEED_WORKAROUND_CORTEX_A9_745320 := true
 USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
+MALLOC_IMPL := dlmalloc
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
+BOARD_ALLOW_EGL_HIBERNATION := true
+BOARD_EGL_NEEDS_HANDLE_VALUE := true
 
 # defines to support legacy blobs
 COMMON_GLOBAL_CFLAGS += \
     -DNEEDS_VECTORIMPL_SYMBOLS \
     -DADD_LEGACY_SET_POSITION_SYMBOL \
-    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL
-#    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
+    -DUSES_LEGACY_ACQUIRE_WVM \
+    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL \
+    -DCAMERA_VENDOR_L_COMPAT \
+    -DDISABLE_ASHMEM_TRACKING
+
+COMMON_GLOBAL_CPPFLAGS += \
+    -DNEEDS_VECTORIMPL_SYMBOLS \
+    -DADD_LEGACY_SET_POSITION_SYMBOL \
+    -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
+    -DUSES_LEGACY_ACQUIRE_WVM \
+    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL \
+    -DCAMERA_VENDOR_L_COMPAT \
+    -DDISABLE_ASHMEM_TRACKING
 
 # Kernel
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam
+TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -101,7 +118,7 @@ TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 #TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
-TARGET_PREBUILT_KERNEL := kernel/notionink/adam.cm12.1/arch/arm/boot/zImage
+#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
@@ -112,8 +129,11 @@ BOARD_PAGE_SIZE := 0x00000800
 #BOARD_KERNEL_CMDLINE := tegra_fbmem=8192000@0x1e018000 video=tegrafb console=tty0,115200n8 androidboot.console=tty0 mem=1024M@0M lp0_vec=8192@0x1e7f1020 lcd_manfid=AUO usbcore.old_scheme_first=1 tegraboot=nand mtdparts=tegra_nand:16384K@9984K(misc),16384K@26880K(recovery),32768K@43776K(boot),204800K@77056K(system),765696K@282368K(cache)
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
-BOARD_KERNEL_CMDLINE := 
+# BOARD_MKBOOTIMG_ARGS  := --ramdisk_offset 0x05000000 --tags_offset 0x04800000
+BOARD_KERNEL_CMDLINE :=
+# androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
 #zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
+# BOARD_KERNEL_SEPARATED_DT := true
 
 # Custom Tools
 # TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
@@ -156,10 +176,11 @@ TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 #XX BOARD_USES_LEGACY_OVERLAY := true
 BOARD_USE_LEGACY_UI := true
 BOARD_HAVE_PIXEL_FORMAT_INFO := true
+BOARD_USES_LEGACY_ACQUIRE_WVM := true
 
 MAX_EGL_CACHE_KEY_SIZE := 4096
 MAX_EGL_CACHE_SIZE := 2146304
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 5
 
 # display
 # Use nicer font rendering
@@ -178,7 +199,7 @@ BOARD_USES_LEGACY_ACQUIRE_WVM := true
 # BOARD_USES_OVERLAY := true
 BOARD_USES_HGL := true
 USE_OPENGL_RENDERER := true
-# BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
+BOARD_EGL_CFG := device/notionink/adam_common/files/egl.cfg
 BOARD_HDMI_MIRROR_MODE := Scale
 BOARD_USE_MHEAP_SCREENSHOT := true
 BOARD_EGL_SKIP_FIRST_DEQUEUE := true
@@ -277,51 +298,19 @@ HAVE_SELINUX := true
 
 ifeq ($(HAVE_SELINUX),true)
 
-	#POLICYVERS := 24
+	#POLICYVERS := 26
 	
 	BOARD_SEPOLICY_DIRS += \
 	device/notionink/adam_common/sepolicy
-
-BOARD_SEPOLICY_UNION := \
-	file_contexts \
-	app.te \
-	boot_anim.te \
-	device.te \
-	drmserver.te \
-	file.te \
-	genfs_contexts \
-	healthd.te \
-	init.te \
-	init_shell.te \
-	isolated_app.te \
-	media_app.te \
-	release_app.te \
-	mediaserver.te \
-	netd.te \
-	platform_app.te \
-	rild.te \
-	sensors_config.te \
-	shared_app.te \
-	shell.te \
-	surfaceflinger.te \
-	system_app.te \
-	system.te \
-	ueventd.te \
-	untrusted_app.te \
-	vold.te \
-	wpa_socket.te \
-	wpa.te \
-	zygote.te
-
 endif
 
 # TWRP Settings
 DEVICE_RESOLUTION := 1024x600
 RECOVERY_SDCARD_ON_DATA := true
-TW_INTERNAL_STORAGE_PATH := "/storage/sdcard1"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard1"
-TW_EXTERNAL_STORAGE_PATH := "/storage/sdcard2"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard2"
+TW_INTERNAL_STORAGE_PATH := "/data/media"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
 TW_NO_REBOOT_BOOTLOADER := false
 TW_NO_REBOOT_RECOVERY := false
 TW_FLASH_FROM_STORAGE := true

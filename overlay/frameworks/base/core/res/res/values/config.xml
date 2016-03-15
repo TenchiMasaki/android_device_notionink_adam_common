@@ -289,7 +289,7 @@
         <item>com.google.android.gms</item>
     </string-array>
     
-    <bool name="config_legacyGpsHAL">true</bool>
+    <!-- <bool name="config_legacyGpsHAL">true</bool> -->
 
     <!-- The duration (in milliseconds) of a short animation. -->
     <integer name="config_shortAnimTime">100</integer>
@@ -345,5 +345,8 @@
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
     <integer name="config_doubleTapOnHomeBehavior">2</integer>
+
+    <!-- enable doze powersaving mode -->
+    <bool name="config_enableAutoPowerModes">true</bool>
 
 </resources>

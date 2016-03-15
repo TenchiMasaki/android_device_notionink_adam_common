@@ -3,7 +3,9 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-/dev/block/mmcblk0p2	/data	ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer
+#/dev/block/mmcblk0p3	/cache		ext4	defaults	wait,check,notrim
+/dev/block/mmcblk0p2	/system		ext4	defaults	wait,notrim
+/dev/block/mmcblk0p3	/data		ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer,notrim
 
 ## Vold 2.0 fstab for NI Adam
 
@@ -17,18 +19,20 @@
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
 
-/devices/platform/sdhci-tegra.3/mmc_host/mmc1 auto auto defaults voldmanaged=sdcard1:auto
-/devices/platform/sdhci-tegra.2/mmc_host/mmc2 auto auto defaults voldmanaged=sdcard2:auto
-/devices/platform/tegra-ehci.2/usb1/1-1/1-1.1/1-1.1:1.0 auto auto defaults voldmanaged=usbdisk0:auto
-/devices/platform/tegra-ehci.2/usb1/1-1/1-1.2/1-1.2:1.0 auto auto defaults voldmanaged=usbdisk1:auto
+*/block/sda*		auto	auto	defaults	voldmanaged=USBdisk1:auto,notrim
+*/block/sdb*		auto	auto	defaults	voldmanaged=USBdisk2:auto,notrim
+*/block/mmcblk0*	auto	auto	defaults	voldmanaged=sdcard1:auto,encryptable=userdata,notrim
+*/block/mmcblk1*	auto	auto	defaults	voldmanaged=sdcard2:auto,encryptable=userdata,notrim
+
+#/dev/block/zram0	none	swap	defaults	zramsize=419430400
 
 # recovery
 misc			/misc		mtd		defaults	recoveryonly
 recovery		/recovery	mtd		defaults	recoveryonly
 boot			/boot		mtd		defaults	recoveryonly
-system			/system		yaffs2		defaults	recoveryonly
-cache			/cache		yaffs2		defaults	recoveryonly
+/dev/block/mmcblk0p2	/system		ext4		defaults	recoveryonly
+#/dev/block/mmcblk1p3	/cache		ext4		defaults	recoveryonly
 /dev/null		/internal_sd	datamedia	defaults	recoveryonly
-/dev/block/mmcblk0p2	/data		ext4		defaults	recoveryonly
+/dev/block/mmcblk0p3	/data		ext4		defaults	recoveryonly
 /dev/block/mmcblk1p1	/external_sd	auto		defaults	recoveryonly
-/dev/block/mmcblk0p1	/sdcard		auto		defaults	recoveryonly
+/dev/block/mmcblk1p1	/sdcard		auto		defaults	recoveryonly
