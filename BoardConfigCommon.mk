@@ -26,6 +26,7 @@ TARGET_ARCH_LOWMEM := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
+DISABLE_DROIDDOC := true
 
 # Devices asserts
 TARGET_OTA_ASSERT_DEVICE := adam,adam_3g,adam_recovery
@@ -90,14 +91,18 @@ COMMON_GLOBAL_CFLAGS += \
     -DADD_LEGACY_SET_POSITION_SYMBOL \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
     -DUSES_LEGACY_ACQUIRE_WVM \
-    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL \
+    -DCAMERA_VENDOR_L_COMPAT \
+    -DDISABLE_ASHMEM_TRACKING
 
-TARGET_RELEASE_CPPFLAGS += \
+COMMON_GLOBAL_CPPFLAGS += \
     -DNEEDS_VECTORIMPL_SYMBOLS \
     -DADD_LEGACY_SET_POSITION_SYMBOL \
     -DADD_LEGACY_MEMORY_DEALER_CONSTRUCTOR_SYMBOL \
     -DUSES_LEGACY_ACQUIRE_WVM \
-    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
+    -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL \
+    -DCAMERA_VENDOR_L_COMPAT \
+    -DDISABLE_ASHMEM_TRACKING
 
 # Kernel
 #TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
@@ -121,7 +126,8 @@ BOARD_PAGE_SIZE := 0x00000800
 #androidboot.carrier=wifi-only product_type=w
 #BOARD_KERNEL_CMDLINE := console=tty0,115200n8 androidboot.console=tty0
 BOARD_KERNEL_CMDLINE := 
-#zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
+# androidboot.hardware=$(TARGET_BOOTLOADER_BOARD_NAME)
+# zcache mem=256M@0M nvmem=256M@256M mem=512M@512M vmalloc=384M video=tegrafb console=ttyS0,115200,n8 usbcore.old_scheme_first=1 cpuid=200102 devicetype=1002 tegraboot=nand
 
 # Custom Tools
 # TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/notionink/adam_3g/releasetools/adam_ota_from_target_files
@@ -293,10 +299,10 @@ endif
 # TWRP Settings
 DEVICE_RESOLUTION := 1024x600
 RECOVERY_SDCARD_ON_DATA := true
-TW_INTERNAL_STORAGE_PATH := "/storage/sdcard1"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard1"
-TW_EXTERNAL_STORAGE_PATH := "/storage/sdcard2"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard2"
+TW_INTERNAL_STORAGE_PATH := "/data/media"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
 TW_NO_REBOOT_BOOTLOADER := false
 TW_NO_REBOOT_RECOVERY := false
 TW_FLASH_FROM_STORAGE := true

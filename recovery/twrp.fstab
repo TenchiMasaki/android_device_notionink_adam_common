@@ -1,5 +1,18 @@
-/system			yaffs2	/dev/block/mtdblock3
-/cache			yaffs2	/dev/block/mtdblock4
-/data			ext4	/dev/block/mmcblk0p2
-/external_sd	vfat	/dev/block/mmcblk1p1
-/internal_sd	vfat	/dev/block/mmcblk0p1
+# mount point 	fstype 		device 													options (length for cryptfs encryption footer)
+/system			ext4		/dev/block/mmcblk0p2				flags=display="System"
+
+#/cache			yaffs2		/dev/block/mtdblock4				flags=display="Cache"
+
+/data			ext4		/dev/block/mmcblk0p3				length=-16384
+
+/internal_sd	auto		/dev/block/mmcblk0p1 /dev/block/mmcblk0					flags=display="Internal Storage";storage;wipeingui
+
+/external_sd	auto		/dev/block/mmcblk1p1 /dev/block/mmcblk1					flags=display="External Storage";storage;wipeingui;removable
+
+/external_sys	auto		/dev/block/mmcblk1p2 /dev/block/mmcblk1					flags=display="External System";storage;wipeingui;removable
+
+/external_data	auto		/dev/block/mmcblk1p3 /dev/block/mmcblk1					flags=display="External Data";storage;wipeingui;removable
+
+/usb0			auto		/dev/block/sda1 /dev/block/sda							flags=display="USB Storage 0";storage;wipeingui;removable
+
+/usb1			auto		/dev/block/sdb1 /dev/block/sdb							flags=display="USB Storage 1";storage;wipeingui;removable

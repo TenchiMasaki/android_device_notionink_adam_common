@@ -3,10 +3,10 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-/dev/block/mmcblk1p1	/microsd	vfat	defaults	wait,check
-#/dev/block/mmcblk1p4	/cache	ext4	defaults	wait,check
-/dev/block/mmcblk1p2	/system	ext4	defaults	wait
-/dev/block/mmcblk1p3	/data	ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer
+/dev/block/mmcblk1p1	/microsd	vfat	defaults	notrim
+#/dev/block/mmcblk1p4	/cache		ext4	defaults	wait,check,notrim
+/dev/block/mmcblk1p2	/system		ext4	defaults	wait,notrim
+/dev/block/mmcblk1p3	/data		ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer,notrim
 
 ## Vold 2.0 fstab for NI Adam
 
@@ -20,12 +20,12 @@
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
 
-*/block/sda*              	auto    	vfat	None	wait,voldmanaged=USBdisk1:auto
-*/block/sdb*              	auto    	vfat	None	wait,voldmanaged=USBdisk2:auto
-*/block/mmcblk0*          	auto            auto    defaults wait,voldmanaged=sdcard1:auto,noemulatedsd
-*/block/mmcblk1*          	auto            auto    defaults wait,voldmanaged=sdcard2:auto,noemulatedsd
+*/block/sda*		auto	auto	defaults	voldmanaged=USBdisk1:auto,notrim
+*/block/sdb*		auto	auto	defaults	voldmanaged=USBdisk2:auto,notrim
+*/block/mmcblk0*	auto	auto	defaults	voldmanaged=sdcard1:auto,encryptable=userdata,notrim
+*/block/mmcblk1*	auto	auto	defaults	voldmanaged=sdcard2:auto,encryptable=userdata,notrim
 
-/dev/block/zram0                none            swap    defaults    zramsize=419430400
+#/dev/block/zram0		none	swap	defaults	zramsize=419430400
 
 # recovery
 misc			/misc		mtd		defaults	recoveryonly

@@ -28,9 +28,9 @@ endif
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
 # uses mdpi artwork where available
-PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
-PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += en mdpi
+# PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
+# PRODUCT_AAPT_PREF_CONFIG := mdpi
+# PRODUCT_LOCALES += en mdpi
 
 # Enable optional sensor types
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -77,11 +77,10 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
     device/notionink/adam_common/recovery/twrp.fstab:recovery/root/etc/twrp.fstab \
-#    device/notionink/adam_common/recovery/init.recovery.harmony.rc:recovery/root/init.recovery.harmony.rc \
+    device/notionink/adam_common/recovery/init.recovery.harmony.rc:root/init.recovery.harmony.rc \
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
-#    device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
 #    device/notionink/adam_common/files/init.zygote32.rc:root/init.zygote32.rc \
 #    device/notionink/adam_common/files/init.trace.rc:root/init.trace.rc \
 #    device/notionink/adam_common/files/ueventd.rc:root/ueventd.rc \
@@ -139,10 +138,6 @@ PRODUCT_COPY_FILES += \
 # APNs list
 #PRODUCT_COPY_FILES += \
 #   device/notionink/adam_common/files/apns-conf.xml:system/etc/apns-conf.xml
-
-# Boot animation
-PRODUCT_COPY_FILES += \
-    vendor/omni/prebuilt/bootanimation/res/360x240.zip:system/media/bootanimation.zip
 
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
@@ -276,7 +271,6 @@ PRODUCT_COPY_FILES += \
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \
@@ -307,6 +301,7 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+	badblocks \
 	e2fsck \
 	setup_fs \
         make_ext4fs \
