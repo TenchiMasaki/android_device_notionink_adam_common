@@ -234,7 +234,8 @@ PRODUCT_PACKAGES += \
 	libwebkit \
 	libmmcamera_interface2 \
 	libmmcamera_interface \
-	Launcher3
+	Launcher3 \
+        Snap
     
 # Sensor daemon
 PRODUCT_PACKAGES += \
