@@ -3,7 +3,7 @@
 #type storage_file;
 #type bootchart_data_file;
 #type gatekeeper_data_file
-type sysinit;
+#type sysinit;
 #type sysfs_firmware_writable, fs_type, sysfs_type;
 #type sysfs_devices_system_cpu, fs_type, sysfs_type;
 attribute tcp_socket;
@@ -99,7 +99,7 @@ allow kernel cgroup:dir add_name;
 allow kernel bootchart_data_file:dir create_dir_perms;
 allow kernel adb_keys_file:dir create_dir_perms;
 allow kernel bluetooth_data_file:dir create_dir_perms;
-allow kernel keystore_data_file:dir create_dir_perms;
+# allow kernel keystore_data_file:dir create_dir_perms;
 allow kernel gatekeeper_data_file:dir create_dir_perms;
 allow kernel net_data_file:dir create_dir_perms;
 allow kernel domain:dir create_dir_perms;
