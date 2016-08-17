@@ -105,7 +105,7 @@ COMMON_GLOBAL_CPPFLAGS += \
     -DDISABLE_ASHMEM_TRACKING
 
 # Kernel
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
+TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -113,7 +113,7 @@ TARGET_KERNEL_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
-TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
+#TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
 #TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
