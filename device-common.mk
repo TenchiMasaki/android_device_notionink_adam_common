@@ -28,9 +28,9 @@ endif
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
 # uses mdpi artwork where available
-# PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
-# PRODUCT_AAPT_PREF_CONFIG := mdpi
-# PRODUCT_LOCALES += en mdpi
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi
+PRODUCT_LOCALES += en mdpi
 
 # Enable optional sensor types
 PRODUCT_PROPERTY_OVERRIDES += \
