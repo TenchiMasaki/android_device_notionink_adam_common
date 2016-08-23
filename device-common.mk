@@ -67,18 +67,15 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Adam/Harmony Configs
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    device/notionink/adam_common/sdcard-boot/fstab.harmony:root/fstab.harmony \
-    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.harmony.rc \
-    device/notionink/adam_common/sdcard-boot/init.harmony.rc:root/init.unknown.rc \
+    device/notionink/adam_common/files/fstab.harmony:root/fstab.harmony \
+    device/notionink/adam_common/files/init.harmony.rc:root/init.harmony.rc \
     device/notionink/adam_common/files/init.harmony.usb.rc:root/init.harmony.usb.rc \
     device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.harmony.rc \
-    device/notionink/adam_common/files/ueventd.harmony.rc:root/ueventd.unknown.rc \
     device/notionink/adam_common/files/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     device/notionink/adam_common/files/nvram.txt:system/etc/wifi/nvram.txt \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
-#    device/notionink/adam_common/recovery/init.recovery.harmony.rc:root/init.recovery.harmony.rc
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
@@ -239,7 +236,7 @@ PRODUCT_PACKAGES += \
 	libmmcamera_interface2 \
 	libmmcamera_interface \
 	Launcher3
-    
+
 # Sensor daemon
 PRODUCT_PACKAGES += \
        g5sensord
@@ -274,7 +271,6 @@ PRODUCT_COPY_FILES += \
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	persist.sys.usb.config=mtp \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \
@@ -305,6 +301,7 @@ PRODUCT_PACKAGES += \
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
+	badblocks \
 	e2fsck \
 	setup_fs \
         make_ext4fs \

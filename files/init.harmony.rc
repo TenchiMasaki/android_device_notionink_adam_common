@@ -14,6 +14,8 @@ on early-init
 
 on init
 
+    export LD_SHIM_LIBS /system/lib/libnvomxadaptor.so|libnvshim.so:/system/lib/libnvwinsys.so|libnvshim.so :/system/lib/libaudioflinger.so
+
     # Set permissions for persist partition
     mkdir /persist 0771 system system
     mkdir /firmware 0771 system system
@@ -22,17 +24,13 @@ on init
 
     symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
-    
-    # Enable secondary storage
-    mkdir /microsd 0777 sdcard_rw sdcard_rw
-    export SECONDARY_STORAGE /microsd
 
     mkdir /data/system 0775 system system
 
 on fs
     # Mount cache and system yaffs2 partitions here
-    mount yaffs2 mtd@cache /cache nosuid nodev
-    mount yaffs2 mtd@system /system 
+    # mount yaffs2 mtd@cache /cache nosuid nodev
+    # mount yaffs2 mtd@system /system 
     mount_all /fstab.harmony
     
     restorecon_recursive /persist
@@ -112,6 +110,7 @@ on post-fs-data
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
 
+
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
     setrlimit 8 67108864 67108864
@@ -119,7 +118,7 @@ on early-boot
     setenforce 1                                # RC:    1 is implied value?
 
 on boot
-    mount yaffs2 mtd@system /system rw remount   #RC add: mount rw, solve .apk
+#    mount ext4 /dev/block/mmcblk0p1 /system rw remount   #RC add: mount rw, solve .apk
 
 # PQi Permissions
     chmod 0666 /sys/class/gpio/gpio27/value
