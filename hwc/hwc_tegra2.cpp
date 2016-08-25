@@ -726,6 +726,7 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
     dev->base.dump = tegra2_dump;
 
 	dev->fb_fd = -1;
+#if 0
 	struct fb_var_screeninfo info;	
 
 	// Open framebuffer
@@ -762,6 +763,7 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
 			info.height, dev->ydpi / 1000.0, refreshRate);
 
 	}
+#endif
 
     // Try to query the original hw composer for the time between frames...
     uint64_t value = 0;
@@ -771,6 +773,8 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
 
     } else {
 #endif
+
+#if 0
         // Try to get the time from the framebuffer device...
         if (dev->fb_fd >= 0) {
             value = (
@@ -780,6 +784,7 @@ static int tegra2_open(const struct hw_module_t *module, const char *name,
                 ) / 1000ULL;
             ALOGD("Got time between frames from framebuffer: time in ns = %llu",value);
         }
+#endif
 #if 0
     }
 #endif

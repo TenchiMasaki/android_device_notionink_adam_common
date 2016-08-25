@@ -1,9 +1,0 @@
-type sysfs_ksm;
-allow system_app device:chr_file { rw_file_perms };
-allow system_app knv_device:chr_file { rw_file_perms };
-allow system_app init:unix_dgram_socket write;
-allow system_app init_tmpfs:file rw_file_perms;
-allow system_app dalvikcache_data_file:file rw_file_perms;
-allow system_app sysfs_ksm:dir r_dir_perms;
-allow system_app system_app_data_file:file { execute execute_no_trans };
-allow system_app system_file:file execmod;

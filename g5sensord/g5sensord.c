@@ -1159,7 +1159,7 @@ void fSixDOFSensorDrivers(int k)
 	    fd_lis = open("/sys/devices/platform/lis3lv02d/position", O_RDWR); }
 	short acc[3]={0};
 	
-	fscanf(fd_lis,"(%d,%d,%d)",acc[0],acc[1],acc[2]);
+	fscanf((FILE *)fd_lis,"(%d,%d,%d)",acc[0],acc[1],acc[2]);
 	//ioctl_msg=BMA222_READ_ACCEL_XYZ;
 	//res = ioctl(fd_bma, ioctl_msg, &acc);
 	fGpx = (float)acc[0]/256;

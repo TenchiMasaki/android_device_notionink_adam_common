@@ -501,7 +501,7 @@ static int start_input_stream(struct stream_in *in)
      * create a resampler.
      */
     
-    if (&in->stream && &in->stream.common && in->pcm_config && in->pcm_config->rate && 
+    if (in->pcm_config && in->pcm_config->rate && 
     	in_get_sample_rate(&in->stream.common) &&
     	in_get_sample_rate(&in->stream.common) != in->pcm_config->rate) {
         in->buf_provider.get_next_buffer = get_next_buffer;
@@ -747,6 +747,8 @@ static int out_set_volume(struct audio_stream_out *stream, float left,
 static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
                          size_t bytes)
 {
+    if (bytes == 0) return 0;
+
     int ret = 0;
     struct stream_out *out = (struct stream_out *)stream;
     struct audio_device *adev = out->dev;

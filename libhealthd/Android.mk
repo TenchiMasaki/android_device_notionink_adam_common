@@ -21,6 +21,6 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := healthd_board_harmony.cpp
 LOCAL_MODULE := libhealthd.harmony
-LOCAL_C_INCLUDES := system/core/healthd
+LOCAL_C_INCLUDES := system/core/healthd/include
 include $(BUILD_STATIC_LIBRARY)
 endif

@@ -1,9 +1,0 @@
-#
-allow platform_app video_device:file rw_file_perms;
-allow platform_app sysfs:file rw_file_perms;
-allow platform_app init:unix_dgram_socket write;
-allow platform_app device:chr_file write;
-allow platform_app kernel:system module_request;
-allow platform_app system_file:file execmod;
-allow platform_app video_device:file write;
-allow platform_app device:chr_file { open write read };

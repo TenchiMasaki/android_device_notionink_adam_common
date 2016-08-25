@@ -118,9 +118,9 @@ static void save_max_freqs() {
     sysfs_read(cpu_path_max[0], &last_max_freq[0], 10);
     sysfs_read(cpu_path_max[1], &last_max_freq[1], 10);
     if (*last_max_freq[0] == 0)
-        *last_max_freq[0] = "1000000";
+        strcpy(last_max_freq[0], "1000000");
     if (*last_max_freq[1] == 0)
-        *last_max_freq[1] = "1000000";
+        strcpy(last_max_freq[1], "1000000");
 }
 
 static int restore_max_freq(int cpu) {

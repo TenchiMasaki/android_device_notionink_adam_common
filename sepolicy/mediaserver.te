@@ -1,5 +1,0 @@
-allow mediaserver { nvhost_writable_device nv_device nvhost_device video_device device }:chr_file rw_file_perms;
-allow mediaserver system_data_file:sock_file write;
-allow mediaserver debugfs:file rw_file_perms;
-allow mediaserver system_file:file rx_file_perms;
-allow mediaserver system_file:file execmod;

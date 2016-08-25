@@ -1,4 +1,0 @@
-allow isolated_app zygote_exec:file { open read };
-allow isolated_app app_data_file:dir search;
-allow isolated_app untrusted_app:unix_stream_socket ioctl;
-allow isolated_app app_data_file:file ioctl;
