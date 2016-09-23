@@ -220,6 +220,21 @@ on boot
 on property:ro.carrier=unknown
     stop ril-daemon
 
+on property:init.post_fs_data.bootreason=*
+    # Create dump dir and collect dumps. (use the same location as in init.rc)
+    mkdir /data/dontpanic 0750 root log
+    copy /proc/emmc_ipanic_console /data/dontpanic/ipanic_console
+    chown root log /data/dontpanic/ipanic_console
+    chmod 0640 /data/dontpanic/ipanic_console
+    copy /proc/emmc_ipanic_threads /data/dontpanic/ipanic_threads
+    chown root log /data/dontpanic/ipanic_threads
+    chmod 0640 /data/dontpanic/ipanic_threads
+    copy /proc/emmc_ipanic_gbuffer /data/dontpanic/ipanic_gbuffer
+    chown root log /data/dontpanic/ipanic_gbuffer
+    chmod 0640 /data/dontpanic/ipanic_gbuffer
+    # Clear panic partition
+    write /proc/emmc_ipanic_header 1
+
 service wpa_supplicant /system/bin/wpa_supplicant \
     -Dnl80211 -iwlan0 -puse_p2p_group_interface=1 -c/data/misc/wifi/wpa_supplicant.conf -e/data/misc/wifi/entropy.bin \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf \

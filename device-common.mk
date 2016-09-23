@@ -32,6 +32,8 @@ DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 # PRODUCT_AAPT_PREF_CONFIG := mdpi
 # PRODUCT_LOCALES += en mdpi
 
+PRODUCT_RESTRICT_VENDOR_FILES := false
+
 # Enable optional sensor types
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.qti.sensors.smd=false \
@@ -269,6 +271,7 @@ PRODUCT_COPY_FILES += \
 
 # start adb early
 ADDITIONAL_DEFAULT_PROPERTIES += \
+	security.perf_harden=0 \
 	ro.secure=0 \
 	ro.adb.secure=0 \
 	persist.fuse_sdcard=true \
@@ -289,9 +292,9 @@ PRODUCT_PACKAGES += \
 	libwpa_client \
 	hostapd \
 	hostapd_default.conf \
-	dhcpcd.conf \
+#	dhcpcd.conf \
 	wpa_supplicant \
-	wpa_supplicant.conf
+#	wpa_supplicant.conf
 	
 PRODUCT_PACKAGES += \
 	wpa_supplicant_overlay.conf \

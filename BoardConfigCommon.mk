@@ -81,6 +81,7 @@ USE_ALL_OPTIMIZED_STRING_FUNCS := true
 # customize the malloced address to be 16-byte aligned
 BOARD_MALLOC_ALIGNMENT := 16
 MALLOC_SVELTE := true
+BOARD_NEEDS_VECTORIMPL_SYMBOLS := true
 TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu=cortex-a9)
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
 BOARD_ALLOW_EGL_HIBERNATION := true
@@ -105,7 +106,7 @@ COMMON_GLOBAL_CPPFLAGS += \
     -DDISABLE_ASHMEM_TRACKING
 
 # Kernel
-#TARGET_KERNEL_SOURCE := kernel/notionink/adam-m
+TARGET_KERNEL_SOURCE := kernel/notionink/adam-n-3.0
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
