@@ -12,6 +12,8 @@ dmesg > /data/dmsg &
 #mv /data/kmsg /data/last_kmsg
 #cat /proc/kmsg > /data/kmsg &
 
+adbd &
+
 # Sleep freeze workaround (makes usb unstable, but suspend power usage less)
     #echo 1 > /sys/module/cpuidle/parameters/lp2_in_idle
 

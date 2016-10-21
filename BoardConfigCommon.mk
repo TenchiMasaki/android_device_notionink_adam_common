@@ -22,7 +22,8 @@ BOARD_ADAM := true
 TARGET_ARCH_LOWMEM := true
 
 # Dex-preoptimization
-WITH_DEXPREOPT := false
+WITH_DEXPREOPT_BOOT_IMG_ONLY := true
+# WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -68,6 +69,9 @@ TARGET_CPU_VARIANT := generic
 TARGET_HAVE_TEGRA_ERRATA_657451 := true
 ARCH_ARM_USE_NON_NEON_MEMCPY := true
 #TARGET_BOARD_INFO_FILE := device/notionink/adam_common/board-info.txt
+
+# Dump State
+BOARD_HAL_STATIC_LIBRARIES := libdumpstate.harmony
 
 # Compiler Optimization - This is a @codefireX specific flag to use -O3 everywhere.
 ARCH_ARM_HIGH_OPTIMIZATION := true
