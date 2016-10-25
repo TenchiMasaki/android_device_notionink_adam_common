@@ -21,6 +21,8 @@ BOARD_ADAM := true
 
 TARGET_ARCH_LOWMEM := true
 
+USE_CLANG_PLATFORM_BUILD := true
+
 # Dex-preoptimization
 WITH_DEXPREOPT_BOOT_IMG_ONLY := true
 # WITH_DEXPREOPT := true
@@ -90,6 +92,8 @@ TARGET_EXTRA_CFLAGS := $(call cc-option,-mtune=cortex-a9) $(call cc-option,-mcpu
 BOARD_EGL_SYSTEMUI_PBSIZE_HACK := true
 BOARD_ALLOW_EGL_HIBERNATION := true
 
+TARGET_ICS_SENSOR_BLOB := true
+
 # defines to support legacy blobs
 COMMON_GLOBAL_CFLAGS += \
     -DNEEDS_VECTORIMPL_SYMBOLS \
@@ -110,7 +114,7 @@ COMMON_GLOBAL_CPPFLAGS += \
     -DDISABLE_ASHMEM_TRACKING
 
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/notionink/adam-n-3.0
+#TARGET_KERNEL_SOURCE := kernel/notionink/adam-n-3.0
 #TARGET_KERNEL_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_VARIANT_CONFIG := tegra_adam_defconfig
 #TARGET_KERNEL_SELINUX_CONFIG := tegra_adam_defconfig
@@ -150,7 +154,10 @@ WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
 WIFI_DRIVER_FW_PATH_STA     := "/system/vendor/firmware/fw_bcmdhd.bin"
 #WIFI_DRIVER_FW_PATH_P2P     := "/system/vendor/firmware/fw_bcmdhd_p2p.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/system/vendor/firmware/fw_bcmdhd_apsta.bin"
+WIFI_DRIVER_MODULE_ARG      := "firmware_path=/system/vendor/firmware/fw_bcmdhd.bin nvram_path=/system/etc/wifi/nvram.txt"
+WIFI_DRIVER_MODULE_AP_ARG := "firmware_path=/system/vendor/firmware/fw_bcmdhd_apsta.bin nvram_path=/system/etc/wifi/nvram.txt"
 CONFIG_CTRL_IFACE           := true
+BOARD_NO_WIFI_HAL           := true
 
 # Wi-Fi AP
 BOARD_LEGACY_NL80211_STA_EVENTS := true
@@ -210,6 +217,10 @@ BOARD_EGL_NEEDS_LEGACY_FB := true
 EGL_NEEDS_FNW := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 
+# Charger
+BOARD_CHARGER_ENABLE_SUSPEND := true
+BOARD_CHARGER_DISABLE_INIT_BLANK := true
+
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
 
@@ -238,6 +249,10 @@ BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_AUDIO_LEGACY := false
 BOARD_USES_ALSA_AUDIO := false
 BOARD_OMX_NEEDS_LEGACY_AUDIO := true
+BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
+BOARD_HAVE_PRE_KITKAT_AUDIO_POLICY_BLOB := true
+USE_LEGACY_AUDIO_POLICY := 0
+
 # OMNIROM flag
 BOARD_NEED_OMX_COMPAT := true
 
@@ -272,6 +287,9 @@ TARGET_SCREEN_WIDTH := 1024
 TARGET_SCREEN_HEIGHT := 600
 TARGET_CONTINUOUS_SPLASH_ENABLED := true
 
+# Suppress EMMC WIPE
+BOARD_SUPPRESS_EMMC_WIPE := true
+
 # Recovery
 RECOVERY_NAME := Adam Tablet CWM-based Recovery
 RECOVERY_FSTAB_VERSION := 2
@@ -280,6 +298,7 @@ TARGET_RECOVERY_FSTAB := device/notionink/adam_common/files/fstab.harmony
 # Small fonts
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
+# RGBX_8888
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/notionink/adam_common/recovery/recovery_keys.c
 BOARD_RECOVERY_SWIPE := true
 

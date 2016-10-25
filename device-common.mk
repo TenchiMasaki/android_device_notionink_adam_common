@@ -28,9 +28,9 @@ endif
 DEVICE_PACKAGE_OVERLAYS := device/notionink/adam_common/overlay
 
 # uses mdpi artwork where available
-# PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
-# PRODUCT_AAPT_PREF_CONFIG := mdpi
-# PRODUCT_LOCALES += en mdpi
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi
+PRODUCT_LOCALES += en mdpi
 
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
@@ -125,7 +125,8 @@ PRODUCT_COPY_FILES += \
      device/notionink/adam_common/files/media_codecs.xml:system/etc/media_codecs.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
      frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-     device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
+     frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:system/etc/media_codecs_google_video_le.xml
+#    device/notionink/adam_common/files/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
 
 # Mixer paths
 PRODUCT_COPY_FILES += \
@@ -292,9 +293,10 @@ PRODUCT_PACKAGES += \
 	libwpa_client \
 	hostapd \
 	hostapd_default.conf \
-#	dhcpcd.conf \
+	dhcpcd.conf \
 	wpa_supplicant \
-#	wpa_supplicant.conf
+	wpa_supplicant.conf \
+	macloader
 	
 PRODUCT_PACKAGES += \
 	wpa_supplicant_overlay.conf \
@@ -309,6 +311,10 @@ PRODUCT_PACKAGES += \
         l2ping \
         hcitool \
         bttest
+
+# Charger images
+PRODUCT_PACKAGES += \
+	charger_res_images
         
 # GPS
 PRODUCT_PACKAGES += \
