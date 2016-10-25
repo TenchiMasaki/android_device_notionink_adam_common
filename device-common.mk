@@ -279,7 +279,8 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.serial=0123456789ABCDEF \
 	ro.product.manufacturer=NotionInk \
 	ro.product.model=Notion_Ink_ADAM \
-	ro.boot.hardware=harmony
+	ro.boot.hardware=harmony \
+	persist.sys.root_access=1
 
 PRODUCT_CHARACTERISTICS := tablet
 
