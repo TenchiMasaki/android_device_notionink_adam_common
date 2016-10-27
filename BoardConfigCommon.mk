@@ -24,8 +24,8 @@ TARGET_ARCH_LOWMEM := true
 USE_CLANG_PLATFORM_BUILD := true
 
 # Dex-preoptimization
-WITH_DEXPREOPT_BOOT_IMG_ONLY := true
-# WITH_DEXPREOPT := true
+# WITH_DEXPREOPT_BOOT_IMG_ONLY := true
+WITH_DEXPREOPT := true
 
 # Skip droiddoc build to save build time
 BOARD_SKIP_ANDROID_DOC_BUILD := true
