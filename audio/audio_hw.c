@@ -830,6 +830,7 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
          * pcm driver buffer */
         do {
             struct timespec time_stamp;
+            if (!out->pcm || !kernel_frames) break;
             if (pcm_get_htimestamp(out->pcm,
                                    (unsigned int *)&kernel_frames,
                                    &time_stamp) < 0)
@@ -932,6 +933,7 @@ static int out_get_presentation_position(const struct audio_stream_out *stream,
     pthread_mutex_lock(&out->lock);
 
     size_t avail;
+    if (!out->pcm || !timestamp) return ret;
     if (pcm_get_htimestamp(out->pcm, &avail, timestamp) == 0) {
         size_t kernel_buffer_size = out->pcm_config->period_size * out->pcm_config->period_count;
         // FIXME This calculation is incorrect if there is buffering after app processor
