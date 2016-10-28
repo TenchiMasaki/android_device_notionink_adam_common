@@ -930,10 +930,11 @@ static int out_get_presentation_position(const struct audio_stream_out *stream,
     struct stream_out *out = (struct stream_out *)stream;
     int ret = -1;
 
+    if (!out->pcm || !timestamp) return ret;
     pthread_mutex_lock(&out->lock);
 
     size_t avail;
-    if (!out->pcm || !timestamp) return ret;
+
     if (pcm_get_htimestamp(out->pcm, &avail, timestamp) == 0) {
         size_t kernel_buffer_size = out->pcm_config->period_size * out->pcm_config->period_count;
         // FIXME This calculation is incorrect if there is buffering after app processor
