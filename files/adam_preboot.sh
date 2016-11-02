@@ -20,7 +20,7 @@ dmesg > /data/dmsg &
 
 # Interactive Governor Settings   (write cpufreq before cpu0,cpu1)
     echo 216000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq # Minimum clock speed
-    echo 1500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq # ** Set 1.6Ghz nax clock speed **
+    echo 1500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq # ** Set 1.5Ghz max clock speed **
     echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor # Set governor
     echo 216000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq # Minimum clock speed for second core
     echo 1500000 >/sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq # Max clock speed for second core
