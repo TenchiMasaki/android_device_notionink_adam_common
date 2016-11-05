@@ -175,7 +175,8 @@ PRODUCT_PACKAGES += \
 	gps.harmony \
 	camera.tegra \
 	hwcomposer.tegra \
-	power.tegra
+	power.tegra \
+        libstagefrighthw
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
