@@ -78,6 +78,9 @@ PRODUCT_COPY_FILES := \
     device/notionink/adam_common/files/adam_preboot.sh:system/etc/adam_preboot.sh \
     device/notionink/adam_common/files/init.usb.rc:root/init.usb.rc \
     device/notionink/adam_common/files/adam_postboot.sh:system/etc/adam_postboot.sh \
+    device/notionink/adam_common/files/gps.conf:system/etc/gps.conf \
+    device/notionink/adam_common/files/SuplRootCert:system/etc/SuplRootCert \
+    
 #    device/notionink/adam_common/files/init.rc:root/init.rc \
 #    device/notionink/adam_common/files/init.cm.rc:root/init.cm.rc \
 #    device/notionink/adam_common/files/init.superuser.rc:root/init.superuser.rc \
@@ -325,10 +328,11 @@ PRODUCT_PACKAGES += \
 	libloc_core \
 	libizat_core \
 	libgeofence \
-	libgps.utils \
-	gps.conf
+	libgps.utils
+#	gps.conf
 
-$(call inherit-product, device/common/gps/gps_us_supl.mk)
+#$(call inherit-product, device/common/gps/gps_us_supl.mk)
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 
 WIFI_BAND := 802_11_BG
