@@ -22,7 +22,8 @@ BOARD_ADAM := true
 TARGET_ARCH_LOWMEM := true
 
 USE_CLANG_PLATFORM_BUILD := true
-LOCAL_STRIP_MODULE := keep_symbols
+TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
+# TARGET_BUILD_TYPE := debug
 
 # Dex-preoptimization
 # WITH_DEXPREOPT_BOOT_IMG_ONLY := true
@@ -124,7 +125,7 @@ TARGET_KERNEL_VARIANT_CONFIG := tegra_smba1006_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := tegra_smba1006_defconfig
 # kernel fallback - if kernel source is not present use prebuilt
 TARGET_PREBUILT_KERNEL := device/notionink/adam_common/kernel
-#TARGET_PREBUILT_KERNEL := kernel/notionink/adam/arch/arm/boot/zImage
+#TARGET_PREBUILT_KERNEL := kernel/notionink/adam-n-p4/arch/arm/boot/zImage
 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 0x00000800
