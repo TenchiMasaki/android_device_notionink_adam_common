@@ -318,7 +318,7 @@
             64 - Volume Keys
          For example, a device with Home, Back and Menu keys would set this
          config to 7. -->
-     <!-- <integer name="config_deviceHardwareKeys">79</integer> -->
+     <integer name="config_deviceHardwareKeys">79</integer>
 
     <!-- Hardware keys present on the device with the ability to wake, stored as a bit field.
          This integer should equal the sum of the corresponding value for each
@@ -332,7 +332,7 @@
             64 - Volume rocker
          For example, a device with Home, Back and Menu keys would set this
          config to 7. -->
-    <!-- <integer name="config_deviceHardwareWakeKeys">2</integer> -->
+    <integer name="config_deviceHardwareWakeKeys">2</integer>
 
     <!-- Control the behavior when the user long presses the home button.
             0 - Nothing
@@ -363,6 +363,6 @@
 
     <!-- Older sensors are not setting event.timestamp correctly.  Setting to
           true will use SystemClock.elapsedRealtimeNanos() to set timestamp-->
-    <!-- <bool name="config_useSystemClockforSensors">true</bool> -->
+    <bool name="config_useSystemClockforRotationSensor">true</bool>
 
 </resources>
