@@ -21,7 +21,7 @@
      for different hardware and product builds. -->
 <resources>
     <!-- Set to true if separate software navigation bar is required on this device. -->  
-    <bool name="config_showNavigationBar">true</bool>
+    <bool name="config_showNavigationBar">false</bool>
 
     <bool name="config_batterySdCardAccessibility">true</bool>
 
