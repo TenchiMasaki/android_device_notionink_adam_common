@@ -51,7 +51,8 @@ ifeq  ($(strip $(BOARD_ADAM)),true)
     libutils \
     libcutils \
     libdl \
-    libc
+    libc \
+    liblog
   
   LOCAL_PRELINK_MODULE := false
   include $(BUILD_SHARED_LIBRARY)

@@ -15,7 +15,8 @@ on early-init
 on init
 
     export LD_SHIM_LIBS /system/lib/libnvomxadaptor.so|libnvshim.so:/system/lib/libnvwinsys.so|libnvshim.so :/system/lib/libaudioflinger.so
-
+    export LD_PRELOAD /system/lib/libjaunt.so
+    
     # Set permissions for persist partition
     mkdir /persist 0771 system system
     mkdir /firmware 0771 system system

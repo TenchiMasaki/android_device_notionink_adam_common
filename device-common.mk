@@ -151,16 +151,16 @@ PRODUCT_PROPERTY_OVERRIDES += ro.hdmi.device_type=0
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
-	HoloSpiralWallpaper \
-	LiveWallpapers \
+   HoloSpiralWallpaper \
+   LiveWallpapers \
         LiveWallpapersPicker \
         VisualizationWallpapers \
 
 #Audio
 PRODUCT_PACKAGES += \
         audio.a2dp.default \
-	audio.primary.harmony \
-	audio.usb.default \
+   audio.primary.harmony \
+   audio.usb.default \
         audio.r_submix.default \
         libaudio-resampler \
         libaudioutils \
@@ -173,12 +173,12 @@ PRODUCT_PACKAGES += \
 
 # Harmony Hardware
 PRODUCT_PACKAGES += \
-	sensors.harmony \
-	lights.harmony \
-	gps.harmony \
-	camera.tegra \
-	hwcomposer.tegra \
-	power.tegra
+   sensors.harmony \
+   lights.harmony \
+   gps.harmony \
+   camera.tegra \
+   hwcomposer.tegra \
+   power.tegra
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -198,47 +198,47 @@ PRODUCT_PACKAGES += \
 
 # OMX
 PRODUCT_PACKAGES += \
-	libc2dcolorconvert \
-	libdivxdrmdecrypt \
-	libOmxCore \
-	libOmxVdec \
-	libOmxVenc \
-	libOmxAacEnc \
-	libOmxAmrEnc \
-	libOmxEvrcEnc \
-	libOmxQcelp13Enc \
-	libstagefrighthw \
-	libdashplayer \
-#	qcmediaplayer
+   libc2dcolorconvert \
+   libdivxdrmdecrypt \
+   libOmxCore \
+   libOmxVdec \
+   libOmxVenc \
+   libOmxAacEnc \
+   libOmxAmrEnc \
+   libOmxEvrcEnc \
+   libOmxQcelp13Enc \
+   libstagefrighthw \
+   libdashplayer \
+#  qcmediaplayer
 
 #PRODUCT_BOOT_JARS += \
-#	qcmediaplayer
+#  qcmediaplayer
 
 # WebKit
 PRODUCT_PACKAGES += \
-	libwebcore
+   libwebcore
 
 # Webkit (classic webview provider)
 PRODUCT_PROPERTY_OVERRIDES += \
-	persist.webview.provider=classic
+   persist.webview.provider=classic
 
 # IPv6 tethering
 PRODUCT_PACKAGES += \
-	ebtables \
-	ethertypes
+   ebtables \
+   ethertypes
 
 PRODUCT_PACKAGES += \
-	librs_jni \
-	libemoji \
-	bttest \
-	libbt-vendor \
-	webview \
-	WebViewDream \
-	PhotoTable \
-	libwebkit \
-	libmmcamera_interface2 \
-	libmmcamera_interface \
-	Launcher3
+   librs_jni \
+   libemoji \
+   bttest \
+   libbt-vendor \
+   webview \
+   WebViewDream \
+   PhotoTable \
+   libwebkit \
+   libmmcamera_interface2 \
+   libmmcamera_interface \
+   Launcher3
 
 # Sensor daemon
 PRODUCT_PACKAGES += \
@@ -273,43 +273,43 @@ PRODUCT_COPY_FILES += \
 #    ro.build.selinux=0
 
 # start adb early
-ADDITIONAL_DEFAULT_PROPERTIES += \
-	security.perf_harden=0 \
-	ro.secure=0 \
-	ro.adb.secure=0 \
-	persist.fuse_sdcard=true \
-	ro.serial=0123456789ABCDEF \
-	ro.product.manufacturer=NotionInk \
-	ro.product.model=Notion_Ink_ADAM \
-	ro.boot.hardware=harmony \
-	persist.sys.root_access=1
+#ADDITIONAL_DEFAULT_PROPERTIES += \
+#   security.perf_harden=0 \
+#   ro.secure=0 \
+#   ro.adb.secure=0 \
+#   persist.fuse_sdcard=true \
+#   ro.serial=0123456789ABCDEF \
+#   ro.product.manufacturer=NotionInk \
+#   ro.product.model=Notion_Ink_ADAM \
+#   ro.boot.hardware=harmony \
+#   persist.sys.root_access=1
 
 PRODUCT_CHARACTERISTICS := tablet
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
 PRODUCT_PACKAGES += \
-	libnetcmdiface
+   libnetcmdiface
 
 # Wifi
 PRODUCT_PACKAGES += \
-	libwpa_client \
-	hostapd \
-	hostapd_default.conf \
-	dhcpcd.conf \
-	wpa_supplicant \
-	wpa_supplicant.conf \
-	macloader
-	
+   libwpa_client \
+   hostapd \
+   hostapd_default.conf \
+   dhcpcd.conf \
+   wpa_supplicant \
+   wpa_supplicant.conf \
+   macloader
+   
 PRODUCT_PACKAGES += \
-	wpa_supplicant_overlay.conf \
-	p2p_supplicant_overlay.conf
+   wpa_supplicant_overlay.conf \
+   p2p_supplicant_overlay.conf
 
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
-	badblocks \
-	e2fsck \
-	setup_fs \
+   badblocks \
+   e2fsck \
+   setup_fs \
         make_ext4fs \
         l2ping \
         hcitool \
@@ -317,19 +317,25 @@ PRODUCT_PACKAGES += \
 
 # Charger images
 PRODUCT_PACKAGES += \
-	charger_res_images
+   charger_res_images
         
 # GPS
 PRODUCT_PACKAGES += \
-	libloc_adapter \
-	libloc_eng \
-	libloc_api_v02 \
-	libloc_ds_api \
-	libloc_core \
-	libizat_core \
-	libgeofence \
-	libgps.utils
-#	gps.conf
+   libloc_adapter \
+   libloc_eng \
+   libloc_api_v02 \
+   libloc_ds_api \
+   libloc_core \
+   libizat_core \
+   libgeofence \
+   libgps.utils
+#  gps.conf
+
+# Cortex-A9 emulation
+PRODUCT_PACKAGES += \
+   libtcg_arm \
+   liblimbocompat \
+   libjaunt
 
 #$(call inherit-product, device/common/gps/gps_us_supl.mk)
 
@@ -340,10 +346,10 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/device-bcm.mk)
 # Firmware
 #PRODUCT_COPY_FILES += \
-#	hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329.bin:system/vendor/firmware/fw_bcmdhd.bin \
+#  hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329.bin:system/vendor/firmware/fw_bcmdhd.bin \
 #   hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/fw_bcm4329_apsta.bin:system/vendor/firmware/fw_bcmdhd_apsta.bin
 
-#	device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd.bin:system/vendor/firmware/fw_bcmdhd.bin \
+#  device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd.bin:system/vendor/firmware/fw_bcmdhd.bin \
 #        device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd_p2p.bin:system/vendor/firmware/fw_bcmdhd_p2p.bin \
 #        device/notionink/adam_common/files/vendor/firmware/fw_bcmdhd_apsta.bin:system/vendor/firmware/fw_bcmdhd_apsta.bin
 
