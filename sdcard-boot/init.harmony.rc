@@ -35,8 +35,17 @@ on init
 on fs
     # Mount cache and system yaffs2 partitions here
     # mount yaffs2 mtd@cache /cache nosuid nodev
-    # mount yaffs2 mtd@system /system 
+    # mount yaffs2 mtd@system /system
+    
+    # mount ext4 /dev/block/mmcblk1p2 /system
+    # mount ext4 /dev/block/mmcblk1p3 /data noatime nosuid nodev barrier=1 data=ordered
+
     mount_all /fstab.harmony
+
+    swapon_all /fstab.harmony
+ 
+    start adam_mkswap
+    start adam_swapon
     
     restorecon_recursive /persist
     
@@ -309,13 +318,38 @@ on device-removed-/dev/ttyUSB3
 
 # Preboot service
 service adam_preboot /system/bin/sh /system/etc/adam_preboot.sh
-    user root
-    oneshot
+   class core
+   critical
+   group root system wakelock
+   seclabel u:r:init:s0
+   oneshot
 
 # Postboot service
 service adam_postboot /system/bin/sh /system/etc/adam_postboot.sh
-    user root
-    oneshot
+   class core
+   critical
+   group root system wakelock
+   seclabel u:r:init:s0
+   oneshot
+    
+service adam_mkswap /system/bin/mkswap /data/swap
+   class core
+   critical
+   group root system wakelock
+   seclabel u:r:init:s0
+   oneshot
+   
+service adam_swapon /system/bin/swapon /data/swap
+   class core
+   critical
+   group root system wakelock
+   seclabel u:r:init:s0
+   oneshot
+   
+service adbd /system/bin/adbd
+    class core
+    critical
+    group root system wakelock
 
 on property:init.svc.vold=running
     start adam_preboot

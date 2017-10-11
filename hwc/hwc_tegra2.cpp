@@ -38,6 +38,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+#include <binder/IMemory.h>
 #include <cutils/compiler.h>
 #include <cutils/log.h>
 #include <cutils/iosched_policy.h>

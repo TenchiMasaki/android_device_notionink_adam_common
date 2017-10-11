@@ -4,9 +4,9 @@
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
 /dev/block/mmcblk1p1	/microsd	vfat	defaults	notrim
-#/dev/block/mmcblk1p4	/cache		ext4	defaults	wait,check,notrim
+#/dev/block/mmcblk1p4	/cache		ext4	defaults	wait,notrim
 /dev/block/mmcblk1p2	/system		ext4	defaults	wait,notrim
-/dev/block/mmcblk1p3	/data		ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,check,encryptable=footer,notrim
+/dev/block/mmcblk1p3	/data		ext4	noatime,nosuid,nodev,barrier=1,data=ordered	wait,encryptable=footer,notrim
 
 ## Vold 2.0 fstab for NI Adam
 
@@ -25,7 +25,9 @@
 */block/mmcblk0*	auto	auto	defaults	voldmanaged=sdcard1:auto,encryptable=userdata,notrim
 */block/mmcblk1*	auto	auto	defaults	voldmanaged=sdcard2:auto,encryptable=userdata,notrim
 
-#/dev/block/zram0		none	swap	defaults	zramsize=419430400
+/dev/block/zram0		none	swap	defaults	zramsize=419430400
+
+/data/swap  none  swap   defaults   swapprio=1
 
 # recovery
 misc			/misc		mtd		defaults	recoveryonly

@@ -26,8 +26,10 @@ LOCAL_SHARED_LIBRARIES := liblog libcutils libhardware \
 
 LOCAL_SRC_FILES := hwc_tegra2.cpp
 
-LOCAL_C_INCLUDES += $(LOCAL_PATH)
-LOCAL_CPP_INCLUDES += $(LOCAL_PATH)
+LOCAL_C_INCLUDES += $(LOCAL_PATH) \
+	frameworks/native/include
+LOCAL_CPP_INCLUDES += $(LOCAL_PATH) \
+	frameworks/native/include
 
 LOCAL_MODULE := hwcomposer.tegra
 LOCAL_MODULE_TAGS := optional

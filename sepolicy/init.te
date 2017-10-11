@@ -1,0 +1,11 @@
+# mkswap service
+type mkswap, domain;
+type mkswap_exec, exec_type, file_type;
+
+init_daemon_domain(mkswap)
+
+# swapon service
+type swapon, domain;
+type swapon_exec, exec_type, file_type;
+
+init_daemon_domain(swapon)

@@ -1,0 +1,2 @@
+/system/bin/mkswap   u:object_r:mkswap_exec:s0
+/system/bin/swapon   u:object_r:swapon_exec:s0

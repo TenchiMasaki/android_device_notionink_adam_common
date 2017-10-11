@@ -98,6 +98,12 @@ PRODUCT_COPY_FILES += \
     device/notionink/adam_common/modules/tun.ko:system/lib/modules/tun.ko
 
 # Bluetooth
+
+# Bluetooth HAL
+PRODUCT_PACKAGES += \
+    android.hardware.bluetooth@1.0-impl \
+    libbt-vendor
+
 PRODUCT_COPY_FILES += \
     device/notionink/adam_common/files/bcm4329.hcd:system/etc/firmware/bcm4329.hcd
 
@@ -105,7 +111,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/notionink/adam_common/files/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf
 #    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf \
-
 
 # Touchscreen
 PRODUCT_COPY_FILES += \
@@ -169,7 +174,11 @@ PRODUCT_PACKAGES += \
         tinyrec \
         libaudioamp \
         FM2 \
-        FMRecord
+        FMRecord \
+        android.hardware.audio@2.0-impl \
+        android.hardware.audio.effect@2.0-impl \
+        audiod \
+        audio.usb.default
 
 # Harmony Hardware
 PRODUCT_PACKAGES += \
@@ -181,6 +190,10 @@ PRODUCT_PACKAGES += \
    power.tegra
 
 # Camera
+PRODUCT_PACKAGES += \
+    camera.device@1.0-impl \
+    android.hardware.camera.provider@2.4-impl
+
 PRODUCT_PROPERTY_OVERRIDES += \
     camera2.portability.force_api=1
 
@@ -238,7 +251,14 @@ PRODUCT_PACKAGES += \
    libwebkit \
    libmmcamera_interface2 \
    libmmcamera_interface \
-   Launcher3
+   Launcher3 \
+   libjaunt \
+   Terminal
+   
+
+# Sensors
+PRODUCT_PACKAGES += \
+    android.hardware.sensors@1.0-impl
 
 # Sensor daemon
 PRODUCT_PACKAGES += \
@@ -273,16 +293,16 @@ PRODUCT_COPY_FILES += \
 #    ro.build.selinux=0
 
 # start adb early
-#ADDITIONAL_DEFAULT_PROPERTIES += \
-#   security.perf_harden=0 \
-#   ro.secure=0 \
-#   ro.adb.secure=0 \
-#   persist.fuse_sdcard=true \
-#   ro.serial=0123456789ABCDEF \
-#   ro.product.manufacturer=NotionInk \
-#   ro.product.model=Notion_Ink_ADAM \
-#   ro.boot.hardware=harmony \
-#   persist.sys.root_access=1
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+   security.perf_harden=0 \
+   ro.secure=0 \
+   ro.adb.secure=0 \
+   persist.fuse_sdcard=true \
+   ro.serial=0123456789ABCDEF \
+   ro.product.manufacturer=NotionInk \
+   ro.product.model=Notion_Ink_ADAM \
+   ro.boot.hardware=harmony \
+   persist.sys.root_access=1
 
 PRODUCT_CHARACTERISTICS := tablet
 
@@ -299,12 +319,18 @@ PRODUCT_PACKAGES += \
    dhcpcd.conf \
    wpa_supplicant \
    wpa_supplicant.conf \
-   macloader
+   macloader \
+   wificond \
+   wifilogd
    
 PRODUCT_PACKAGES += \
    wpa_supplicant_overlay.conf \
    p2p_supplicant_overlay.conf
 
+# WiFi HAL
+PRODUCT_PACKAGES += \
+    android.hardware.wifi@1.0-service
+    
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
    badblocks \
@@ -336,6 +362,36 @@ PRODUCT_PACKAGES += \
    libtcg_arm \
    liblimbocompat \
    libjaunt
+
+# Health
+PRODUCT_PACKAGES += \
+    android.hardware.health@1.0-impl
+
+# Gralloc
+PRODUCT_PACKAGES += \
+    android.hardware.graphics.allocator@2.0-impl \
+    android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.memtrack@1.0-impl
+
+# HW Composer
+PRODUCT_PACKAGES += \
+    android.hardware.graphics.composer@2.1-impl
+    
+# Keymaster HAL
+PRODUCT_PACKAGES += \
+    android.hardware.keymaster@3.0-impl
+
+# Themes
+PRODUCT_PACKAGES += \
+    PixelTheme \
+    Stock
+    
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.boot.vendor.overlay.theme=com.google.android.theme.pixel
+
+# USB HAL
+PRODUCT_PACKAGES += \
+    android.hardware.usb@1.0-service
 
 #$(call inherit-product, device/common/gps/gps_us_supl.mk)
 
