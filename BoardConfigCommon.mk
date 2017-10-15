@@ -25,6 +25,10 @@ USE_CLANG_PLATFORM_BUILD := true
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 # TARGET_BUILD_TYPE := debug
 
+# HIDL
+DEVICE_MANIFEST_FILE := device/notionink/adam_common/hidl/manifest.xml
+DEVICE_MATRIX_FILE := device/notionink/adam_common/hidl/compatibility_matrix.xml
+
 # Dex-preoptimization
 # WITH_DEXPREOPT_BOOT_IMG_ONLY := true
 WITH_DEXPREOPT := true

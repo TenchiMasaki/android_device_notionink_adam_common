@@ -34,6 +34,9 @@ PRODUCT_LOCALES += en mdpi
 
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
+# Device was launched with M
+PRODUCT_SHIPPING_API_LEVEL := 23
+
 # Enable optional sensor types
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.qti.sensors.smd=false \
@@ -101,7 +104,6 @@ PRODUCT_COPY_FILES += \
 
 # Bluetooth HAL
 PRODUCT_PACKAGES += \
-    android.hardware.bluetooth@1.0-impl \
     libbt-vendor
 
 PRODUCT_COPY_FILES += \
@@ -175,8 +177,6 @@ PRODUCT_PACKAGES += \
         libaudioamp \
         FM2 \
         FMRecord \
-        android.hardware.audio@2.0-impl \
-        android.hardware.audio.effect@2.0-impl \
         audiod \
         audio.usb.default
 
@@ -190,10 +190,6 @@ PRODUCT_PACKAGES += \
    power.tegra
 
 # Camera
-PRODUCT_PACKAGES += \
-    camera.device@1.0-impl \
-    android.hardware.camera.provider@2.4-impl
-
 PRODUCT_PROPERTY_OVERRIDES += \
     camera2.portability.force_api=1
 
@@ -254,11 +250,6 @@ PRODUCT_PACKAGES += \
    Launcher3 \
    libjaunt \
    Terminal
-   
-
-# Sensors
-PRODUCT_PACKAGES += \
-    android.hardware.sensors@1.0-impl
 
 # Sensor daemon
 PRODUCT_PACKAGES += \
@@ -327,10 +318,6 @@ PRODUCT_PACKAGES += \
    wpa_supplicant_overlay.conf \
    p2p_supplicant_overlay.conf
 
-# WiFi HAL
-PRODUCT_PACKAGES += \
-    android.hardware.wifi@1.0-service
-    
 # Filesystem management tools and others
 PRODUCT_PACKAGES += \
    badblocks \
@@ -363,24 +350,6 @@ PRODUCT_PACKAGES += \
    liblimbocompat \
    libjaunt
 
-# Health
-PRODUCT_PACKAGES += \
-    android.hardware.health@1.0-impl
-
-# Gralloc
-PRODUCT_PACKAGES += \
-    android.hardware.graphics.allocator@2.0-impl \
-    android.hardware.graphics.mapper@2.0-impl \
-    android.hardware.memtrack@1.0-impl
-
-# HW Composer
-PRODUCT_PACKAGES += \
-    android.hardware.graphics.composer@2.1-impl
-    
-# Keymaster HAL
-PRODUCT_PACKAGES += \
-    android.hardware.keymaster@3.0-impl
-
 # Themes
 PRODUCT_PACKAGES += \
     PixelTheme \
@@ -388,10 +357,6 @@ PRODUCT_PACKAGES += \
     
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.boot.vendor.overlay.theme=com.google.android.theme.pixel
-
-# USB HAL
-PRODUCT_PACKAGES += \
-    android.hardware.usb@1.0-service
 
 #$(call inherit-product, device/common/gps/gps_us_supl.mk)
 
@@ -411,3 +376,4 @@ $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329
 
 $(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
 $(call inherit-product, vendor/notionink/adam/device-vendor.mk)
+$(call inherit-product, device/notionink/adam_common/hidl/hidl.mk)
